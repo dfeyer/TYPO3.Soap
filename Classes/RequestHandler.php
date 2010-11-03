@@ -3,7 +3,7 @@ declare(ENCODING = 'utf-8');
 namespace F3\Soap;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "ExtJS".                      *
+ * This script belongs to the FLOW3 package "Soap".                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -29,11 +29,24 @@ namespace F3\Soap;
  */
 class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 
+	const HANDLEREQUEST_OK = 1;
+	const HANDLEREQUEST_NOVALIDREQUEST = -1;
+
+	const CANHANDLEREQUEST_OK = 1;
+	const CANHANDLEREQUEST_MISSINGSOAPEXTENSION = -1;
+	const CANHANDLEREQUEST_NOPOSTREQUEST = -2;
+	const CANHANDLEREQUEST_WRONGSERVICEURI = -3;
+
 	/**
 	 * @inject
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
+
+	/**
+	 * @var \F3\Soap\RequestBuilder
+	 */
+	protected $requestBuilder;
 
 	/**
 	 * @inject
@@ -42,24 +55,52 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	protected $environment;
 
 	/**
-	 * Handles a raw Ext Direct request and sends the respsonse.
+	 * @var array
+	 */
+	protected $settings = array();
+
+	/**
+	 * @param array $settings
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectSettings(array $settings) {
+		$this->settings = $settings;
+	}
+
+	/**
+	 * @param \F3\Soap\RequestBuilder $requestBuilder
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectRequestBuilder(\F3\Soap\RequestBuilder $requestBuilder) {
+		$this->requestBuilder = $requestBuilder;
+	}
+
+	/**
+	 * Handles a SOAP request and sends the response directly to the clien.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleRequest() {
-		$wsdlUri = NULL;
+		$request = $this->requestBuilder->build();
+		if ($request === FALSE) {
+			header('HTTP/1.1 404 Not Found');
+			echo 'Could not build request - probably no SOAP service matched the given endpoint URI.';
+			return self::HANDLEREQUEST_NOVALIDREQUEST;
+		}
+
 		$serverOptions = array(
 			'soap_version' => SOAP_1_2,
-			'encoding' => 'UTF-8',
-			'uri' => (string)$this->environment->getBaseUri()
+			'encoding' => 'UTF-8'
 		);
-		$soapServer = new \SoapServer($wsdlUri, $serverOptions);
 
-		$service = $this->objectManager->get('F3\Test\Service\V1\CustomerService');
-		$soapServer->setObject($service);
-		
-		$soapServer->handle($this->environment->getRawPostData());
+		$soapServer = new \SoapServer((string)$request->getWsdlUri(), $serverOptions);
+		$soapServer->setObject($this->objectManager->get($request->getServiceObjectName()));
+		$soapServer->handle($request->getBody());
+
+		return self::HANDLEREQUEST_OK;
 	}
 
 	/**
@@ -69,15 +110,18 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function canHandleRequest() {
-		if (!extension_loaded('soap') || $this->environment->getRequestMethod() !== 'POST' ) {
-			return FALSE;
+		if (!extension_loaded('soap')) {
+			return self::CANHANDLEREQUEST_MISSINGSOAPEXTENSION;
+		}
+		if ($this->environment->getRequestMethod() !== 'POST' ) {
+			return self::CANHANDLEREQUEST_NOPOSTREQUEST;
 		}
 
-		$url = substr($this->environment->getRequestUri(), strlen($this->environment->getBaseUri()));
-		if ($url !== 'service/soap/v1/') {
-			return FALSE;
+		$uriString = substr($this->environment->getRequestUri(), strlen($this->environment->getBaseUri()));
+		if (strpos($uriString, $this->settings['endpointUriBasePath']) !== 0) {
+			return self::CANHANDLEREQUEST_WRONGSERVICEURI;
 		}
-		return TRUE;
+		return self::CANHANDLEREQUEST_OK;
 	}
 
 	/**
