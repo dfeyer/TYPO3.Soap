@@ -85,16 +85,18 @@ class LoggingAspect {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logAfterHandleRequestCalls(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		if ($joinPoint->hasException()) {
-			$this->systemLogger->log('handleRequest() exited with exception:' . $joinPoint->getException()->getMessage(), LOG_ERR);
+		$result = $joinPoint->getResult();
+		if ($result instanceof \Exception) {
+			$this->systemLogger->log('handleRequest() exited with exception:' . $result, LOG_ERR);
 		} else {
-			switch ($joinPoint->getResult()) {
+			switch ($result) {
 				case \F3\Soap\RequestHandler::CANHANDLEREQUEST_OK :
 					$this->systemLogger->log('handleRequest() exited successfully', LOG_DEBUG);
 				break;
 				case \F3\Soap\RequestHandler::HANDLEREQUEST_NOVALIDREQUEST :
 					$this->systemLogger->log('Could not build request - probably no SOAP service matched the given endpoint URI', LOG_NOTICE);
 				break;
+				default :
 			}
 		}
 	}
