@@ -3,7 +3,6 @@
 #                                                                        #
 
 Soap:
-
   # This path will be prefixed with the current web base URI and be suffixed
   # with the service name.
   #

@@ -1,0 +1,17 @@
+#                                                                        #
+# Default subroutes configuration for the Soap package                   #
+#                                                                        #
+
+##
+# WSDL
+
+-
+  name: 'WSDL'
+  uriPattern: '{wsdlUri}'
+  defaults:
+    '@package':    'Soap'
+    '@controller': 'Wsdl'
+    '@action':     'show'
+  routeParts:
+    wsdlUri:
+      handler: F3\Soap\Routing\WsdlRoutePartHandler
