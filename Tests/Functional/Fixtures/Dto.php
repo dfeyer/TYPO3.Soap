@@ -23,36 +23,55 @@ namespace F3\Soap\Tests\Functional\Fixtures;
  *                                                                        */
 
 /**
- * A sample service which is used for basic functional testing
+ * A sample DTO
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
-class TestService {
+class Dto {
 
 	/**
-	 * Responds with the given value
-	 *
-	 * @param string $value
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @var string
 	 */
-	public function ping($value) {
-		return $value;
+	protected $name;
+
+	/**
+	 *
+	 * @var int
+	 */
+	protected $size;
+
+	/**
+	 *
+	 * @return string
+	 */
+	public function getName() {
+		return $this->name;
 	}
 
 	/**
-	 * Concatenate the name
 	 *
-	 * @param \F3\Soap\Tests\Functional\Fixtures\Dto $value
-	 * @return string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @param string $name
 	 */
-	public function multiply(\F3\Soap\Tests\Functional\Fixtures\Dto $value) {
-		$result = '';
-		for ($i = 0; $i < $value->getSize(); $i++) {
-			$result .= $value->getName();
-		}
-		return $result;
+	public function setName($name) {
+		$this->name = $name;
 	}
+
+	/**
+	 *
+	 * @return int
+	 */
+	public function getSize() {
+		return $this->size;
+	}
+
+	/**
+	 *
+	 * @param int $size
+	 */
+	public function setSize($size) {
+		$this->size = $size;
+	}
+
 }
 ?>

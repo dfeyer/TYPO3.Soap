@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Tests\Functional\Fixtures;
+namespace F3\Soap\Tests\Functional;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,36 +23,45 @@ namespace F3\Soap\Tests\Functional\Fixtures;
  *                                                                        */
 
 /**
- * A sample service which is used for basic functional testing
+ * Testcase for the Service Wrapper
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class TestService {
+class ServiceWrapperTest extends \F3\Testing\FunctionalTestCase {
 
 	/**
-	 * Responds with the given value
-	 *
-	 * @param string $value
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @test
 	 */
-	public function ping($value) {
-		return $value;
+	public function simpleServiceMethodIsWrapped() {
+		$serviceObject = $this->objectManager->get('F3\Soap\Tests\Functional\Fixtures\TestService');
+		$wrapper = $this->objectManager->create('F3\Soap\ServiceWrapper', $serviceObject);
+		$result = $wrapper->ping('Hello');
+		$this->assertEquals('Hello', $result);
 	}
 
 	/**
-	 * Concatenate the name
-	 *
-	 * @param \F3\Soap\Tests\Functional\Fixtures\Dto $value
-	 * @return string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @test
 	 */
-	public function multiply(\F3\Soap\Tests\Functional\Fixtures\Dto $value) {
-		$result = '';
-		for ($i = 0; $i < $value->getSize(); $i++) {
-			$result .= $value->getName();
-		}
-		return $result;
+	public function argumentToMethodIsMappedToObjectByParamAnnotation() {
+		$serviceObject = $this->objectManager->get('F3\Soap\Tests\Functional\Fixtures\TestService');
+		$wrapper = $this->objectManager->create('F3\Soap\ServiceWrapper', $serviceObject);
+		$argument = new \stdClass();
+		$argument->name = 'Foo';
+		$argument->size = 2;
+		$result = $wrapper->multiply($argument);
+		$this->assertEquals('FooFoo', $result);
+	}
+
+	/**
+	 * @test
+	 */
+	public function mapperMapsToClassName() {
+		$propertyMapper = $this->objectManager->get('F3\FLOW3\Property\PropertyMapper');
+		$value = array('name' => 'Foo', 'size' => 2);
+		$type = 'F3\Soap\Tests\Functional\Fixtures\Dto';
+		$target = $propertyMapper->map(array('name', 'size'), $value, $type);
+
+		$this->assertType('F3\Soap\Tests\Functional\Fixtures\Dto', $target);
 	}
 }
 ?>

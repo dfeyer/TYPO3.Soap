@@ -1,9 +1,9 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Tests\Functional\Fixtures;
+namespace F3\Soap;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the FLOW3 package "Soap".                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -23,36 +23,28 @@ namespace F3\Soap\Tests\Functional\Fixtures;
  *                                                                        */
 
 /**
- * A sample service which is used for basic functional testing
+ * A mapping exception
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class TestService {
+class MappingException extends \F3\FLOW3\Exception {
 
 	/**
-	 * Responds with the given value
-	 *
-	 * @param string $value
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @var \F3\FLOW3\Property\MappingResults
 	 */
-	public function ping($value) {
-		return $value;
+	protected $mappingResults;
+
+	public function __construct($message, $mappingResults) {
+		parent::__construct($message, '1288952996');
+		$this->mappingResults = $mappingResults;
 	}
 
 	/**
-	 * Concatenate the name
-	 *
-	 * @param \F3\Soap\Tests\Functional\Fixtures\Dto $value
-	 * @return string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @return \F3\FLOW3\Property\MappingResults
 	 */
-	public function multiply(\F3\Soap\Tests\Functional\Fixtures\Dto $value) {
-		$result = '';
-		for ($i = 0; $i < $value->getSize(); $i++) {
-			$result .= $value->getName();
-		}
-		return $result;
+	public function getMappingResults() {
+		return $this->mappingResults;
 	}
 }
+
 ?>

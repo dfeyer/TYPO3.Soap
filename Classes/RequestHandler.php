@@ -97,7 +97,9 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 		);
 
 		$soapServer = new \SoapServer((string)$request->getWsdlUri(), $serverOptions);
-		$soapServer->setObject($this->objectManager->get($request->getServiceObjectName()));
+		$serviceObject = $this->objectManager->get($request->getServiceObjectName());
+		$serviceWrapper = $this->objectManager->create('F3\Soap\ServiceWrapper', $serviceObject);
+		$soapServer->setObject($serviceWrapper);
 
 		try {
 			$soapServer->handle($request->getBody());
