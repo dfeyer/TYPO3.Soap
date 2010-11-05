@@ -30,19 +30,38 @@ namespace F3\Soap\Controller;
 class WsdlController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
+	 * @inject
+	 * @var \F3\Soap\WsdlGenerator
+	 */
+	protected $wsdlGenerator;
+
+	/**
+	 * Get the WSDL for a WSDL URI part (e.g. 'mypackage/someservicename').
+	 * The WSDL will be generated using reflection on the service class or it
+	 * will use the configured file from staticWsdlResources.
+	 *
+	 * The endpoint will be dynamically changed to the current base URL by using
+	 * the ###BASE_URL### marker inside the file.
 	 *
 	 * @param string $wsdlUri The WSDL URI part
+	 * @return string
 	 */
 	public function showAction($wsdlUri) {
 		if (isset($this->settings['staticWsdlResources'][$wsdlUri])) {
-			$this->response->setHeader('Content-type', 'application/xml');
 			$wsdlContent = file_get_contents($this->settings['staticWsdlResources'][$wsdlUri]);
-			$wsdlContent = str_replace('###BASE_URL###', $this->request->getBaseUri(), $wsdlContent);
-
-			return $wsdlContent;
 		} else {
-			throw new \F3\FLOW3\Exception('WSDL URI not configured and dynamic WSDL generation not yet implemented', 1288877970);
+			list($packageKey, $servicePath) = explode('/', $wsdlUri, 2);
+			$servicePath = str_replace('/', '\\', $servicePath);
+
+			$serviceObjectName = sprintf("F3\%s\Service\Soap\%sService", $packageKey, $servicePath);
+			$serviceObjectName = $this->objectManager->getCaseSensitiveObjectName($serviceObjectName);
+
+			$wsdlContent = $this->wsdlGenerator->generateWsdl($serviceObjectName);
 		}
+		$this->response->setHeader('Content-type', 'application/xml');
+		$wsdlContent = str_replace('###BASE_URL###', $this->request->getBaseUri(), $wsdlContent);
+		return $wsdlContent;
+
 	}
 }
 

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Tests\Functional\Fixtures;
+namespace F3\Soap\Tests\Functional;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -23,47 +23,27 @@ namespace F3\Soap\Tests\Functional\Fixtures;
  *                                                                        */
 
 /**
- * A sample service which is used for basic functional testing
+ * Testcase for the WSDL generator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class TestService {
+class WsdlGeneratorTest extends \F3\Testing\FunctionalTestCase {
 
 	/**
-	 * Responds with the given value
-	 *
-	 * @param string $value
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @test
 	 */
-	public function ping($value) {
-		return $value;
-	}
+	public function wsdlForSimpleServiceIsCorrect() {
+		$wsdlGenerator = $this->objectManager->get('F3\Soap\WsdlGenerator');
 
-	/**
-	 * Concatenate the name
-	 *
-	 * @param \F3\Soap\Tests\Functional\Fixtures\Dto $value
-	 * @return string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function multiply(\F3\Soap\Tests\Functional\Fixtures\Dto $value) {
-		$result = '';
-		for ($i = 0; $i < $value->getSize(); $i++) {
-			$result .= $value->getName();
-		}
-		return $result;
-	}
+		$wsdl = $wsdlGenerator->generateWsdl('F3\Soap\Tests\Functional\Fixtures\TestService');
 
-	/**
-	 * Sum the numbers
-	 *
-	 * @param array<int> $values
-	 * @return int
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function sum(array $values) {
-		return array_sum($values);
+		$wsdlFixture = \F3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestService.wsdl', FILE_TEXT);
+
+			// Clean whitespace and linebreaks for better comparison and diff
+		$wsdl = preg_replace('/>\\s*</', ">\n<", $wsdl);
+		$wsdlFixture = preg_replace('/>\\s*</', ">\n<", $wsdlFixture);
+
+		$this->assertEquals($wsdlFixture, $wsdl);
 	}
 }
 ?>

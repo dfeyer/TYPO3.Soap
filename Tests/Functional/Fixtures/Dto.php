@@ -3,7 +3,7 @@ declare(ENCODING = 'utf-8');
 namespace F3\Soap\Tests\Functional\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the FLOW3 package "Soap".                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -43,31 +43,30 @@ class Dto {
 
 	/**
 	 *
-	 * @return string
+	 * @return string The name
 	 */
 	public function getName() {
 		return $this->name;
 	}
 
 	/**
-	 *
 	 * @param string $name
+	 * @return void
 	 */
 	public function setName($name) {
 		$this->name = $name;
 	}
 
 	/**
-	 *
-	 * @return int
+	 * @return int The size
 	 */
 	public function getSize() {
 		return $this->size;
 	}
 
 	/**
-	 *
 	 * @param int $size
+	 * @return void
 	 */
 	public function setSize($size) {
 		$this->size = $size;

@@ -61,6 +61,9 @@ class ServiceWrapper {
 	}
 
 	/**
+	 * The SoapServer will call methods with parameters as stdClass instances.
+	 * This magic call method will convert the parameters to the object types
+	 * specified in the SOAP service class.
 	 *
 	 * @param string $name Method name
 	 * @param array $arguments Arguments
@@ -70,18 +73,47 @@ class ServiceWrapper {
 		$className = ($this->service instanceof \F3\FLOW3\AOP\ProxyInterface) ? $this->service->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($this->service);
 		$methodParameters = $this->reflectionService->getMethodParameters($className, $name);
 		foreach ($methodParameters as $parameterName => $parameterOptions) {
-			if (isset($parameterOptions['class']) && $this->reflectionService->isClassReflected($parameterOptions['class'])) {
-				$argument = $arguments[$parameterOptions['position']];
-				$target = $this->objectManager->create($parameterOptions['class']);
-				if ($this->propertyMapper->map($this->reflectionService->getClassPropertyNames($parameterOptions['class']), \F3\FLOW3\Utility\Arrays::convertObjectToArray($argument), $target)) {
-					$arguments[$parameterOptions['position']] = $target;
-				} else {
-					throw new \F3\Soap\MappingException('Could not map argument ' . $parameterName, $this->propertyMapper->getMappingResults());
+			if (isset($parameterOptions['class'])) {
+				$className = $parameterOptions['class'];
+				if ($this->reflectionService->isClassReflected($className)) {
+					$arguments[$parameterOptions['position']] = $this->convertStdClassToObject($arguments[$parameterOptions['position']], $className, $parameterName);
+				}
+			} elseif (isset($parameterOptions['type'])) {
+				$type = $parameterOptions['type'];
+				if (preg_match('/^array<(.+)>$/', $type, $matches)) {
+					$className = $matches[1];
+					$typeName = strpos($className, '\\') !== FALSE ? substr($className, strrpos($className, '\\') + 1) : $className;
+					$arrayValues = $arguments[$parameterOptions['position']]->$typeName;
+					if ($this->reflectionService->isClassReflected($className)) {
+						$result = array();
+						foreach ($arrayValues as $arrayValue) {
+							$result[] = $this->convertStdClassToObject($arrayValue, $className, $parameterName);
+						}
+					} else {
+						$arguments[$parameterOptions['position']] = $arrayValues;
+					}
 				}
 			}
 		}
 		return call_user_func_array(array($this->service, $name), $arguments);
 	}
-}
 
+	/**
+	 * Convert the given argument from stdClass to a FLOW3 object with the
+	 * specified class name.
+	 *
+	 * @param \stdClass $argument The argument
+	 * @param string $className The class name of the target object
+	 * @param string $parameterName The parameter name of the argument
+	 * @return object The converted object
+	 */
+	protected function convertStdClassToObject($argument, $className, $parameterName) {
+		$target = $this->objectManager->create($className);
+		if ($this->propertyMapper->map($this->reflectionService->getClassPropertyNames($className), \F3\FLOW3\Utility\Arrays::convertObjectToArray($argument), $target)) {
+			return $target;
+		} else {
+			throw new \F3\Soap\MappingException('Could not map argument ' . $parameterName . ' to type ' . $className, $this->propertyMapper->getMappingResults());
+		}
+	}
+}
 ?>

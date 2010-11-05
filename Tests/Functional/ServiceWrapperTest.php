@@ -3,7 +3,7 @@ declare(ENCODING = 'utf-8');
 namespace F3\Soap\Tests\Functional;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the FLOW3 package "Soap".                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -62,6 +62,18 @@ class ServiceWrapperTest extends \F3\Testing\FunctionalTestCase {
 		$target = $propertyMapper->map(array('name', 'size'), $value, $type);
 
 		$this->assertType('F3\Soap\Tests\Functional\Fixtures\Dto', $target);
+	}
+
+	/**
+	 * @test
+	 */
+	public function simpleArrayTypeParametersAreConvertedFromStdClass() {
+		$serviceObject = $this->objectManager->get('F3\Soap\Tests\Functional\Fixtures\TestService');
+		$wrapper = $this->objectManager->create('F3\Soap\ServiceWrapper', $serviceObject);
+		$argument = new \stdClass();
+		$argument->int = array(17, 4);
+		$result = $wrapper->sum($argument);
+		$this->assertEquals(21, $result);
 	}
 }
 ?>
