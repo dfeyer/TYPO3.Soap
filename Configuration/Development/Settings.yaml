@@ -1,0 +1,7 @@
+#                                                                        #
+# Development settings for the package "Soap"                            #
+#                                                                        #
+
+Soap:
+  exposeExceptionInformation: yes
+  logDetailedExceptions: no

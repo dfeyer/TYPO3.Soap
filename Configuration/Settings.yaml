@@ -10,3 +10,9 @@ Soap:
   # there's no need to change it.
   endpointUriBasePath: 'service/soap/'
 
+  # Expose the exception information to the client in a SOAP fault. Should
+  # not be used in production context.
+  exposeExceptionInformation: no
+
+  # Log detailed exception information including a stacktrace of the exception.
+  logDetailedExceptions: yes
