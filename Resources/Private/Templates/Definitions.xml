@@ -55,7 +55,7 @@
 
 	<wsdl:service name="{serviceName}">
 		<wsdl:port binding="tns:{serviceName}SoapBinding" name="{serviceName}SoapPort">
-			<soap:address location="###BASE_URL###{servicePath}" />
+			<soap:address location="{baseUrl}{servicePath}" />
 		</wsdl:port>
 	</wsdl:service>
 </wsdl:definitions>

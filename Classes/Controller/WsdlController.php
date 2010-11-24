@@ -41,7 +41,7 @@ class WsdlController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * will use the configured file from staticWsdlResources.
 	 *
 	 * The endpoint will be dynamically changed to the current base URL by using
-	 * the ###BASE_URL### marker inside the file.
+	 * the {baseUrl} marker inside the file.
 	 *
 	 * @param string $wsdlUri The WSDL URI part
 	 * @return string
@@ -56,12 +56,17 @@ class WsdlController extends \F3\FLOW3\MVC\Controller\ActionController {
 			$serviceObjectName = sprintf("F3\%s\Service\Soap\%sService", $packageKey, $servicePath);
 			$serviceObjectName = $this->objectManager->getCaseSensitiveObjectName($serviceObjectName);
 
+			if ($serviceObjectName === FALSE) {
+				$this->response->setStatus(404);
+				return '404 Not Found (No WSDL resource found at this URI)';
+			}
+
 			$wsdlContent = $this->wsdlGenerator->generateWsdl($serviceObjectName);
 		}
-		$this->response->setHeader('Content-type', 'application/xml');
-		$wsdlContent = str_replace('###BASE_URL###', $this->request->getBaseUri(), $wsdlContent);
-		return $wsdlContent;
 
+		$this->response->setHeader('Content-type', 'application/xml');
+		$wsdlContent = str_replace('{baseUrl}', $this->request->getBaseUri(), $wsdlContent);
+		return $wsdlContent;
 	}
 }
 

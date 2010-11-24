@@ -35,8 +35,6 @@ class WsdlRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	protected $settings;
 
 	/**
-	 * Inject the settings
-	 *
 	 * @param array $settings
 	 * @return void
 	 */
@@ -51,17 +49,24 @@ class WsdlRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 * @return boolean TRUE if value could be matched successfully, otherwise FALSE.
 	 */
 	protected function matchValue($value) {
-		if ($value === NULL || $value === '') return FALSE;
+		if ($value === NULL || $value === '') {
+			return FALSE;
+		}
+
 		$endpointUriBasePath = $this->settings['endpointUriBasePath'];
-		if (!preg_match('/^' . \preg_quote($endpointUriBasePath, '/') .'(.+)\.wsdl$/', $value, $matches)) return FALSE;
+		$pattern = '/^' . \preg_quote($endpointUriBasePath, '/') . '(.+)\.wsdl$/';
+		if (preg_match($pattern, $value, $matches) !== 1) {
+			return FALSE;
+		}
 
 		$this->value = $matches[1];
 		return TRUE;
 	}
 
 	/**
+	 * This route part handler tries to match the full route path.
 	 *
-	 * @param string $routePath
+	 * @param string $routePath The current route path
 	 * @return string
 	 */
 	protected function findValueToMatch($routePath) {

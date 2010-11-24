@@ -109,7 +109,7 @@ class WsdlGenerator {
 
 		$this->reflectOperations($className);
 
-		return $this->renderTemplate('resource://Soap/Private/Templates/definitions.xml', array(
+		return $this->renderTemplate('resource://Soap/Private/Templates/Definitions.xml', array(
 			'messages' => $this->messages,
 			'complexTypes' => $this->complexTypes,
 			'operations' => $this->operations,

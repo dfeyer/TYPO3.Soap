@@ -127,7 +127,7 @@
 
 	<wsdl:service name="TestService">
 		<wsdl:port binding="tns:TestServiceSoapBinding" name="TestServiceSoapPort">
-			<soap:address location="###BASE_URL###service/soap/soap/fixtures/test" />
+			<soap:address location="{baseUrl}service/soap/soap/fixtures/test" />
 		</wsdl:port>
 	</wsdl:service>
 </wsdl:definitions>

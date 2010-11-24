@@ -34,7 +34,13 @@ class MappingException extends \F3\FLOW3\Exception {
 	 */
 	protected $mappingResults;
 
-	public function __construct($message, $mappingResults) {
+	/**
+	 * Constructs this exception
+	 *
+	 * @param string $message The exception message
+	 * @param \F3\FLOW3\Property\MappingResults $mappingResults
+	 */
+	public function __construct($message, \F3\FLOW3\Property\MappingResults $mappingResults) {
 		parent::__construct($message, '1288952996');
 		$this->mappingResults = $mappingResults;
 	}
