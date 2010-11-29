@@ -63,6 +63,11 @@ class ServiceWrapper {
 	protected $systemLogger;
 
 	/**
+	 * @var \F3\Soap\Request
+	 */
+	protected $request;
+
+	/**
 	 * @var array
 	 */
 	protected $settings = array();
@@ -88,11 +93,12 @@ class ServiceWrapper {
 	 * specified in the SOAP service class.
 	 *
 	 * @param string $methodName Method name called
-	 * @param array $arguments Arguments of the call
+	 * @param object $arguments Arguments of the call
 	 * @return mixed
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function __call($methodName, $arguments) {
+		$this->initializeCall($this->request);
 		$className = ($this->service instanceof \F3\FLOW3\AOP\ProxyInterface) ? $this->service->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($this->service);
 		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
 		foreach ($methodParameters as $parameterName => $parameterOptions) {
@@ -126,6 +132,28 @@ class ServiceWrapper {
 	}
 
 	/**
+	 * AOP method template to intercept a SOAP request and
+	 * set headers before initializing security
+	 *
+	 * @param \F3\Soap\Request $request
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function initializeCall(\F3\Soap\Request $request) {}
+
+	/**
+	 * Sets SOAP headers from the <headers> SOAP header.
+	 *
+	 * @param object $arguments
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function headers($arguments) {
+		$headers = \F3\FLOW3\Utility\Arrays::convertObjectToArray($arguments);
+		$this->request->setSoapHeaders($headers);
+	}
+
+	/**
 	 * Convert the thrown exception to a corresponding SOAP fault,
 	 * respecting expected and unexpected Exceptions by looking at the
 	 * throws annotation of the method declaration.
@@ -139,7 +167,9 @@ class ServiceWrapper {
 	 */
 	protected function handleException($exception, $className, $methodName) {
 		$exceptionClassName = get_class($exception);
-
+		if ($exception instanceof \F3\FLOW3\Security\Exception\AuthenticationRequiredException) {
+			throw new \SoapFault('Client', 'Authentication required', NULL, 'Security_AuthenticationRequired');
+		}
 		$expectedException = $this->methodThrowsException($className, $methodName, $exceptionClassName);
 		if ($expectedException) {
 			$exceptionName = implode('_', array_slice(explode('\\', $exceptionClassName), 4));
@@ -237,6 +267,17 @@ class ServiceWrapper {
 		} else {
 			throw new \F3\Soap\MappingException('Could not map argument ' . $parameterName . ' to type ' . $className, $this->propertyMapper->getMappingResults());
 		}
+	}
+
+	/**
+	 * Set the current SOAP request
+	 *
+	 * @param \F3\Soap\Request $request
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function setRequest($request) {
+		$this->request = $request;
 	}
 }
 ?>

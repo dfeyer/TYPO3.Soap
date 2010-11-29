@@ -28,7 +28,7 @@ namespace F3\Soap;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class Request {
+class Request extends \F3\FLOW3\MVC\Request {
 
 	/**
 	 * The fully qualified object name of the service this request refers to
@@ -57,6 +57,11 @@ class Request {
 	 * @var string
 	 */
 	protected $body;
+
+	/**
+	 * @var array
+	 */
+	protected $soapHeaders;
 
 	/**
 	 * Sets the service object name
@@ -142,6 +147,25 @@ class Request {
 	 */
 	public function getBody() {
 		return isset($this->body) ? $this->body : $GLOBALS['HTTP_RAW_POST_DATA'];
+	}
+
+	/**
+	 * Get SOAP headers that were sent in the request
+	 *
+	 * @return array
+	 */
+	public function getSoapHeaders() {
+		return $this->soapHeaders;
+	}
+
+	/**
+	 * Sets SOAP headers during handling of the SOAP message
+	 *
+	 * @param array $soapHeaders
+	 * @return void
+	 */
+	public function setSoapHeaders($soapHeaders) {
+		$this->soapHeaders = $soapHeaders;
 	}
 }
 
