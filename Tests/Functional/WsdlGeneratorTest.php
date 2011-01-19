@@ -27,10 +27,11 @@ namespace F3\Soap\Tests\Functional;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class WsdlGeneratorTest extends \F3\Testing\FunctionalTestCase {
+class WsdlGeneratorTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function wsdlForSimpleServiceIsCorrect() {
 		$wsdlGenerator = $this->objectManager->get('F3\Soap\WsdlGenerator');

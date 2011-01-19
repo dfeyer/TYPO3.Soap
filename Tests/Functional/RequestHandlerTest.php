@@ -27,7 +27,7 @@ namespace F3\Soap\Tests\Functional;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RequestHandlerTest extends \F3\Testing\FunctionalTestCase {
+class RequestHandlerTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test

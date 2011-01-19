@@ -27,10 +27,11 @@ namespace F3\Soap\Tests\Functional;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ServiceWrapperTest extends \F3\Testing\FunctionalTestCase {
+class ServiceWrapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function simpleServiceMethodIsWrapped() {
 		$serviceObject = $this->objectManager->get('F3\Soap\Tests\Functional\Fixtures\TestService');
@@ -41,6 +42,7 @@ class ServiceWrapperTest extends \F3\Testing\FunctionalTestCase {
 
 	/**
 	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function argumentToMethodIsMappedToObjectByParamAnnotation() {
 		$serviceObject = $this->objectManager->get('F3\Soap\Tests\Functional\Fixtures\TestService');
@@ -54,6 +56,7 @@ class ServiceWrapperTest extends \F3\Testing\FunctionalTestCase {
 
 	/**
 	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function mapperMapsToClassName() {
 		$propertyMapper = $this->objectManager->get('F3\FLOW3\Property\PropertyMapper');
@@ -66,6 +69,7 @@ class ServiceWrapperTest extends \F3\Testing\FunctionalTestCase {
 
 	/**
 	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function simpleArrayTypeParametersAreConvertedFromStdClass() {
 		$serviceObject = $this->objectManager->get('F3\Soap\Tests\Functional\Fixtures\TestService');
