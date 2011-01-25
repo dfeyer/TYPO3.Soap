@@ -142,7 +142,8 @@ class WsdlGenerator {
 	protected function reflectOperations($className) {
 		$methodNames = $this->reflectionService->getClassMethodNames($className);
 		foreach ($methodNames as $methodName) {
-			if (!$this->reflectionService->isMethodPublic($className, $methodName)) continue;
+			if (!$this->reflectionService->isMethodPublic($className, $methodName) ||
+				strpos($methodName, 'inject') === 0) continue;
 			$this->operations[$methodName] = array(
 				'name' => $methodName,
 				'documentation' => $methodName
