@@ -85,5 +85,24 @@ class ServiceWrapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 		$result = $wrapper->sum($argument);
 		$this->assertEquals(21, $result);
 	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function objectArrayTypeParametersAreConvertedFromStdClass() {
+		$serviceObject = $this->objectManager->get('F3\Soap\Tests\Functional\Fixtures\TestService');
+		$wrapper = $this->objectManager->create('F3\Soap\ServiceWrapper', $serviceObject);
+		$mockRequest = $this->getMock('F3\Soap\Request');
+		$wrapper->setRequest($mockRequest);
+		$argument = (object)array(
+			'Dto' => array(
+				(object)array('name' => 'Foo', 'size' => 1),
+				(object)array('name' => 'Bar', 'size' => 2)
+			)
+		);
+		$result = $wrapper->concat($argument);
+		$this->assertEquals('FooBar', $result);
+	}
 }
 ?>

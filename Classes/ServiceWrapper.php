@@ -39,19 +39,16 @@ class ServiceWrapper {
 	protected $service;
 
 	/**
-	 * @inject
 	 * @var \F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @inject
 	 * @var \F3\FLOW3\Property\PropertyMapper
 	 */
 	protected $propertyMapper;
 
 	/**
-	 * @inject
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
@@ -71,6 +68,39 @@ class ServiceWrapper {
 	 * @var array
 	 */
 	protected $settings = array();
+
+	/**
+	 * Inject the reflection service
+	 *
+	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * Inject the property mapper
+	 *
+	 * @param \F3\FLOW3\Property\PropertyMapper $propertyMapper
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function injectPropertyMapper(\F3\FLOW3\Property\PropertyMapper $propertyMapper) {
+		$this->propertyMapper = $propertyMapper;
+	}
+
+	/**
+	 * Inject the object manager
+	 *
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
+	}
 
 	/**
 	 * @param array $settings
@@ -98,36 +128,57 @@ class ServiceWrapper {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function __call($methodName, $arguments) {
+		if (!$this->request instanceof \F3\Soap\Request) throw new \F3\FLOW3\Exception('No SOAP request set', 1297091911);
 		$this->initializeCall($this->request);
 		$className = ($this->service instanceof \F3\FLOW3\AOP\ProxyInterface) ? $this->service->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($this->service);
 		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
-		foreach ($methodParameters as $parameterName => $parameterOptions) {
-			if (isset($parameterOptions['class'])) {
-				$className = $parameterOptions['class'];
-				if ($this->reflectionService->isClassReflected($className)) {
-					$arguments[$parameterOptions['position']] = $this->convertStdClassToObject($arguments[$parameterOptions['position']], $className, $parameterName);
-				}
-			} elseif (isset($parameterOptions['type'])) {
-				$type = $parameterOptions['type'];
-				if (preg_match('/^array<(.+)>$/', $type, $matches)) {
-					$className = $matches[1];
-					$typeName = strpos($className, '\\') !== FALSE ? substr($className, strrpos($className, '\\') + 1) : $className;
-					$arrayValues = $arguments[$parameterOptions['position']]->$typeName;
+		try {
+			foreach ($methodParameters as $parameterName => $parameterOptions) {
+				if (isset($parameterOptions['class'])) {
+					$className = $parameterOptions['class'];
 					if ($this->reflectionService->isClassReflected($className)) {
-						$result = array();
-						foreach ($arrayValues as $arrayValue) {
-							$result[] = $this->convertStdClassToObject($arrayValue, $className, $parameterName);
-						}
-					} else {
-						$arguments[$parameterOptions['position']] = $arrayValues;
+						$arguments[$parameterOptions['position']] = $this->convertStdClassToObject($arguments[$parameterOptions['position']], $className, $parameterName);
 					}
+				} elseif ($parameterOptions['array']) {
+					$arguments[$parameterOptions['position']] = $this->convertArrayArgument($arguments[$parameterOptions['position']], $methodName, $parameterName, $parameterOptions['type']);
 				}
 			}
-		}
-		try {
 			return call_user_func_array(array($this->service, $methodName), $arguments);
 		} catch(\Exception $exception) {
 			$this->handleException($exception, $className, $methodName);
+		}
+	}
+
+	/**
+	 * Convert an array argument from a SOAP value (stdObject with type name
+	 * holding the array) to an array for the service.
+	 *
+	 * @param mixed $argument
+	 * @param string $methodName
+	 * @param string $parameterName
+	 * @param string $parameterType
+	 * @return array
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function convertArrayArgument($argument, $methodName, $parameterName, $parameterType) {
+		if (preg_match('/^array<(.+)>$/', $parameterType, $matches)) {
+			$className = trim($matches[1], '\\');
+			$typeName = strpos($className, '\\') !== FALSE ? substr($className, strrpos($className, '\\') + 1) : $className;
+			if (!isset($argument->$typeName)) {
+				throw new \F3\FLOW3\Exception('Missing array values for parameter ' . $parameterName, 1297166477);
+			}
+			$arrayValues = $argument->$typeName;
+			if ($this->reflectionService->isClassReflected($className)) {
+				$result = array();
+				foreach ($arrayValues as $arrayValue) {
+					$result[] = $this->convertStdClassToObject($arrayValue, $className, $parameterName);
+				}
+				return $result;
+			} else {
+				return $arrayValues;
+			}
+		} else {
+			throw new \F3\FLOW3\Exception('Could not parse array type for parameter ' . $parameterName . ' from type "' . $parameterType . '"', 1297166416);
 		}
 	}
 
@@ -142,7 +193,10 @@ class ServiceWrapper {
 	protected function initializeCall(\F3\Soap\Request $request) {}
 
 	/**
-	 * Sets SOAP headers from the <headers> SOAP header.
+	 * Sets SOAP headers from the <headers> SOAP header. Will be indirectly
+	 * called from RequestHandler by SoapServer->handle().
+	 *
+	 * Custom SOAP headers should be nested in a <headers></headers> element.
 	 *
 	 * @param object $arguments
 	 * @return void
@@ -279,5 +333,6 @@ class ServiceWrapper {
 	public function setRequest($request) {
 		$this->request = $request;
 	}
+
 }
 ?>

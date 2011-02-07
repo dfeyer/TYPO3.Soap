@@ -7,73 +7,67 @@
 	targetNamespace="http://tempuri.org/service/soap/soap/fixtures/test">
 	<wsdl:types>
 		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://tempuri.org/service/soap/soap/fixtures/test">
+			<xsd:complexType name="Dto">
+				<xsd:sequence>
+						<xsd:element name="name" type="xsd:string" >
+							<xsd:annotation>
+								<xsd:documentation>The name</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
 
-				<xsd:complexType name="Dto">
-					<xsd:sequence>
+						<xsd:element name="size" type="xsd:integer" >
+							<xsd:annotation>
+								<xsd:documentation>The size</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+				</xsd:sequence>
+			</xsd:complexType>
 
-							<xsd:element name="name" type="xsd:string" >
-								<xsd:annotation>
-									<xsd:documentation>The name</xsd:documentation>
-								</xsd:annotation>
-							</xsd:element>
+			<xsd:complexType name="ArrayOfDto">
+				<xsd:sequence>
+						<xsd:element name="dto" type="tns:Dto" maxOccurs="unbounded" />
+				</xsd:sequence>
+			</xsd:complexType>
 
-							<xsd:element name="size" type="xsd:integer" >
-								<xsd:annotation>
-									<xsd:documentation>The size</xsd:documentation>
-								</xsd:annotation>
-							</xsd:element>
-
-					</xsd:sequence>
-				</xsd:complexType>
-
-				<xsd:complexType name="ArrayOfInt">
-					<xsd:sequence>
-
-							<xsd:element name="int" type="xsd:integer" maxOccurs="unbounded" />
-
-					</xsd:sequence>
-				</xsd:complexType>
-
+			<xsd:complexType name="ArrayOfInt">
+				<xsd:sequence>
+						<xsd:element name="int" type="xsd:integer" maxOccurs="unbounded" />
+				</xsd:sequence>
+			</xsd:complexType>
 		</xsd:schema>
 	</wsdl:types>
 
+	<wsdl:message name="pingRequest">
+			<wsdl:part name="value" type="xsd:string" />
+	</wsdl:message>
 
-		<wsdl:message name="pingRequest">
+	<wsdl:message name="pingResponse">
+			<wsdl:part name="returnValue" type="xsd:string" />
+	</wsdl:message>
 
-				<wsdl:part name="value" type="xsd:string" />
+	<wsdl:message name="multiplyRequest">
+			<wsdl:part name="value" type="tns:Dto" />
+	</wsdl:message>
 
-		</wsdl:message>
+	<wsdl:message name="multiplyResponse">
+			<wsdl:part name="returnValue" type="xsd:string" />
+	</wsdl:message>
 
-		<wsdl:message name="pingResponse">
+	<wsdl:message name="concatRequest">
+			<wsdl:part name="values" type="tns:ArrayOfDto" />
+	</wsdl:message>
 
-				<wsdl:part name="returnValue" type="xsd:string" />
+	<wsdl:message name="concatResponse">
+		<wsdl:part name="returnValue" type="xsd:string" />
+	</wsdl:message>
 
-		</wsdl:message>
+	<wsdl:message name="sumRequest">
+			<wsdl:part name="values" type="tns:ArrayOfInt" />
+	</wsdl:message>
 
-		<wsdl:message name="multiplyRequest">
-
-				<wsdl:part name="value" type="tns:Dto" />
-
-		</wsdl:message>
-
-		<wsdl:message name="multiplyResponse">
-
-				<wsdl:part name="returnValue" type="xsd:string" />
-
-		</wsdl:message>
-
-		<wsdl:message name="sumRequest">
-
-				<wsdl:part name="values" type="tns:ArrayOfInt" />
-
-		</wsdl:message>
-
-		<wsdl:message name="sumResponse">
-
-				<wsdl:part name="returnValue" type="xsd:integer" />
-
-		</wsdl:message>
-
+	<wsdl:message name="sumResponse">
+			<wsdl:part name="returnValue" type="xsd:integer" />
+	</wsdl:message>
 
 	<wsdl:portType name="TestServiceSoapPort">
 		<wsdl:documentation>Interface for TestService</wsdl:documentation>
@@ -88,6 +82,12 @@
 				<wsdl:documentation>multiply</wsdl:documentation>
 				<wsdl:input message="tns:multiplyRequest" />
 				<wsdl:output message="tns:multiplyResponse" />
+			</wsdl:operation>
+
+			<wsdl:operation name="concat">
+				<wsdl:documentation>concat</wsdl:documentation>
+				<wsdl:input message="tns:concatRequest" />
+				<wsdl:output message="tns:concatResponse" />
 			</wsdl:operation>
 
 			<wsdl:operation name="sum">
@@ -113,6 +113,16 @@
 
 			<wsdl:operation name="multiply">
 				<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/multiply" />
+				<wsdl:input>
+					<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+				</wsdl:input>
+				<wsdl:output>
+					<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+				</wsdl:output>
+			</wsdl:operation>
+
+			<wsdl:operation name="concat">
+				<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/concat" />
 				<wsdl:input>
 					<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
 				</wsdl:input>

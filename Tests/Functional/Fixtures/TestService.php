@@ -41,7 +41,7 @@ class TestService {
 	}
 
 	/**
-	 * Concatenate the name
+	 * Concatenate the name multiple times
 	 *
 	 * @param \F3\Soap\Tests\Functional\Fixtures\Dto $value
 	 * @return string
@@ -50,6 +50,21 @@ class TestService {
 	public function multiply(\F3\Soap\Tests\Functional\Fixtures\Dto $value) {
 		$result = '';
 		for ($i = 0; $i < $value->getSize(); $i++) {
+			$result .= $value->getName();
+		}
+		return $result;
+	}
+
+	/**
+	 * Concatenate the given names
+	 *
+	 * @param array<\F3\Soap\Tests\Functional\Fixtures\Dto> $values
+	 * @return string
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function concat(array $values) {
+		$result = '';
+		foreach ($values as $value) {
 			$result .= $value->getName();
 		}
 		return $result;
