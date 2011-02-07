@@ -42,6 +42,7 @@ class Dto {
 	protected $size;
 
 	/**
+	 * Name of the Dto
 	 *
 	 * @return string The name
 	 */
@@ -58,6 +59,8 @@ class Dto {
 	}
 
 	/**
+	 * A size
+	 *
 	 * @return int The size
 	 */
 	public function getSize() {

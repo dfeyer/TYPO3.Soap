@@ -58,11 +58,11 @@ class WsdlGenerator {
 	protected $complexTypes;
 
 	/**
-	 * Map of PHP types to schema types
+	 * Default map of primitive PHP types to XSD schema types
 	 *
 	 * @var array
 	 */
-	protected $typeMapping = array(
+	protected $defaultTypeMap = array(
 		'string' => 'xsd:string',
 		'boolean' => 'xsd:boolean',
 		'int' => 'xsd:integer',
@@ -72,12 +72,17 @@ class WsdlGenerator {
 	/**
 	 * @var array
 	 */
-	protected $messages;
+	protected $operations;
 
 	/**
-	 * @var array
+	 *
+	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected $operations;
+	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+		$this->reflectionService = $reflectionService;
+	}
 
 	/**
 	 * Inject the settings
@@ -100,22 +105,20 @@ class WsdlGenerator {
 		if (!preg_match('/Service$/', $className)) {
 			throw new \F3\FLOW3\Exception('SOAP service class must end with "Service"', 1288984414);
 		}
-		$this->complexTypes = array();
-		$this->messages = array();
-		$this->operations = array();
+		if (!$this->reflectionService->isClassReflected($className)) {
+			throw new \F3\FLOW3\Exception('SOAP service class "' . $className . '" is not known', 1297073339);
+		}
 
 		$serviceName = substr($className, strrpos($className, '\\') + 1);
 		$servicePath = $this->getServicePath($className);
 
-		$this->reflectOperations($className);
+		$schema = $this->reflectOperations($className);
 
-		return $this->renderTemplate('resource://Soap/Private/Templates/Definitions.xml', array(
-			'messages' => $this->messages,
-			'complexTypes' => $this->complexTypes,
-			'operations' => $this->operations,
+		$viewVariables = array_merge($schema, array(
 			'serviceName' => $serviceName,
 			'servicePath' => $servicePath
 		));
+		return $this->renderTemplate('resource://Soap/Private/Templates/Definitions.xml', $viewVariables);
 	}
 
 	/**
@@ -139,41 +142,81 @@ class WsdlGenerator {
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function reflectOperations($className) {
+	public function reflectOperations($className) {
+		$messages = array();
+		$operations = array();
+		$complexTypes = array();
+		$typeMapping = $this->defaultTypeMap;
 		$methodNames = $this->reflectionService->getClassMethodNames($className);
 		foreach ($methodNames as $methodName) {
-			if (!$this->reflectionService->isMethodPublic($className, $methodName) ||
-				strpos($methodName, 'inject') === 0) continue;
-			$this->operations[$methodName] = array(
+			if (!$this->reflectionService->isMethodPublic($className, $methodName) || strpos($methodName, 'inject') === 0) continue;
+			$operations[$methodName] = array(
 				'name' => $methodName,
 				'documentation' => $methodName
 			);
+			$requestMessage = $this->buildRequestMessage($className, $methodName, $complexTypes, $typeMapping);
+			$messages[$requestMessage['name']] = $requestMessage;
+			$responseMessage = $this->buildResponseMessage($className, $methodName, $complexTypes, $typeMapping);
+			$messages[$responseMessage['name']] = $responseMessage;
+		}
+		return array(
+			'messages' => $messages,
+			'operations' => $operations,
+			'complexTypes' => $complexTypes
+		);
+	}
 
-			$messageName = $methodName . 'Request';
-			$this->messages[$messageName] = array(
-				'name' => $messageName,
-				'parts' => array()
-			);
-			$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
-			foreach ($methodParameters as $parameterName => $methodParameter) {
-				$this->messages[$messageName]['parts'][$parameterName] = array(
-					'name' => $parameterName,
-					'type' => $this->getOrCreateType($methodParameter['type'])
-				);
-			}
-			$returnType = $this->getMethodReturnType($className, $methodName);
-
-			$messageName = $methodName . 'Response';
-			$this->messages[$messageName] = array(
-				'name' => $messageName,
-				'parts' => array(
-					'returnValue' => array(
-						'name' => 'returnValue',
-						'type' => $this->getOrCreateType($returnType)
-					)
-				)
+	/**
+	 * Build message information for the request message and recursively map
+	 * types occuring as method parameters or return value.
+	 *
+	 * @param string $className
+	 * @param string $methodName
+	 * @param array &$complexTypes
+	 * @param array &$typeMapping
+	 * @return array Message information
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function buildRequestMessage($className, $methodName, &$complexTypes, &$typeMapping) {
+		$messageName = $methodName . 'Request';
+		$message = array(
+			'name' => $messageName,
+			'parts' => array()
+		);
+		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
+		foreach ($methodParameters as $parameterName => $methodParameter) {
+			$message['parts'][$parameterName] = array(
+				'name' => $parameterName,
+				'type' => $this->getOrCreateType($methodParameter['type'], $complexTypes, $typeMapping)
 			);
 		}
+		return $message;
+	}
+
+	/**
+	 * Build message information for the response message and recursively map
+	 * types occuring as method parameters or return value.
+	 *
+	 * @param string $className
+	 * @param string $methodName
+	 * @param array &$complexTypes
+	 * @param array &$typeMapping
+	 * @return array Message information
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function buildResponseMessage($className, $methodName, &$complexTypes, &$typeMapping) {
+		$messageName = $methodName . 'Response';
+		$returnType = $this->getMethodReturnType($className, $methodName);
+		$message = array(
+			'name' => $messageName,
+			'parts' => array(
+				'returnValue' => array(
+					'name' => 'returnValue',
+					'type' => $this->getOrCreateType($returnType, $complexTypes, $typeMapping)
+				)
+			)
+		);
+		return $message;
 	}
 
 	/**
@@ -195,34 +238,55 @@ class WsdlGenerator {
 	}
 
 	/**
-	 * Get or create a schema type from a PHP type
+	 * Get the method return documentation
+	 *
+	 * @param string $className
+	 * @param string $methodName
+	 * @return string The documentation
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function getMethodReturnDocumentation($className, $methodName) {
+		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
+		if (isset($methodTagsValues['return']) && isset($methodTagsValues['return'][0])) {
+			$returnParts = \F3\FLOW3\Utility\Arrays::trimExplode(' ', $methodTagsValues['return'][0], TRUE);
+			array_shift($returnParts);
+			return implode(' ', $returnParts);
+		} else {
+			throw new \F3\FLOW3\Exception('Could not get return value for ' . $className . '#' . $methodName, 1288984174);
+		}
+	}
+
+	/**
+	 * Get or create a XSD schema type from a PHP type
 	 *
 	 * @param string $phpType The PHP type
+	 * @param array &$complexTypes The complex types
+	 * @param array &$typeMapping Type mapping from PHP to schema type
 	 * @return string The namespace prefixed schema type
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function getOrCreateType($phpType) {
-		if (isset($this->typeMapping[$phpType])) {
-			return $this->typeMapping[$phpType];
+	protected function getOrCreateType($phpType, &$complexTypes, &$typeMapping) {
+		if (isset($typeMapping[$phpType])) {
+			return $typeMapping[$phpType];
 		}
 		if (preg_match('/^array<(.+)>$/', $phpType, $matches)) {
 			$typeName = strpos($matches[1], '\\') !== FALSE ? substr($matches[1], strrpos($matches[1], '\\') + 1) : $matches[1];
 			$arrayTypeName = 'ArrayOf' . ucfirst($typeName);
-			$this->typeMapping[$phpType] = 'tns:' . $arrayTypeName;
-			$this->complexTypes[$arrayTypeName] = array(
+			$typeMapping[$phpType] = 'tns:' . $arrayTypeName;
+			$complexTypes[$arrayTypeName] = array(
 				'name' => $arrayTypeName,
 				'elements' => array(
 					array(
 						'name' => lcfirst($typeName),
-						'type' => $this->getOrCreateType($matches[1]),
+						'type' => $this->getOrCreateType($matches[1], $complexTypes, $typeMapping),
 						'attributes' => 'maxOccurs="unbounded" '
 					)
 				)
 			);
 		} elseif (strpos($phpType, '\\') !== FALSE) {
 			$typeName = substr($phpType, strrpos($phpType, '\\') + 1);
-			$this->typeMapping[$phpType] = 'tns:' . $typeName;
-			$this->complexTypes[$typeName] = array(
+			$typeMapping[$phpType] = 'tns:' . $typeName;
+			$complexTypes[$typeName] = array(
 				'name' => $typeName,
 				'elements' => array()
 			);
@@ -231,17 +295,19 @@ class WsdlGenerator {
 				if (strpos($methodName, 'get') === 0 && $this->reflectionService->isMethodPublic($phpType, $methodName)) {
 					$propertyName = lcfirst(substr($methodName, 3));
 
+					$returnDocumentation = $this->getMethodReturnDocumentation($phpType, $methodName);
 					$returnType = $this->getMethodReturnType($phpType, $methodName);
-					$this->complexTypes[$typeName]['elements'][$propertyName] = array(
+					$complexTypes[$typeName]['elements'][$propertyName] = array(
 						'name' => $propertyName,
-						'type' => $this->getOrCreateType($returnType)
+						'type' => $this->getOrCreateType($returnType, $complexTypes, $typeMapping),
+						'documentation' => $returnDocumentation
 					);
 				}
 			}
 		} else {
 			throw new \F3\FLOW3\Exception('Type ' . $phpType . ' not supported', 1288979369);
 		}
-		return $this->typeMapping[$phpType];
+		return $typeMapping[$phpType];
 	}
 
 	/**
@@ -258,9 +324,7 @@ class WsdlGenerator {
 			throw new \F3\Fluid\Core\Exception('The template file "' . $templatePathAndFilename . '" could not be loaded.', 1225709595);
 		}
 		$parsedTemplate = $this->templateParser->parse($templateSource);
-
 		$renderingContext = $this->buildRenderingContext($contextVariables);
-
 		return $parsedTemplate->render($renderingContext);
 	}
 
@@ -273,12 +337,10 @@ class WsdlGenerator {
 	 */
 	protected function buildRenderingContext(array $contextVariables) {
 		$renderingContext = $this->objectManager->create('F3\Fluid\Core\Rendering\RenderingContextInterface');
-
 		$renderingContext->injectTemplateVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\TemplateVariableContainer', $contextVariables));
 		$renderingContext->injectViewHelperVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer'));
-
 		return $renderingContext;
 	}
-}
 
+}
 ?>

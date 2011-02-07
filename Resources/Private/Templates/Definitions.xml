@@ -8,48 +8,59 @@
 	<wsdl:types>
 		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://tempuri.org/{servicePath}">
 			<f:for each="{complexTypes}" as="complexType">
-				<xsd:complexType name="{complexType.name}">
-					<xsd:sequence>
-						<f:for each="{complexType.elements}" as="element">
-							<xsd:element name="{element.name}" type="{element.type}" {element.attributes}/>
-						</f:for>
-					</xsd:sequence>
-				</xsd:complexType>
+			<xsd:complexType name="{complexType.name}">
+				<xsd:sequence>
+					<f:for each="{complexType.elements}" as="element">
+					<f:if condition="{element.documentation}">
+					<f:then>
+					<xsd:element name="{element.name}" type="{element.type}" {element.attributes}>
+						<xsd:annotation>
+							<xsd:documentation>{element.documentation}</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					</f:then>
+					<f:else>
+					<xsd:element name="{element.name}" type="{element.type}" {element.attributes}/>
+					</f:else>
+					</f:if>
+					</f:for>
+				</xsd:sequence>
+			</xsd:complexType>
 			</f:for>
 		</xsd:schema>
 	</wsdl:types>
 
 	<f:for each="{messages}" as="message">
-		<wsdl:message name="{message.name}">
-			<f:for each="{message.parts}" as="part">
-				<wsdl:part name="{part.name}" type="{part.type}" />
-			</f:for>
-		</wsdl:message>
+	<wsdl:message name="{message.name}">
+		<f:for each="{message.parts}" as="part">
+		<wsdl:part name="{part.name}" type="{part.type}" />
+		</f:for>
+	</wsdl:message>
 	</f:for>
 
 	<wsdl:portType name="{serviceName}SoapPort">
 		<wsdl:documentation>Interface for {serviceName}</wsdl:documentation>
 		<f:for each="{operations}" as="operation">
-			<wsdl:operation name="{operation.name}">
-				<wsdl:documentation>{operation.documentation}</wsdl:documentation>
-				<wsdl:input message="tns:{operation.name}Request" />
-				<wsdl:output message="tns:{operation.name}Response" />
-			</wsdl:operation>
+		<wsdl:operation name="{operation.name}">
+			<wsdl:documentation>{operation.documentation}</wsdl:documentation>
+			<wsdl:input message="tns:{operation.name}Request" />
+			<wsdl:output message="tns:{operation.name}Response" />
+		</wsdl:operation>
 		</f:for>
 	</wsdl:portType>
 
 	<wsdl:binding name="{serviceName}SoapBinding" type="tns:{serviceName}SoapPort">
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
 		<f:for each="{operations}" as="operation">
-			<wsdl:operation name="{operation.name}">
-				<soap:operation soapAction="http://tempuri.org/{servicePath}/{operation.name}" />
-				<wsdl:input>
-					<soap:body use="literal" namespace="http://tempuri.org/{servicePath}" />
-				</wsdl:input>
-				<wsdl:output>
-					<soap:body use="literal" namespace="http://tempuri.org/{servicePath}" />
-				</wsdl:output>
-			</wsdl:operation>
+		<wsdl:operation name="{operation.name}">
+			<soap:operation soapAction="http://tempuri.org/{servicePath}/{operation.name}" />
+			<wsdl:input>
+				<soap:body use="literal" namespace="http://tempuri.org/{servicePath}" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" namespace="http://tempuri.org/{servicePath}" />
+			</wsdl:output>
+		</wsdl:operation>
 		</f:for>
 	</wsdl:binding>
 
