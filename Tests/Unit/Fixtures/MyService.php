@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Tests\Functional\Fixtures;
+namespace F3\Soap\Tests\Unit\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -23,57 +23,33 @@ namespace F3\Soap\Tests\Functional\Fixtures;
  *                                                                        */
 
 /**
- * A sample DTO
+ * Simple service fixture
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
+ * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class Dto {
+class MyService {
 
 	/**
-	 * The name
-	 * @var string
-	 */
-	protected $name;
-
-	/**
-	 * The size
-	 * @var int
-	 */
-	protected $size;
-
-	/**
-	 * Name of the Dto
+	 * Foo operation
 	 *
-	 * @return string The name
+	 * @param string $stringParameter
+	 * @return string The string result
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getName() {
-		return $this->name;
+	public function foo($stringParameter) {
+
 	}
 
 	/**
-	 * @param string $name
-	 * @return void
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
-
-	/**
-	 * A size
+	 * Bar operation
 	 *
-	 * @return int The size
+	 * @param \F3\Soap\Test\Unit\Fixtures\MyType $objectParameter
+	 * @param array<int> $arrayParameter
+	 * @return array<string> Array of strings
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getSize() {
-		return $this->size;
-	}
+	public function bar(\F3\Soap\Test\Unit\Fixtures\MyType $objectParameter, array $arrayParameter) {
 
-	/**
-	 * @param int $size
-	 * @return void
-	 */
-	public function setSize($size) {
-		$this->size = $size;
 	}
 
 }

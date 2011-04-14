@@ -51,7 +51,7 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$wsdlGenerator = new \F3\Soap\WsdlGenerator();
 		$wsdlGenerator->injectReflectionService($mockReflectionService);
 
-		$wsdlGenerator->generateWsdl('F3\Soap\Test\Unit\Fixtures\MyUnknownService');
+		$wsdlGenerator->generateWsdl('F3\Soap\Tests\Unit\Fixtures\MyUnknownService');
 	}
 
 	/**
@@ -77,7 +77,7 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'serviceName' => 'MyService',
 			'servicePath' => 'soap/fixtures/my'
 		))->will($this->returnValue('<WSDL>'));
-		$result = $wsdlGenerator->generateWsdl('F3\Soap\Test\Unit\Fixtures\MyService');
+		$result = $wsdlGenerator->generateWsdl('F3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals('<WSDL>', $result);
 	}
 
@@ -91,15 +91,15 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$wsdlGenerator = $this->getMock('F3\Soap\WsdlGenerator', array('dummy'));
 		$wsdlGenerator->injectReflectionService($mockReflectionService);
 
-		$schema = $wsdlGenerator->reflectOperations('F3\Soap\Test\Unit\Fixtures\MyService');
+		$schema = $wsdlGenerator->reflectOperations('F3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals(array(
 			'bar' => array(
 				'name' => 'bar',
-				'documentation' => 'bar'
+				'documentation' => 'Bar operation'
 			),
 			'foo' => array(
 				'name' => 'foo',
-				'documentation' => 'foo'
+				'documentation' => 'Foo operation'
 			)
 		), $schema['operations']);
 	}
@@ -114,18 +114,20 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$wsdlGenerator = $this->getMock('F3\Soap\WsdlGenerator', array('dummy'));
 		$wsdlGenerator->injectReflectionService($mockReflectionService);
 
-		$schema = $wsdlGenerator->reflectOperations('F3\Soap\Test\Unit\Fixtures\MyService');
+		$schema = $wsdlGenerator->reflectOperations('F3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals(array(
 			'barRequest' => array(
 				'name' => 'barRequest',
 				'parts' => array(
 					'objectParameter' => array(
 						'name' => 'objectParameter',
-						'type' => 'tns:MyType'
+						'type' => 'tns:MyType',
+						'documentation' => NULL
 					),
 					'arrayParameter' => array(
 						'name' => 'arrayParameter',
-						'type' => 'tns:ArrayOfInt'
+						'type' => 'tns:ArrayOfInt',
+						'documentation' => NULL
 					)
 				)
 			),
@@ -134,7 +136,8 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 				'parts' => array(
 					'returnValue' => array(
 						'name' => 'returnValue',
-						'type' => 'tns:ArrayOfString'
+						'type' => 'tns:ArrayOfString',
+						'documentation' => 'Array of strings'
 					)
 				)
 			),
@@ -143,7 +146,8 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 				'parts' => array(
 					'stringParameter' => array(
 						'name' => 'stringParameter',
-						'type' => 'xsd:string'
+						'type' => 'xsd:string',
+						'documentation' => NULL
 					)
 				)
 			),
@@ -152,7 +156,8 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 				'parts' => array(
 					'returnValue' => array(
 						'name' => 'returnValue',
-						'type' => 'xsd:string'
+						'type' => 'xsd:string',
+						'documentation' => 'The string result'
 					)
 				)
 			)
@@ -169,7 +174,7 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$wsdlGenerator = $this->getMock('F3\Soap\WsdlGenerator', array('dummy'));
 		$wsdlGenerator->injectReflectionService($mockReflectionService);
 
-		$schema = $wsdlGenerator->reflectOperations('F3\Soap\Test\Unit\Fixtures\MyService');
+		$schema = $wsdlGenerator->reflectOperations('F3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals(array(
 			'ArrayOfInt' => array(
 				'name' => 'ArrayOfInt',
@@ -193,6 +198,7 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 			),
 			'MyType' => array(
 				'name' => 'MyType',
+				'documentation' => 'Simple type fixture',
 				'elements' => array(
 					'name' => array(
 						'name' => 'name',
@@ -215,9 +221,9 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService->expects($this->any())->method('getClassMethodNames')->will($this->returnCallback(
 			function($className) {
 				switch ($className) {
-					case 'F3\Soap\Test\Unit\Fixtures\MyService':
+					case 'F3\Soap\Tests\Unit\Fixtures\MyService':
 						return array('foo', 'bar', 'injectBaz', 'someProtected');
-					case 'F3\Soap\Test\Unit\Fixtures\MyType':
+					case 'F3\Soap\Tests\Unit\Fixtures\MyType':
 						return array('getName', 'setName', 'doSomething', 'someProtected');
 				}
 			}
@@ -225,7 +231,7 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService->expects($this->any())->method('isMethodPublic')->will($this->returnCallback(
 			function($className, $methodName) {
 				switch ($className) {
-					case 'F3\Soap\Test\Unit\Fixtures\MyService':
+					case 'F3\Soap\Tests\Unit\Fixtures\MyService':
 						switch ($methodName) {
 							case 'foo':
 							case 'bar':
@@ -234,7 +240,7 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 							default:
 								return FALSE;
 						}
-					case 'F3\Soap\Test\Unit\Fixtures\MyType':
+					case 'F3\Soap\Tests\Unit\Fixtures\MyType':
 						switch ($methodName) {
 							case 'getName':
 							case 'setName':
@@ -269,8 +275,8 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 								'array' => FALSE,
 								'optional' => FALSE,
 								'allowsNull' => FALSE,
-								'class' => 'F3\Soap\Test\Unit\Fixtures\MyType',
-								'type' => 'F3\Soap\Test\Unit\Fixtures\MyType'
+								'class' => 'F3\Soap\Tests\Unit\Fixtures\MyType',
+								'type' => 'F3\Soap\Tests\Unit\Fixtures\MyType'
 							),
 							'arrayParameter' => array(
 								'position' => 1,
@@ -288,7 +294,7 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService->expects($this->any())->method('getMethodTagsValues')->will($this->returnCallback(
 			function($className, $methodName) {
 				switch ($className) {
-					case 'F3\Soap\Test\Unit\Fixtures\MyService':
+					case 'F3\Soap\Tests\Unit\Fixtures\MyService':
 						switch ($methodName) {
 							case 'foo':
 								return array (
@@ -298,12 +304,12 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 								);
 							case 'bar':
 								return array (
-									'param' => array('\F3\Soap\Test\Unit\Fixtures\MyType $objectParameter', 'array<int> $arrayParameter'),
+									'param' => array('\F3\Soap\Tests\Unit\Fixtures\MyType $objectParameter', 'array<int> $arrayParameter'),
 									'return' => array('array<string> Array of strings'),
 									'author' => array('Christopher Hlubek <hlubek@networkteam.com>')
 								);
 						}
-					case 'F3\Soap\Test\Unit\Fixtures\MyType':
+					case 'F3\Soap\Tests\Unit\Fixtures\MyType':
 						switch ($methodName) {
 							case 'getName':
 								return array (

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Tests\Functional\Fixtures;
+namespace F3\Soap\Tests\Unit\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -23,29 +23,20 @@ namespace F3\Soap\Tests\Functional\Fixtures;
  *                                                                        */
 
 /**
- * A sample DTO
+ * Simple type fixture
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
+ * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class Dto {
+class MyType {
 
 	/**
-	 * The name
+	 * Some name
 	 * @var string
 	 */
 	protected $name;
 
 	/**
-	 * The size
-	 * @var int
-	 */
-	protected $size;
-
-	/**
-	 * Name of the Dto
-	 *
-	 * @return string The name
+	 * @return string
 	 */
 	public function getName() {
 		return $this->name;
@@ -57,23 +48,6 @@ class Dto {
 	 */
 	public function setName($name) {
 		$this->name = $name;
-	}
-
-	/**
-	 * A size
-	 *
-	 * @return int The size
-	 */
-	public function getSize() {
-		return $this->size;
-	}
-
-	/**
-	 * @param int $size
-	 * @return void
-	 */
-	public function setSize($size) {
-		$this->size = $size;
 	}
 
 }

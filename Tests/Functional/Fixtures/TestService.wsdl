@@ -25,73 +25,91 @@
 
 			<xsd:complexType name="ArrayOfDto">
 				<xsd:sequence>
-						<xsd:element name="dto" type="tns:Dto" maxOccurs="unbounded" />
+						<xsd:element name="dto" type="tns:Dto" maxOccurs="unbounded" >
+						</xsd:element>
 				</xsd:sequence>
 			</xsd:complexType>
 
 			<xsd:complexType name="ArrayOfInt">
 				<xsd:sequence>
-						<xsd:element name="int" type="xsd:integer" maxOccurs="unbounded" />
+						<xsd:element name="int" type="xsd:integer" maxOccurs="unbounded" >
+						</xsd:element>
 				</xsd:sequence>
 			</xsd:complexType>
 		</xsd:schema>
 	</wsdl:types>
 
 	<wsdl:message name="pingRequest">
-			<wsdl:part name="value" type="xsd:string" />
+			<wsdl:part name="value" type="xsd:string">
+				<wsdl:documentation>The value</wsdl:documentation>
+			</wsdl:part>
 	</wsdl:message>
 
 	<wsdl:message name="pingResponse">
-			<wsdl:part name="returnValue" type="xsd:string" />
+			<wsdl:part name="returnValue" type="xsd:string">
+				<wsdl:documentation>The same value</wsdl:documentation>
+			</wsdl:part>
 	</wsdl:message>
 
 	<wsdl:message name="multiplyRequest">
-			<wsdl:part name="value" type="tns:Dto" />
+			<wsdl:part name="value" type="tns:Dto">
+				<wsdl:documentation>The value as object</wsdl:documentation>
+			</wsdl:part>
 	</wsdl:message>
 
 	<wsdl:message name="multiplyResponse">
-			<wsdl:part name="returnValue" type="xsd:string" />
+			<wsdl:part name="returnValue" type="xsd:string">
+				<wsdl:documentation>The result</wsdl:documentation>
+			</wsdl:part>
 	</wsdl:message>
 
 	<wsdl:message name="concatRequest">
-			<wsdl:part name="values" type="tns:ArrayOfDto" />
+			<wsdl:part name="values" type="tns:ArrayOfDto">
+				<wsdl:documentation>The values as objects</wsdl:documentation>
+			</wsdl:part>
 	</wsdl:message>
 
 	<wsdl:message name="concatResponse">
-		<wsdl:part name="returnValue" type="xsd:string" />
+		<wsdl:part name="returnValue" type="xsd:string">
+			<wsdl:documentation>The result</wsdl:documentation>
+		</wsdl:part>
 	</wsdl:message>
 
 	<wsdl:message name="sumRequest">
-			<wsdl:part name="values" type="tns:ArrayOfInt" />
+		<wsdl:part name="values" type="tns:ArrayOfInt">
+			<wsdl:documentation>The values as int array</wsdl:documentation>
+		</wsdl:part>
 	</wsdl:message>
 
 	<wsdl:message name="sumResponse">
-			<wsdl:part name="returnValue" type="xsd:integer" />
+		<wsdl:part name="returnValue" type="xsd:integer">
+			<wsdl:documentation>The sum of the values</wsdl:documentation>
+		</wsdl:part>
 	</wsdl:message>
 
 	<wsdl:portType name="TestServiceSoapPort">
 		<wsdl:documentation>Interface for TestService</wsdl:documentation>
 
 			<wsdl:operation name="ping">
-				<wsdl:documentation>ping</wsdl:documentation>
+				<wsdl:documentation>Responds with the given value</wsdl:documentation>
 				<wsdl:input message="tns:pingRequest" />
 				<wsdl:output message="tns:pingResponse" />
 			</wsdl:operation>
 
 			<wsdl:operation name="multiply">
-				<wsdl:documentation>multiply</wsdl:documentation>
+				<wsdl:documentation>Concatenate the name multiple times</wsdl:documentation>
 				<wsdl:input message="tns:multiplyRequest" />
 				<wsdl:output message="tns:multiplyResponse" />
 			</wsdl:operation>
 
 			<wsdl:operation name="concat">
-				<wsdl:documentation>concat</wsdl:documentation>
+				<wsdl:documentation>Concatenate the given names</wsdl:documentation>
 				<wsdl:input message="tns:concatRequest" />
 				<wsdl:output message="tns:concatResponse" />
 			</wsdl:operation>
 
 			<wsdl:operation name="sum">
-				<wsdl:documentation>sum</wsdl:documentation>
+				<wsdl:documentation>Sum the numbers</wsdl:documentation>
 				<wsdl:input message="tns:sumRequest" />
 				<wsdl:output message="tns:sumResponse" />
 			</wsdl:operation>

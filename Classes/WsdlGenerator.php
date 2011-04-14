@@ -150,9 +150,10 @@ class WsdlGenerator {
 		$methodNames = $this->reflectionService->getClassMethodNames($className);
 		foreach ($methodNames as $methodName) {
 			if (!$this->reflectionService->isMethodPublic($className, $methodName) || strpos($methodName, 'inject') === 0) continue;
+			$methodReflection = new \F3\FLOW3\Reflection\MethodReflection($className, $methodName);
 			$operations[$methodName] = array(
 				'name' => $methodName,
-				'documentation' => $methodName
+				'documentation' => $methodReflection->getDescription()
 			);
 			$requestMessage = $this->buildRequestMessage($className, $methodName, $complexTypes, $typeMapping);
 			$messages[$requestMessage['name']] = $requestMessage;
@@ -184,10 +185,18 @@ class WsdlGenerator {
 			'parts' => array()
 		);
 		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
+		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
 		foreach ($methodParameters as $parameterName => $methodParameter) {
+			$paramAnnotation = $methodTagsValues['param'][$methodParameter['position']];
+			if (preg_match('/\$\S+\ (.*)/', $paramAnnotation, $matches)) {
+				$documentation = $matches[1];
+			} else {
+				$documentation = NULL;
+			}
 			$message['parts'][$parameterName] = array(
 				'name' => $parameterName,
-				'type' => $this->getOrCreateType($methodParameter['type'], $complexTypes, $typeMapping)
+				'type' => $this->getOrCreateType($methodParameter['type'], $complexTypes, $typeMapping),
+				'documentation' => $documentation
 			);
 		}
 		return $message;
@@ -206,13 +215,14 @@ class WsdlGenerator {
 	 */
 	protected function buildResponseMessage($className, $methodName, &$complexTypes, &$typeMapping) {
 		$messageName = $methodName . 'Response';
-		$returnType = $this->getMethodReturnType($className, $methodName);
+		$returnType = $this->getMethodReturnAnnotation($className, $methodName);
 		$message = array(
 			'name' => $messageName,
 			'parts' => array(
 				'returnValue' => array(
 					'name' => 'returnValue',
-					'type' => $this->getOrCreateType($returnType, $complexTypes, $typeMapping)
+					'type' => $this->getOrCreateType($returnType['type'], $complexTypes, $typeMapping),
+					'documentation' => $returnType['description']
 				)
 			)
 		);
@@ -220,37 +230,21 @@ class WsdlGenerator {
 	}
 
 	/**
-	 * Get the method return type
+	 * Get the method return type and description
 	 *
 	 * @param string $className
 	 * @param string $methodName
-	 * @return string The PHP type
+	 * @return array The method return type and description
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function getMethodReturnType($className, $methodName) {
+	protected function getMethodReturnAnnotation($className, $methodName) {
 		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
 		if (isset($methodTagsValues['return']) && isset($methodTagsValues['return'][0])) {
-			list($returnType) = \F3\FLOW3\Utility\Arrays::trimExplode(' ', $methodTagsValues['return'][0], TRUE);
-			return $returnType;
-		} else {
-			throw new \F3\FLOW3\Exception('Could not get return value for ' . $className . '#' . $methodName, 1288984174);
-		}
-	}
-
-	/**
-	 * Get the method return documentation
-	 *
-	 * @param string $className
-	 * @param string $methodName
-	 * @return string The documentation
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	protected function getMethodReturnDocumentation($className, $methodName) {
-		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
-		if (isset($methodTagsValues['return']) && isset($methodTagsValues['return'][0])) {
-			$returnParts = \F3\FLOW3\Utility\Arrays::trimExplode(' ', $methodTagsValues['return'][0], TRUE);
-			array_shift($returnParts);
-			return implode(' ', $returnParts);
+			$returnAnnotations = explode(' ', $methodTagsValues['return'][0], 2);
+			return array(
+				'type' => $returnAnnotations[0],
+				'description' => count($returnAnnotations) > 1 ? $returnAnnotations[1] : NULL
+			);
 		} else {
 			throw new \F3\FLOW3\Exception('Could not get return value for ' . $className . '#' . $methodName, 1288984174);
 		}
@@ -284,23 +278,25 @@ class WsdlGenerator {
 				)
 			);
 		} elseif (strpos($phpType, '\\') !== FALSE) {
+			$classReflection = new \F3\FLOW3\Reflection\ClassReflection($phpType);
 			$typeName = substr($phpType, strrpos($phpType, '\\') + 1);
 			$typeMapping[$phpType] = 'tns:' . $typeName;
 			$complexTypes[$typeName] = array(
 				'name' => $typeName,
-				'elements' => array()
+				'elements' => array(),
+				'documentation' => $classReflection->getDescription()
 			);
 			$methodNames = $this->reflectionService->getClassMethodNames($phpType);
 			foreach ($methodNames as $methodName) {
 				if (strpos($methodName, 'get') === 0 && $this->reflectionService->isMethodPublic($phpType, $methodName)) {
 					$propertyName = lcfirst(substr($methodName, 3));
+					$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection($phpType, $propertyName);
 
-					$returnDocumentation = $this->getMethodReturnDocumentation($phpType, $methodName);
-					$returnType = $this->getMethodReturnType($phpType, $methodName);
+					$returnType = $this->getMethodReturnAnnotation($phpType, $methodName);
 					$complexTypes[$typeName]['elements'][$propertyName] = array(
 						'name' => $propertyName,
-						'type' => $this->getOrCreateType($returnType, $complexTypes, $typeMapping),
-						'documentation' => $returnDocumentation
+						'type' => $this->getOrCreateType($returnType['type'], $complexTypes, $typeMapping),
+						'documentation' => $propertyReflection->getDescription()
 					);
 				}
 			}

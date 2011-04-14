@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
 	xmlns:tns="http://tempuri.org/{servicePath}"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -11,18 +12,13 @@
 			<xsd:complexType name="{complexType.name}">
 				<xsd:sequence>
 					<f:for each="{complexType.elements}" as="element">
-					<f:if condition="{element.documentation}">
-					<f:then>
 					<xsd:element name="{element.name}" type="{element.type}" {element.attributes}>
+						<f:if condition="{element.documentation}">
 						<xsd:annotation>
 							<xsd:documentation>{element.documentation}</xsd:documentation>
 						</xsd:annotation>
+						</f:if>
 					</xsd:element>
-					</f:then>
-					<f:else>
-					<xsd:element name="{element.name}" type="{element.type}" {element.attributes}/>
-					</f:else>
-					</f:if>
 					</f:for>
 				</xsd:sequence>
 			</xsd:complexType>
@@ -33,7 +29,11 @@
 	<f:for each="{messages}" as="message">
 	<wsdl:message name="{message.name}">
 		<f:for each="{message.parts}" as="part">
-		<wsdl:part name="{part.name}" type="{part.type}" />
+		<wsdl:part name="{part.name}" type="{part.type}">
+			<f:if condition="{part.documentation}">
+			<wsdl:documentation>{part.documentation}</wsdl:documentation>
+			</f:if>
+		</wsdl:part>
 		</f:for>
 	</wsdl:message>
 	</f:for>
@@ -42,7 +42,9 @@
 		<wsdl:documentation>Interface for {serviceName}</wsdl:documentation>
 		<f:for each="{operations}" as="operation">
 		<wsdl:operation name="{operation.name}">
+			<f:if condition="{operation.documentation}">
 			<wsdl:documentation>{operation.documentation}</wsdl:documentation>
+			</f:if>
 			<wsdl:input message="tns:{operation.name}Request" />
 			<wsdl:output message="tns:{operation.name}Response" />
 		</wsdl:operation>

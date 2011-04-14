@@ -32,8 +32,8 @@ class TestService {
 	/**
 	 * Responds with the given value
 	 *
-	 * @param string $value
-	 * @return string
+	 * @param string $value The value
+	 * @return string The same value
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function ping($value) {
@@ -43,8 +43,8 @@ class TestService {
 	/**
 	 * Concatenate the name multiple times
 	 *
-	 * @param \F3\Soap\Tests\Functional\Fixtures\Dto $value
-	 * @return string
+	 * @param \F3\Soap\Tests\Functional\Fixtures\Dto $value The value as object
+	 * @return string The result
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function multiply(\F3\Soap\Tests\Functional\Fixtures\Dto $value) {
@@ -58,8 +58,8 @@ class TestService {
 	/**
 	 * Concatenate the given names
 	 *
-	 * @param array<\F3\Soap\Tests\Functional\Fixtures\Dto> $values
-	 * @return string
+	 * @param array<\F3\Soap\Tests\Functional\Fixtures\Dto> $values The values as objects
+	 * @return string The result
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function concat(array $values) {
@@ -73,8 +73,8 @@ class TestService {
 	/**
 	 * Sum the numbers
 	 *
-	 * @param array<int> $values
-	 * @return int
+	 * @param array<int> $values The values as int array
+	 * @return int The sum of the values
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function sum(array $values) {
