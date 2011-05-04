@@ -30,9 +30,9 @@
 				</xsd:sequence>
 			</xsd:complexType>
 
-			<xsd:complexType name="ArrayOfInt">
+			<xsd:complexType name="ArrayOfInteger">
 				<xsd:sequence>
-						<xsd:element name="int" type="xsd:integer" maxOccurs="unbounded" >
+						<xsd:element name="integer" type="xsd:integer" maxOccurs="unbounded" >
 						</xsd:element>
 				</xsd:sequence>
 			</xsd:complexType>
@@ -76,7 +76,7 @@
 	</wsdl:message>
 
 	<wsdl:message name="sumRequest">
-		<wsdl:part name="values" type="tns:ArrayOfInt">
+		<wsdl:part name="values" type="tns:ArrayOfInteger">
 			<wsdl:documentation>The values as int array</wsdl:documentation>
 		</wsdl:part>
 	</wsdl:message>

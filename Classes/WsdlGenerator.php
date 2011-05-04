@@ -65,7 +65,7 @@ class WsdlGenerator {
 	protected $defaultTypeMap = array(
 		'string' => 'xsd:string',
 		'boolean' => 'xsd:boolean',
-		'int' => 'xsd:integer',
+		'integer' => 'xsd:integer',
 		'float' => 'xsd:float'
 	);
 
@@ -147,7 +147,7 @@ class WsdlGenerator {
 		$operations = array();
 		$complexTypes = array();
 		$typeMapping = $this->defaultTypeMap;
-		$methodNames = $this->reflectionService->getClassMethodNames($className);
+		$methodNames = get_class_methods($className);
 		foreach ($methodNames as $methodName) {
 			if (!$this->reflectionService->isMethodPublic($className, $methodName) || strpos($methodName, 'inject') === 0) continue;
 			$methodReflection = new \F3\FLOW3\Reflection\MethodReflection($className, $methodName);

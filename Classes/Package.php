@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Tests\Functional\Fixtures;
+namespace F3\Soap;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -22,63 +22,14 @@ namespace F3\Soap\Tests\Functional\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\Package\Package as BasePackage;
+
 /**
- * A sample service which is used for basic functional testing
+ * The Soap Package
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class TestService {
+class Package extends BasePackage {
 
-	/**
-	 * Responds with the given value
-	 *
-	 * @param string $value The value
-	 * @return string The same value
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function ping($value) {
-		return $value;
-	}
-
-	/**
-	 * Concatenate the name multiple times
-	 *
-	 * @param \F3\Soap\Tests\Functional\Fixtures\Dto $value The value as object
-	 * @return string The result
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function multiply(\F3\Soap\Tests\Functional\Fixtures\Dto $value) {
-		$result = '';
-		for ($i = 0; $i < $value->getSize(); $i++) {
-			$result .= $value->getName();
-		}
-		return $result;
-	}
-
-	/**
-	 * Concatenate the given names
-	 *
-	 * @param array<\F3\Soap\Tests\Functional\Fixtures\Dto> $values The values as objects
-	 * @return string The result
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function concat(array $values) {
-		$result = '';
-		foreach ($values as $value) {
-			$result .= $value->getName();
-		}
-		return $result;
-	}
-
-	/**
-	 * Sum the numbers
-	 *
-	 * @param array<integer> $values The values as int array
-	 * @return integer The sum of the values
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function sum(array $values) {
-		return array_sum($values);
-	}
 }
 ?>

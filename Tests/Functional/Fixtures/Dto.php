@@ -38,7 +38,7 @@ class Dto {
 
 	/**
 	 * The size
-	 * @var int
+	 * @var integer
 	 */
 	protected $size;
 
@@ -62,14 +62,14 @@ class Dto {
 	/**
 	 * A size
 	 *
-	 * @return int The size
+	 * @return integer The size
 	 */
 	public function getSize() {
 		return $this->size;
 	}
 
 	/**
-	 * @param int $size
+	 * @param integer $size
 	 * @return void
 	 */
 	public function setSize($size) {

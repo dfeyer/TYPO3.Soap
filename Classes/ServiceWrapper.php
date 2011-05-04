@@ -315,11 +315,11 @@ class ServiceWrapper {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function convertStdClassToObject($argument, $className, $parameterName) {
-		$target = $this->objectManager->create($className);
-		if ($this->propertyMapper->map($this->reflectionService->getClassPropertyNames($className), \F3\FLOW3\Utility\Arrays::convertObjectToArray($argument), $target)) {
+		$target = $this->propertyMapper->convert(\F3\FLOW3\Utility\Arrays::convertObjectToArray($argument), $className);
+		if ($target !== NULL) {
 			return $target;
 		} else {
-			throw new \F3\Soap\MappingException('Could not map argument ' . $parameterName . ' to type ' . $className, $this->propertyMapper->getMappingResults());
+			throw new \F3\Soap\MappingException('Could not map argument ' . $parameterName . ' to type ' . $className, $this->propertyMapper->getMessages());
 		}
 	}
 

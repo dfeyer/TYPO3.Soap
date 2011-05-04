@@ -30,6 +30,11 @@ namespace F3\Soap\Tests\Functional;
 class ServiceWrapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
+	 * @var \F3\FLOW3\Property\PropertyMapper
+	 */
+	protected $propertyMapper;
+
+	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
@@ -63,12 +68,12 @@ class ServiceWrapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function mapperMapsToClassName() {
-		$propertyMapper = $this->objectManager->get('F3\FLOW3\Property\PropertyMapper');
+		$this->propertyMapper = $this->objectManager->get('F3\FLOW3\Property\PropertyMapper');
 		$value = array('name' => 'Foo', 'size' => 2);
 		$type = 'F3\Soap\Tests\Functional\Fixtures\Dto';
-		$target = $propertyMapper->map(array('name', 'size'), $value, $type);
-
+		$target = $this->propertyMapper->convert($value, $type);
 		$this->assertType('F3\Soap\Tests\Functional\Fixtures\Dto', $target);
+		$this->assertEquals('Foo', $target->getName());
 	}
 
 	/**
@@ -81,7 +86,7 @@ class ServiceWrapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 		$mockRequest = $this->getMock('F3\Soap\Request');
 		$wrapper->setRequest($mockRequest);
 		$argument = new \stdClass();
-		$argument->int = array(17, 4);
+		$argument->integer = array(17, 4);
 		$result = $wrapper->sum($argument);
 		$this->assertEquals(21, $result);
 	}
