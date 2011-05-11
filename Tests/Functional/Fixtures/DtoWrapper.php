@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Tests\Functional;
+namespace F3\Soap\Tests\Functional\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -23,28 +23,31 @@ namespace F3\Soap\Tests\Functional;
  *                                                                        */
 
 /**
- * Testcase for the WSDL generator
+ * A wrapper for DTOs
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
-class WsdlGeneratorTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class DtoWrapper {
 
 	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @var array<\F3\Soap\Tests\Functional\Fixtures\Dto>
 	 */
-	public function wsdlForSimpleServiceIsCorrect() {
-		$wsdlGenerator = $this->objectManager->get('F3\Soap\WsdlGenerator');
+	protected $dtos = array();
 
-		$wsdl = $wsdlGenerator->generateWsdl('F3\Soap\Tests\Functional\Fixtures\TestService');
+	/**
+	 * @return array<\F3\Soap\Tests\Functional\Fixtures\Dto>
+	 */
+	public function getDtos() {
+		return $this->dtos;
+	}
 
-		$wsdlFixture = \F3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestService.wsdl', FILE_TEXT);
-
-			// Clean whitespace and linebreaks for better comparison and diff
-		$wsdl = preg_replace('/>\\s*</', ">\n<", $wsdl);
-		$wsdlFixture = preg_replace('/>\\s*</', ">\n<", $wsdlFixture);
-
-		$this->assertEquals($wsdlFixture, $wsdl);
+	/**
+	 * @param array<\F3\Soap\Tests\Functional\Fixtures\Dto> $dtos
+	 * @return void
+	 */
+	public function setDtos(array $dtos) {
+		$this->dtos = $dtos;
 	}
 
 }

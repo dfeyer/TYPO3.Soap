@@ -9,67 +9,85 @@
 		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://tempuri.org/service/soap/soap/fixtures/test">
 			<xsd:complexType name="Dto">
 				<xsd:sequence>
-						<xsd:element name="name" type="xsd:string" >
-							<xsd:annotation>
-								<xsd:documentation>The name</xsd:documentation>
-							</xsd:annotation>
-						</xsd:element>
-
-						<xsd:element name="size" type="xsd:integer" >
-							<xsd:annotation>
-								<xsd:documentation>The size</xsd:documentation>
-							</xsd:annotation>
-						</xsd:element>
+					<xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1" >
+						<xsd:annotation>
+							<xsd:documentation>The name</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="size" type="xsd:integer" minOccurs="0" maxOccurs="1" >
+						<xsd:annotation>
+							<xsd:documentation>The size</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
 				</xsd:sequence>
 			</xsd:complexType>
 
 			<xsd:complexType name="ArrayOfDto">
 				<xsd:sequence>
-						<xsd:element name="dto" type="tns:Dto" maxOccurs="unbounded" >
-						</xsd:element>
+					<xsd:element name="dto" type="tns:Dto" maxOccurs="unbounded" >
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:complexType>
+
+			<xsd:complexType name="DtoWrapper">
+				<xsd:sequence>
+					<xsd:element name="dtos" type="tns:ArrayOfDto" minOccurs="0" maxOccurs="1" >
+					</xsd:element>
 				</xsd:sequence>
 			</xsd:complexType>
 
 			<xsd:complexType name="ArrayOfInteger">
 				<xsd:sequence>
-						<xsd:element name="integer" type="xsd:integer" maxOccurs="unbounded" >
-						</xsd:element>
+					<xsd:element name="integer" type="xsd:integer" maxOccurs="unbounded" >
+					</xsd:element>
 				</xsd:sequence>
 			</xsd:complexType>
 		</xsd:schema>
 	</wsdl:types>
 
 	<wsdl:message name="pingRequest">
-			<wsdl:part name="value" type="xsd:string">
-				<wsdl:documentation>The value</wsdl:documentation>
-			</wsdl:part>
+		<wsdl:part name="value" type="xsd:string">
+			<wsdl:documentation>The value</wsdl:documentation>
+		</wsdl:part>
 	</wsdl:message>
 
 	<wsdl:message name="pingResponse">
-			<wsdl:part name="returnValue" type="xsd:string">
-				<wsdl:documentation>The same value</wsdl:documentation>
-			</wsdl:part>
+		<wsdl:part name="returnValue" type="xsd:string">
+			<wsdl:documentation>The same value</wsdl:documentation>
+		</wsdl:part>
 	</wsdl:message>
 
 	<wsdl:message name="multiplyRequest">
-			<wsdl:part name="value" type="tns:Dto">
-				<wsdl:documentation>The value as object</wsdl:documentation>
-			</wsdl:part>
+		<wsdl:part name="value" type="tns:Dto">
+			<wsdl:documentation>The value as object</wsdl:documentation>
+		</wsdl:part>
 	</wsdl:message>
 
 	<wsdl:message name="multiplyResponse">
-			<wsdl:part name="returnValue" type="xsd:string">
-				<wsdl:documentation>The result</wsdl:documentation>
-			</wsdl:part>
+		<wsdl:part name="returnValue" type="xsd:string">
+			<wsdl:documentation>The result</wsdl:documentation>
+		</wsdl:part>
 	</wsdl:message>
 
 	<wsdl:message name="concatRequest">
-			<wsdl:part name="values" type="tns:ArrayOfDto">
-				<wsdl:documentation>The values as objects</wsdl:documentation>
-			</wsdl:part>
+		<wsdl:part name="values" type="tns:ArrayOfDto">
+			<wsdl:documentation>The values as objects</wsdl:documentation>
+		</wsdl:part>
 	</wsdl:message>
 
 	<wsdl:message name="concatResponse">
+		<wsdl:part name="returnValue" type="xsd:string">
+			<wsdl:documentation>The result</wsdl:documentation>
+		</wsdl:part>
+	</wsdl:message>
+
+	<wsdl:message name="wrappedConcatRequest">
+		<wsdl:part name="wrapper" type="tns:DtoWrapper">
+			<wsdl:documentation>The wrapped objects</wsdl:documentation>
+		</wsdl:part>
+	</wsdl:message>
+
+	<wsdl:message name="wrappedConcatResponse">
 		<wsdl:part name="returnValue" type="xsd:string">
 			<wsdl:documentation>The result</wsdl:documentation>
 		</wsdl:part>
@@ -87,78 +105,124 @@
 		</wsdl:part>
 	</wsdl:message>
 
+	<wsdl:message name="helloRequest">
+		<wsdl:part name="name" type="xsd:string">
+			<wsdl:documentation>The value to greet</wsdl:documentation>
+		</wsdl:part>
+		<wsdl:part name="greeting" type="xsd:string">
+			<wsdl:documentation>The greeting message</wsdl:documentation>
+		</wsdl:part>
+	</wsdl:message>
+
+	<wsdl:message name="helloResponse">
+		<wsdl:part name="returnValue" type="xsd:string">
+		</wsdl:part>
+	</wsdl:message>
+
+
 	<wsdl:portType name="TestServiceSoapPort">
 		<wsdl:documentation>Interface for TestService</wsdl:documentation>
 
-			<wsdl:operation name="ping">
-				<wsdl:documentation>Responds with the given value</wsdl:documentation>
-				<wsdl:input message="tns:pingRequest" />
-				<wsdl:output message="tns:pingResponse" />
-			</wsdl:operation>
+		<wsdl:operation name="ping">
+			<wsdl:documentation>Responds with the given value</wsdl:documentation>
+			<wsdl:input message="tns:pingRequest" />
+			<wsdl:output message="tns:pingResponse" />
+		</wsdl:operation>
 
-			<wsdl:operation name="multiply">
-				<wsdl:documentation>Concatenate the name multiple times</wsdl:documentation>
-				<wsdl:input message="tns:multiplyRequest" />
-				<wsdl:output message="tns:multiplyResponse" />
-			</wsdl:operation>
+		<wsdl:operation name="multiply">
+			<wsdl:documentation>Concatenate the name multiple times</wsdl:documentation>
+			<wsdl:input message="tns:multiplyRequest" />
+			<wsdl:output message="tns:multiplyResponse" />
+		</wsdl:operation>
 
-			<wsdl:operation name="concat">
-				<wsdl:documentation>Concatenate the given names</wsdl:documentation>
-				<wsdl:input message="tns:concatRequest" />
-				<wsdl:output message="tns:concatResponse" />
-			</wsdl:operation>
+		<wsdl:operation name="concat">
+			<wsdl:documentation>Concatenate the given names</wsdl:documentation>
+			<wsdl:input message="tns:concatRequest" />
+			<wsdl:output message="tns:concatResponse" />
+		</wsdl:operation>
 
-			<wsdl:operation name="sum">
-				<wsdl:documentation>Sum the numbers</wsdl:documentation>
-				<wsdl:input message="tns:sumRequest" />
-				<wsdl:output message="tns:sumResponse" />
-			</wsdl:operation>
+		<wsdl:operation name="wrappedConcat">
+			<wsdl:documentation>Concatenate the given names</wsdl:documentation>
+			<wsdl:input message="tns:wrappedConcatRequest" />
+			<wsdl:output message="tns:wrappedConcatResponse" />
+		</wsdl:operation>
+
+		<wsdl:operation name="sum">
+			<wsdl:documentation>Sum the numbers</wsdl:documentation>
+			<wsdl:input message="tns:sumRequest" />
+			<wsdl:output message="tns:sumResponse" />
+		</wsdl:operation>
+
+		<wsdl:operation name="hello">
+			<wsdl:documentation>Hello world</wsdl:documentation>
+			<wsdl:input message="tns:helloRequest" />
+			<wsdl:output message="tns:helloResponse" />
+		</wsdl:operation>
 
 	</wsdl:portType>
 
 	<wsdl:binding name="TestServiceSoapBinding" type="tns:TestServiceSoapPort">
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
 
-			<wsdl:operation name="ping">
-				<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/ping" />
-				<wsdl:input>
-					<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
-				</wsdl:input>
-				<wsdl:output>
-					<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
-				</wsdl:output>
-			</wsdl:operation>
+		<wsdl:operation name="ping">
+			<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/ping" />
+			<wsdl:input>
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+			</wsdl:output>
+		</wsdl:operation>
 
-			<wsdl:operation name="multiply">
-				<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/multiply" />
-				<wsdl:input>
-					<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
-				</wsdl:input>
-				<wsdl:output>
-					<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
-				</wsdl:output>
-			</wsdl:operation>
+		<wsdl:operation name="multiply">
+			<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/multiply" />
+			<wsdl:input>
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+			</wsdl:output>
+		</wsdl:operation>
 
-			<wsdl:operation name="concat">
-				<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/concat" />
-				<wsdl:input>
-					<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
-				</wsdl:input>
-				<wsdl:output>
-					<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
-				</wsdl:output>
-			</wsdl:operation>
+		<wsdl:operation name="concat">
+			<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/concat" />
+			<wsdl:input>
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+			</wsdl:output>
+		</wsdl:operation>
 
-			<wsdl:operation name="sum">
-				<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/sum" />
-				<wsdl:input>
-					<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
-				</wsdl:input>
-				<wsdl:output>
-					<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
-				</wsdl:output>
-			</wsdl:operation>
+		<wsdl:operation name="wrappedConcat">
+			<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/wrappedConcat" />
+			<wsdl:input>
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+			</wsdl:output>
+		</wsdl:operation>
 
+		<wsdl:operation name="sum">
+			<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/sum" />
+			<wsdl:input>
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="hello">
+			<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/hello" />
+			<wsdl:input>
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+			</wsdl:output>
+		</wsdl:operation>
 	</wsdl:binding>
 
 	<wsdl:service name="TestService">

@@ -126,7 +126,7 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 					),
 					'arrayParameter' => array(
 						'name' => 'arrayParameter',
-						'type' => 'tns:ArrayOfInt',
+						'type' => 'tns:ArrayOfInteger',
 						'documentation' => NULL
 					)
 				)
@@ -176,11 +176,11 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$schema = $wsdlGenerator->reflectOperations('F3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals(array(
-			'ArrayOfInt' => array(
-				'name' => 'ArrayOfInt',
+			'ArrayOfInteger' => array(
+				'name' => 'ArrayOfInteger',
 				'elements' => array(
 					array(
-						'name' => 'int',
+						'name' => 'integer',
 						'type' => 'xsd:integer',
 						'attributes' => 'maxOccurs="unbounded" '
 					)
@@ -198,14 +198,15 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 			),
 			'MyType' => array(
 				'name' => 'MyType',
-				'documentation' => 'Simple type fixture',
 				'elements' => array(
 					'name' => array(
 						'name' => 'name',
 						'type' => 'xsd:string',
+						'attributes' => 'minOccurs="0" maxOccurs="1" ',
 						'documentation' => 'Some name'
 					)
-				)
+				),
+				'documentation' => 'Simple type fixture'
 			)
 		), $schema['complexTypes']);
 	}
@@ -285,7 +286,7 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 								'optional' => FALSE,
 								'allowsNull' => FALSE,
 								'class' => NULL,
-								'type' => 'array<int>'
+								'type' => 'array<integer>'
 							)
 						);
 				}
@@ -304,7 +305,7 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 								);
 							case 'bar':
 								return array (
-									'param' => array('\F3\Soap\Tests\Unit\Fixtures\MyType $objectParameter', 'array<int> $arrayParameter'),
+									'param' => array('\F3\Soap\Tests\Unit\Fixtures\MyType $objectParameter', 'array<integer> $arrayParameter'),
 									'return' => array('array<string> Array of strings'),
 									'author' => array('Christopher Hlubek <hlubek@networkteam.com>')
 								);

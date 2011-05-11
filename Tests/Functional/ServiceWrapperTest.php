@@ -40,7 +40,7 @@ class ServiceWrapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function simpleServiceMethodIsWrapped() {
 		$serviceObject = $this->objectManager->get('F3\Soap\Tests\Functional\Fixtures\TestService');
-		$wrapper = $this->objectManager->create('F3\Soap\ServiceWrapper', $serviceObject);
+		$wrapper = new \F3\Soap\ServiceWrapper($serviceObject);
 		$mockRequest = $this->getMock('F3\Soap\Request');
 		$wrapper->setRequest($mockRequest);
 		$result = $wrapper->ping('Hello');
@@ -53,7 +53,7 @@ class ServiceWrapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function argumentToMethodIsMappedToObjectByParamAnnotation() {
 		$serviceObject = $this->objectManager->get('F3\Soap\Tests\Functional\Fixtures\TestService');
-		$wrapper = $this->objectManager->create('F3\Soap\ServiceWrapper', $serviceObject);
+		$wrapper = new \F3\Soap\ServiceWrapper($serviceObject);
 		$mockRequest = $this->getMock('F3\Soap\Request');
 		$wrapper->setRequest($mockRequest);
 		$argument = new \stdClass();
@@ -82,7 +82,7 @@ class ServiceWrapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function simpleArrayTypeParametersAreConvertedFromStdClass() {
 		$serviceObject = $this->objectManager->get('F3\Soap\Tests\Functional\Fixtures\TestService');
-		$wrapper = $this->objectManager->create('F3\Soap\ServiceWrapper', $serviceObject);
+		$wrapper = new \F3\Soap\ServiceWrapper($serviceObject);
 		$mockRequest = $this->getMock('F3\Soap\Request');
 		$wrapper->setRequest($mockRequest);
 		$argument = new \stdClass();
@@ -97,11 +97,11 @@ class ServiceWrapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function objectArrayTypeParametersAreConvertedFromStdClass() {
 		$serviceObject = $this->objectManager->get('F3\Soap\Tests\Functional\Fixtures\TestService');
-		$wrapper = $this->objectManager->create('F3\Soap\ServiceWrapper', $serviceObject);
+		$wrapper = new \F3\Soap\ServiceWrapper($serviceObject);
 		$mockRequest = $this->getMock('F3\Soap\Request');
 		$wrapper->setRequest($mockRequest);
 		$argument = (object)array(
-			'Dto' => array(
+			'dto' => array(
 				(object)array('name' => 'Foo', 'size' => 1),
 				(object)array('name' => 'Bar', 'size' => 2)
 			)
@@ -109,5 +109,66 @@ class ServiceWrapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 		$result = $wrapper->concat($argument);
 		$this->assertEquals('FooBar', $result);
 	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function wrappedObjectArrayTypeParameterWithMultipleValuesIsConvertedFromStdClass() {
+		$serviceObject = $this->objectManager->get('F3\Soap\Tests\Functional\Fixtures\TestService');
+		$wrapper = new \F3\Soap\ServiceWrapper($serviceObject);
+		$mockRequest = $this->getMock('F3\Soap\Request');
+		$wrapper->setRequest($mockRequest);
+		$argument = (object)array(
+			'dtos' => (object)array(
+				'dto' => array(
+					(object)array('name' => 'Foo', 'size' => 1),
+					(object)array('name' => 'Bar', 'size' => 2)
+				)
+			)
+		);
+		$result = $wrapper->wrappedConcat($argument);
+		$this->assertEquals('FooBar', $result);
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function wrappedObjectArrayTypeParameterWithSingleValueIsConvertedFromStdClass() {
+		$serviceObject = $this->objectManager->get('F3\Soap\Tests\Functional\Fixtures\TestService');
+		$wrapper = new \F3\Soap\ServiceWrapper($serviceObject);
+		$mockRequest = $this->getMock('F3\Soap\Request');
+		$wrapper->setRequest($mockRequest);
+		$argument = (object)array(
+			'dtos' => (object)array(
+				'dto' => (object)array('name' => 'Foo', 'size' => 1)
+			)
+		);
+		$result = $wrapper->wrappedConcat($argument);
+		$this->assertEquals('Foo', $result);
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function wrappedObjectArrayTypeParameterWithNoValueIsConvertedFromStdClass() {
+		$serviceObject = $this->objectManager->get('F3\Soap\Tests\Functional\Fixtures\TestService');
+		$wrapper = new \F3\Soap\ServiceWrapper($serviceObject);
+		$mockRequest = $this->getMock('F3\Soap\Request');
+		$wrapper->setRequest($mockRequest);
+
+		$argument = (object)array(
+			'dtos' => (object)array()
+		);
+		$result = $wrapper->wrappedConcat($argument);
+		$this->assertEquals('', $result);
+
+		$argument = (object)array();
+		$result = $wrapper->wrappedConcat($argument);
+		$this->assertEquals('', $result);
+	}
+
 }
 ?>

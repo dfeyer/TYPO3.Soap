@@ -180,7 +180,7 @@ class ServiceWrapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 			}
 		));
 		$argument = (object)array(
-			'TestObject' => array(
+			'testObject' => array(
 				(object)array('value' => 1),
 				(object)array('value' => 2),
 				(object)array('value' => 3),

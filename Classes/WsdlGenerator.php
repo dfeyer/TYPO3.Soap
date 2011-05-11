@@ -187,6 +187,10 @@ class WsdlGenerator {
 		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
 		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
 		foreach ($methodParameters as $parameterName => $methodParameter) {
+			if ($methodParameter['optional']) {
+				throw new \F3\FLOW3\Exception('Optional method arguments are not allowed for SOAP operations, ' . $className . '::' . $methodName, 1305039276);
+			}
+
 			$paramAnnotation = $methodTagsValues['param'][$methodParameter['position']];
 			if (preg_match('/\$\S+\ (.*)/', $paramAnnotation, $matches)) {
 				$documentation = $matches[1];
@@ -246,7 +250,7 @@ class WsdlGenerator {
 				'description' => count($returnAnnotations) > 1 ? $returnAnnotations[1] : NULL
 			);
 		} else {
-			throw new \F3\FLOW3\Exception('Could not get return value for ' . $className . '#' . $methodName, 1288984174);
+			throw new \F3\FLOW3\Exception('Could not get return value for ' . $className . '::' . $methodName, 1288984174);
 		}
 	}
 
@@ -286,16 +290,19 @@ class WsdlGenerator {
 				'elements' => array(),
 				'documentation' => $classReflection->getDescription()
 			);
-			$methodNames = $this->reflectionService->getClassMethodNames($phpType);
+			$methodNames = get_class_methods($phpType);
 			foreach ($methodNames as $methodName) {
 				if (strpos($methodName, 'get') === 0 && $this->reflectionService->isMethodPublic($phpType, $methodName)) {
 					$propertyName = lcfirst(substr($methodName, 3));
 					$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection($phpType, $propertyName);
 
+					$minOccurs = $this->isPropertyRequired($propertyReflection) ? 1 : 0;
+
 					$returnType = $this->getMethodReturnAnnotation($phpType, $methodName);
 					$complexTypes[$typeName]['elements'][$propertyName] = array(
 						'name' => $propertyName,
 						'type' => $this->getOrCreateType($returnType['type'], $complexTypes, $typeMapping),
+						'attributes' => 'minOccurs="' . $minOccurs . '" maxOccurs="1" ',
 						'documentation' => $propertyReflection->getDescription()
 					);
 				}
@@ -304,6 +311,23 @@ class WsdlGenerator {
 			throw new \F3\FLOW3\Exception('Type ' . $phpType . ' not supported', 1288979369);
 		}
 		return $typeMapping[$phpType];
+	}
+
+	/**
+	 * A property of a complex type is considered as required and exported with <code>minOccurs="1"</code>
+	 * if the property is tagged with <code>@validate NotEmpty</code>.
+	 *
+	 * @param \F3\FLOW3\Reflection\PropertyReflection $propertyReflection Property reflection of the property
+	 * @return boolean
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function isPropertyRequired(\F3\FLOW3\Reflection\PropertyReflection $propertyReflection) {
+		if ($propertyReflection->isTaggedWith('validate')) {
+			$validationRules = implode(',', $propertyReflection->getTagValues('validate'));
+			preg_match_all(\F3\FLOW3\Validation\ValidatorResolver::PATTERN_MATCH_VALIDATORS, $validationRules, $validators);
+			return in_array('NotEmpty', $validators['validatorName']);
+		}
+		return FALSE;
 	}
 
 	/**

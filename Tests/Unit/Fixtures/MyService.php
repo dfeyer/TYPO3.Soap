@@ -43,12 +43,12 @@ class MyService {
 	/**
 	 * Bar operation
 	 *
-	 * @param \F3\Soap\Test\Unit\Fixtures\MyType $objectParameter
-	 * @param array<int> $arrayParameter
+	 * @param \F3\Soap\Tests\Unit\Fixtures\MyType $objectParameter
+	 * @param array<integer> $arrayParameter
 	 * @return array<string> Array of strings
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function bar(\F3\Soap\Test\Unit\Fixtures\MyType $objectParameter, array $arrayParameter) {
+	public function bar(\F3\Soap\Tests\Unit\Fixtures\MyType $objectParameter, array $arrayParameter) {
 
 	}
 

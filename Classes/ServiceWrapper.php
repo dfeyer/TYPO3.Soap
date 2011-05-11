@@ -130,14 +130,13 @@ class ServiceWrapper {
 	public function __call($methodName, $arguments) {
 		if (!$this->request instanceof \F3\Soap\Request) throw new \F3\FLOW3\Exception('No SOAP request set', 1297091911);
 		$this->initializeCall($this->request);
-		$className = ($this->service instanceof \F3\FLOW3\AOP\ProxyInterface) ? $this->service->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($this->service);
+		$className = get_class($this->service);
 		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
 		try {
 			foreach ($methodParameters as $parameterName => $parameterOptions) {
 				if (isset($parameterOptions['class'])) {
-					$className = $parameterOptions['class'];
-					if ($this->reflectionService->isClassReflected($className)) {
-						$arguments[$parameterOptions['position']] = $this->convertStdClassToObject($arguments[$parameterOptions['position']], $className, $parameterName);
+					if ($this->reflectionService->isClassReflected($parameterOptions['class'])) {
+						$arguments[$parameterOptions['position']] = $this->convertStdClassToObject($arguments[$parameterOptions['position']], $parameterOptions['class'], $parameterName);
 					}
 				} elseif ($parameterOptions['array']) {
 					$arguments[$parameterOptions['position']] = $this->convertArrayArgument($arguments[$parameterOptions['position']], $methodName, $parameterName, $parameterOptions['type']);
@@ -163,11 +162,14 @@ class ServiceWrapper {
 	protected function convertArrayArgument($argument, $methodName, $parameterName, $parameterType) {
 		if (preg_match('/^array<(.+)>$/', $parameterType, $matches)) {
 			$className = trim($matches[1], '\\');
-			$typeName = strpos($className, '\\') !== FALSE ? substr($className, strrpos($className, '\\') + 1) : $className;
+			$typeName = lcfirst(strpos($className, '\\') !== FALSE ? substr($className, strrpos($className, '\\') + 1) : $className);
 			if (!isset($argument->$typeName)) {
-				throw new \F3\FLOW3\Exception('Missing array values for parameter ' . $parameterName, 1297166477);
+				return array();
 			}
 			$arrayValues = $argument->$typeName;
+			if (!is_array($arrayValues)) {
+				$arrayValues = array($arrayValues);
+			}
 			if ($this->reflectionService->isClassReflected($className)) {
 				$result = array();
 				foreach ($arrayValues as $arrayValue) {
@@ -306,7 +308,8 @@ class ServiceWrapper {
 
 	/**
 	 * Convert the given argument from stdClass to a FLOW3 object with the
-	 * specified class name.
+	 * specified class name. XML arrays with duplicated type as property name
+	 * are converted to an array that is supported by the property mapper.
 	 *
 	 * @param \stdClass $argument The argument
 	 * @param string $className The class name of the target object
@@ -315,11 +318,42 @@ class ServiceWrapper {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function convertStdClassToObject($argument, $className, $parameterName) {
-		$target = $this->propertyMapper->convert(\F3\FLOW3\Utility\Arrays::convertObjectToArray($argument), $className);
+		$source = \F3\FLOW3\Utility\Arrays::convertObjectToArray($argument);
+
+		foreach ($source as $propertyName => $propertyValue) {
+			$annotation = $this->getMethodReturnAnnotation($className, 'get' . ucfirst($propertyName));
+			$propertyType = $annotation['type'];
+			if (preg_match('/^array<(.+)>$/', $propertyType, $matches)) {
+				$source[$propertyName] = $this->convertArrayArgument($argument->$propertyName, '', $propertyName, $propertyType);
+			}
+		}
+
+		$target = $this->propertyMapper->convert($source, $className);
 		if ($target !== NULL) {
 			return $target;
 		} else {
 			throw new \F3\Soap\MappingException('Could not map argument ' . $parameterName . ' to type ' . $className, $this->propertyMapper->getMessages());
+		}
+	}
+
+	/**
+	 * Get the return type and description of a method
+	 *
+	 * @param string $className
+	 * @param string $methodName
+	 * @return array The method return type and description
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function getMethodReturnAnnotation($className, $methodName) {
+		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
+		if (isset($methodTagsValues['return']) && isset($methodTagsValues['return'][0])) {
+			$returnAnnotations = explode(' ', $methodTagsValues['return'][0], 2);
+			return array(
+				'type' => $returnAnnotations[0],
+				'description' => count($returnAnnotations) > 1 ? $returnAnnotations[1] : NULL
+			);
+		} else {
+			throw new \F3\FLOW3\Exception('Could not get return value for ' . $className . '::' . $methodName, 1305130721);
 		}
 	}
 

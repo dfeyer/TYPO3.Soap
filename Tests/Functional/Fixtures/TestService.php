@@ -71,6 +71,22 @@ class TestService {
 	}
 
 	/**
+	 * Concatenate the given names
+	 *
+	 * @param \F3\Soap\Tests\Functional\Fixtures\DtoWrapper $wrapper The wrapped objects
+	 * @return string The result
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function wrappedConcat(\F3\Soap\Tests\Functional\Fixtures\DtoWrapper $wrapper) {
+		$result = '';
+		$values = $wrapper->getDtos();
+		foreach ($values as $value) {
+			$result .= $value->getName();
+		}
+		return $result;
+	}
+
+	/**
 	 * Sum the numbers
 	 *
 	 * @param array<integer> $values The values as int array
@@ -80,5 +96,17 @@ class TestService {
 	public function sum(array $values) {
 		return array_sum($values);
 	}
+
+	/**
+	 * Hello world
+	 *
+	 * @param string $name The value to greet
+	 * @param string $greeting The greeting message
+	 * @return string
+	 */
+	public function hello($name, $greeting) {
+		return $greeting . ' ' . $name;
+	}
+
 }
 ?>

@@ -32,12 +32,15 @@ class Dto {
 
 	/**
 	 * The name
+	 *
+	 * @validate NotEmpty
 	 * @var string
 	 */
 	protected $name;
 
 	/**
 	 * The size
+	 *
 	 * @var integer
 	 */
 	protected $size;
