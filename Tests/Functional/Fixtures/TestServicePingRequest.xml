@@ -1,0 +1,10 @@
+<soapenv:Envelope
+	xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:test="http://tempuri.org/service/soap/soap/fixtures/test">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <test:ping>
+         <value>Hello, echo!</value>
+      </test:ping>
+   </soapenv:Body>
+</soapenv:Envelope>

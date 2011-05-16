@@ -102,10 +102,9 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 		$serviceWrapper->setRequest($request);
 		$soapServer->setObject($serviceWrapper);
 
-		try {
-			$soapServer->handle($request->getBody());
-		} catch (\Exception $exception) {
-			return $exception;
+		$soapServer->handle($request->getBody());
+		if ($serviceWrapper->getCatchedException() !== NULL) {
+			throw new \F3\FLOW3\Exception('SOAP fault emitted', 1305541462, $serviceWrapper->getCatchedException());
 		}
 
 		return self::HANDLEREQUEST_OK;

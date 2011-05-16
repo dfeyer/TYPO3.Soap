@@ -37,6 +37,9 @@ class TestService {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function ping($value) {
+		if ($value === 'throw') {
+			throw new \F3\FLOW3\Exception('Some exception occured', 1305541506);
+		}
 		return $value;
 	}
 

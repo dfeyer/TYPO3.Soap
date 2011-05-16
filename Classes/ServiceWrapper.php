@@ -70,6 +70,12 @@ class ServiceWrapper {
 	protected $settings = array();
 
 	/**
+	 * Store any exception that occured during the service execution
+	 * @var \Exception
+	 */
+	protected $catchedException;
+
+	/**
 	 * Inject the reflection service
 	 *
 	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
@@ -222,6 +228,7 @@ class ServiceWrapper {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function handleException($exception, $className, $methodName) {
+		$this->catchedException = $exception;
 		$exceptionClassName = get_class($exception);
 		if ($exception instanceof \F3\FLOW3\Security\Exception\AuthenticationRequiredException) {
 			throw new \SoapFault('Client', 'Authentication required', NULL, 'Security_AuthenticationRequired');
@@ -366,6 +373,15 @@ class ServiceWrapper {
 	 */
 	public function setRequest($request) {
 		$this->request = $request;
+	}
+
+	/**
+	 * Get any exception that occured during the service execution
+	 *
+	 * @return \Exception
+	 */
+	public function getCatchedException() {
+		return $this->catchedException;
 	}
 
 }

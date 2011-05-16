@@ -31,9 +31,55 @@ class RequestHandlerTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function pingRespondsWithPong() {
-		# to be implemented
+	public function pingRespondsWithEcho() {
+		$requestHandler = $this->objectManager->get('F3\Soap\RequestHandler');
+		$mockRequestBuilder = $this->getMock('F3\Soap\RequestBuilder', array('build'));
+		$requestHandler->injectRequestBuilder($mockRequestBuilder);
+
+		$mockRequest = $this->getMock('F3\Soap\Request');
+		$mockRequestBuilder->expects($this->any())->method('build')->will($this->returnValue($mockRequest));
+
+		$mockRequest->expects($this->any())->method('getWsdlUri')->will($this->returnValue(__DIR__ . '/Fixtures/TestService.wsdl'));
+		$mockRequest->expects($this->any())->method('getServiceObjectName')->will($this->returnValue('F3\Soap\Tests\Functional\Fixtures\TestService'));
+		$mockRequest->expects($this->any())->method('getBody')->will($this->returnValue(\F3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingRequest.xml', FILE_TEXT)));
+
+		ob_start();
+		$requestHandler->handleRequest();
+		$response = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertXmlStringEqualsXmlFile(__DIR__ . '/Fixtures/TestServicePingResponse.xml', $response);
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function pingWithExceptionRespondsWithSoapFaultAndException() {
+		$requestHandler = $this->objectManager->get('F3\Soap\RequestHandler');
+		$mockRequestBuilder = $this->getMock('F3\Soap\RequestBuilder', array('build'));
+		$requestHandler->injectRequestBuilder($mockRequestBuilder);
+
+		$mockRequest = $this->getMock('F3\Soap\Request');
+		$mockRequestBuilder->expects($this->any())->method('build')->will($this->returnValue($mockRequest));
+
+		$mockRequest->expects($this->any())->method('getWsdlUri')->will($this->returnValue(__DIR__ . '/Fixtures/TestService.wsdl'));
+		$mockRequest->expects($this->any())->method('getServiceObjectName')->will($this->returnValue('F3\Soap\Tests\Functional\Fixtures\TestService'));
+		$mockRequest->expects($this->any())->method('getBody')->will($this->returnValue(\F3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingWithExceptionRequest.xml', FILE_TEXT)));
+
+		ob_start();
+		try {
+			$requestHandler->handleRequest();
+			$this->fail('Request handler should throw exception in addition to SOAP fault response');
+		} catch(\F3\FLOW3\Exception $e) {
+			$this->assertEquals('Some exception occured', $e->getPrevious()->getMessage(), 'Handled exception should be rethrown');
+		}
+		$response = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertStringStartsWith(\F3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingWithExceptionResponse.xml'), $response);
 	}
 
 }
