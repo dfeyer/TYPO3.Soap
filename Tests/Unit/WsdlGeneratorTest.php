@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Tests\Unit;
+namespace TYPO3\Soap\Tests\Unit;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -27,31 +27,31 @@ namespace F3\Soap\Tests\Unit;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @expectedException \F3\FLOW3\Exception
+	 * @expectedException \TYPO3\FLOW3\Exception
 	 */
 	public function generateWsdlAcceptsOnlyClassNamesWithServiceSuffix() {
-		$wsdlGenerator = new \F3\Soap\WsdlGenerator();
+		$wsdlGenerator = new \TYPO3\Soap\WsdlGenerator();
 		$wsdlGenerator->generateWsdl('MyRandomClass');
 	}
 
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @expectedException \F3\FLOW3\Exception
+	 * @expectedException \TYPO3\FLOW3\Exception
 	 */
 	public function generateWsdlAcceptsOnlyReflectedClassNames() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('isClassReflected')->will($this->returnValue(FALSE));
 
-		$wsdlGenerator = new \F3\Soap\WsdlGenerator();
+		$wsdlGenerator = new \TYPO3\Soap\WsdlGenerator();
 		$wsdlGenerator->injectReflectionService($mockReflectionService);
 
-		$wsdlGenerator->generateWsdl('F3\Soap\Tests\Unit\Fixtures\MyUnknownService');
+		$wsdlGenerator->generateWsdl('TYPO3\Soap\Tests\Unit\Fixtures\MyUnknownService');
 	}
 
 	/**
@@ -59,10 +59,10 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function generateWsdlReflectsOperationsAndRendersTemplate() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('isClassReflected')->will($this->returnValue(TRUE));
 
-		$wsdlGenerator = $this->getMock('F3\Soap\WsdlGenerator', array('reflectOperations', 'renderTemplate'));
+		$wsdlGenerator = $this->getMock('TYPO3\Soap\WsdlGenerator', array('reflectOperations', 'renderTemplate'));
 		$wsdlGenerator->injectReflectionService($mockReflectionService);
 
 		$wsdlGenerator->expects($this->once())->method('reflectOperations')->will($this->returnValue(array(
@@ -77,7 +77,7 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'serviceName' => 'MyService',
 			'servicePath' => 'soap/fixtures/my'
 		))->will($this->returnValue('<WSDL>'));
-		$result = $wsdlGenerator->generateWsdl('F3\Soap\Tests\Unit\Fixtures\MyService');
+		$result = $wsdlGenerator->generateWsdl('TYPO3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals('<WSDL>', $result);
 	}
 
@@ -88,10 +88,10 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function reflectOperationsCollectsPublicMethodsAsOperations() {
 		$mockReflectionService = $this->buildMockReflectionServiceForTestService();
 
-		$wsdlGenerator = $this->getMock('F3\Soap\WsdlGenerator', array('dummy'));
+		$wsdlGenerator = $this->getMock('TYPO3\Soap\WsdlGenerator', array('dummy'));
 		$wsdlGenerator->injectReflectionService($mockReflectionService);
 
-		$schema = $wsdlGenerator->reflectOperations('F3\Soap\Tests\Unit\Fixtures\MyService');
+		$schema = $wsdlGenerator->reflectOperations('TYPO3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals(array(
 			'bar' => array(
 				'name' => 'bar',
@@ -111,10 +111,10 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function reflectOperationsCollectsOperationRequestResponseMessagesAndMapsTypes() {
 		$mockReflectionService = $this->buildMockReflectionServiceForTestService();
 
-		$wsdlGenerator = $this->getMock('F3\Soap\WsdlGenerator', array('dummy'));
+		$wsdlGenerator = $this->getMock('TYPO3\Soap\WsdlGenerator', array('dummy'));
 		$wsdlGenerator->injectReflectionService($mockReflectionService);
 
-		$schema = $wsdlGenerator->reflectOperations('F3\Soap\Tests\Unit\Fixtures\MyService');
+		$schema = $wsdlGenerator->reflectOperations('TYPO3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals(array(
 			'barRequest' => array(
 				'name' => 'barRequest',
@@ -171,10 +171,10 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function reflectOperationsCollectsComplexTypesForOperation() {
 		$mockReflectionService = $this->buildMockReflectionServiceForTestService();
 
-		$wsdlGenerator = $this->getMock('F3\Soap\WsdlGenerator', array('dummy'));
+		$wsdlGenerator = $this->getMock('TYPO3\Soap\WsdlGenerator', array('dummy'));
 		$wsdlGenerator->injectReflectionService($mockReflectionService);
 
-		$schema = $wsdlGenerator->reflectOperations('F3\Soap\Tests\Unit\Fixtures\MyService');
+		$schema = $wsdlGenerator->reflectOperations('TYPO3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals(array(
 			'ArrayOfInteger' => array(
 				'name' => 'ArrayOfInteger',
@@ -213,18 +213,18 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 *
-	 * @return \F3\FLOW3\Reflection\ReflectionService
+	 * @return \TYPO3\FLOW3\Reflection\ReflectionService
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function buildMockReflectionServiceForTestService() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('isClassReflected')->will($this->returnValue(TRUE));
 		$mockReflectionService->expects($this->any())->method('getClassMethodNames')->will($this->returnCallback(
 			function($className) {
 				switch ($className) {
-					case 'F3\Soap\Tests\Unit\Fixtures\MyService':
+					case 'TYPO3\Soap\Tests\Unit\Fixtures\MyService':
 						return array('foo', 'bar', 'injectBaz', 'someProtected');
-					case 'F3\Soap\Tests\Unit\Fixtures\MyType':
+					case 'TYPO3\Soap\Tests\Unit\Fixtures\MyType':
 						return array('getName', 'setName', 'doSomething', 'someProtected');
 				}
 			}
@@ -232,7 +232,7 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService->expects($this->any())->method('isMethodPublic')->will($this->returnCallback(
 			function($className, $methodName) {
 				switch ($className) {
-					case 'F3\Soap\Tests\Unit\Fixtures\MyService':
+					case 'TYPO3\Soap\Tests\Unit\Fixtures\MyService':
 						switch ($methodName) {
 							case 'foo':
 							case 'bar':
@@ -241,7 +241,7 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 							default:
 								return FALSE;
 						}
-					case 'F3\Soap\Tests\Unit\Fixtures\MyType':
+					case 'TYPO3\Soap\Tests\Unit\Fixtures\MyType':
 						switch ($methodName) {
 							case 'getName':
 							case 'setName':
@@ -276,8 +276,8 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 								'array' => FALSE,
 								'optional' => FALSE,
 								'allowsNull' => FALSE,
-								'class' => 'F3\Soap\Tests\Unit\Fixtures\MyType',
-								'type' => 'F3\Soap\Tests\Unit\Fixtures\MyType'
+								'class' => 'TYPO3\Soap\Tests\Unit\Fixtures\MyType',
+								'type' => 'TYPO3\Soap\Tests\Unit\Fixtures\MyType'
 							),
 							'arrayParameter' => array(
 								'position' => 1,
@@ -295,7 +295,7 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService->expects($this->any())->method('getMethodTagsValues')->will($this->returnCallback(
 			function($className, $methodName) {
 				switch ($className) {
-					case 'F3\Soap\Tests\Unit\Fixtures\MyService':
+					case 'TYPO3\Soap\Tests\Unit\Fixtures\MyService':
 						switch ($methodName) {
 							case 'foo':
 								return array (
@@ -305,12 +305,12 @@ class WsdlGeneratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 								);
 							case 'bar':
 								return array (
-									'param' => array('\F3\Soap\Tests\Unit\Fixtures\MyType $objectParameter', 'array<integer> $arrayParameter'),
+									'param' => array('\TYPO3\Soap\Tests\Unit\Fixtures\MyType $objectParameter', 'array<integer> $arrayParameter'),
 									'return' => array('array<string> Array of strings'),
 									'author' => array('Christopher Hlubek <hlubek@networkteam.com>')
 								);
 						}
-					case 'F3\Soap\Tests\Unit\Fixtures\MyType':
+					case 'TYPO3\Soap\Tests\Unit\Fixtures\MyType':
 						switch ($methodName) {
 							case 'getName':
 								return array (

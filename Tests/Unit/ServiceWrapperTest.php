@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Tests\Unit;
+namespace TYPO3\Soap\Tests\Unit;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -27,7 +27,7 @@ namespace F3\Soap\Tests\Unit;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class ServiceWrapperTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var object
@@ -35,27 +35,27 @@ class ServiceWrapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	protected $mockService;
 
 	/**
-	 * @var \F3\Soap\Request
+	 * @var \TYPO3\Soap\Request
 	 */
 	protected $mockRequest;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $mockReflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Property\PropertyMapper
+	 * @var \TYPO3\FLOW3\Property\PropertyMapper
 	 */
 	protected $mockPropertyMapper;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $mockObjectManager;
 
 	/**
-	 * @var \F3\Soap\ServiceWrapper
+	 * @var \TYPO3\Soap\ServiceWrapper
 	 */
 	protected $serviceWrapper;
 
@@ -87,11 +87,11 @@ class ServiceWrapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 			}
 		');
 		$this->mockService = $this->getMock($serviceClassName, array('dummy'));
-		$this->mockRequest = $this->getMock('F3\Soap\Request');
+		$this->mockRequest = $this->getMock('TYPO3\Soap\Request');
 		$this->mockReflectionService = $this->buildMockReflectionServiceForTestService();
-		$this->mockPropertyMapper = $this->getMock('F3\FLOW3\Property\PropertyMapper');
-		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$this->serviceWrapper = $this->getMock('F3\Soap\ServiceWrapper', array('initializeCall', 'convertStdClassToObject'), array($this->mockService));
+		$this->mockPropertyMapper = $this->getMock('TYPO3\FLOW3\Property\PropertyMapper');
+		$this->mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$this->serviceWrapper = $this->getMock('TYPO3\Soap\ServiceWrapper', array('initializeCall', 'convertStdClassToObject'), array($this->mockService));
 		$this->serviceWrapper->injectReflectionService($this->mockReflectionService);
 		$this->serviceWrapper->injectPropertyMapper($this->mockPropertyMapper);
 		$this->serviceWrapper->injectObjectManager($this->mockObjectManager);
@@ -192,11 +192,11 @@ class ServiceWrapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @return \F3\FLOW3\Reflection\ReflectionService
+	 * @return \TYPO3\FLOW3\Reflection\ReflectionService
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function buildMockReflectionServiceForTestService() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('isClassReflected')->will($this->returnCallback(
 			function($className) {
 				switch ($className) {

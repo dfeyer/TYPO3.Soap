@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap;
+namespace TYPO3\Soap;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -31,19 +31,19 @@ class WsdlGenerator {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
 	 * @inject
-	 * @var \F3\Fluid\Core\Parser\TemplateParser
+	 * @var \TYPO3\Fluid\Core\Parser\TemplateParser
 	 */
 	protected $templateParser;
 
@@ -76,11 +76,11 @@ class WsdlGenerator {
 
 	/**
 	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -103,10 +103,10 @@ class WsdlGenerator {
 	 */
 	public function generateWsdl($className) {
 		if (!preg_match('/Service$/', $className)) {
-			throw new \F3\FLOW3\Exception('SOAP service class must end with "Service"', 1288984414);
+			throw new \TYPO3\FLOW3\Exception('SOAP service class must end with "Service"', 1288984414);
 		}
 		if (!$this->reflectionService->isClassReflected($className)) {
-			throw new \F3\FLOW3\Exception('SOAP service class "' . $className . '" is not known', 1297073339);
+			throw new \TYPO3\FLOW3\Exception('SOAP service class "' . $className . '" is not known', 1297073339);
 		}
 
 		$serviceName = substr($className, strrpos($className, '\\') + 1);
@@ -118,7 +118,7 @@ class WsdlGenerator {
 			'serviceName' => $serviceName,
 			'servicePath' => $servicePath
 		));
-		return $this->renderTemplate('resource://Soap/Private/Templates/Definitions.xml', $viewVariables);
+		return $this->renderTemplate('resource://TYPO3.Soap/Private/Templates/Definitions.xml', $viewVariables);
 	}
 
 	/**
@@ -150,7 +150,7 @@ class WsdlGenerator {
 		$methodNames = get_class_methods($className);
 		foreach ($methodNames as $methodName) {
 			if (!$this->reflectionService->isMethodPublic($className, $methodName) || strpos($methodName, 'inject') === 0) continue;
-			$methodReflection = new \F3\FLOW3\Reflection\MethodReflection($className, $methodName);
+			$methodReflection = new \TYPO3\FLOW3\Reflection\MethodReflection($className, $methodName);
 			$operations[$methodName] = array(
 				'name' => $methodName,
 				'documentation' => $methodReflection->getDescription()
@@ -188,7 +188,7 @@ class WsdlGenerator {
 		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
 		foreach ($methodParameters as $parameterName => $methodParameter) {
 			if ($methodParameter['optional']) {
-				throw new \F3\FLOW3\Exception('Optional method arguments are not allowed for SOAP operations, ' . $className . '::' . $methodName, 1305039276);
+				throw new \TYPO3\FLOW3\Exception('Optional method arguments are not allowed for SOAP operations, ' . $className . '::' . $methodName, 1305039276);
 			}
 
 			$paramAnnotation = $methodTagsValues['param'][$methodParameter['position']];
@@ -250,7 +250,7 @@ class WsdlGenerator {
 				'description' => count($returnAnnotations) > 1 ? $returnAnnotations[1] : NULL
 			);
 		} else {
-			throw new \F3\FLOW3\Exception('Could not get return value for ' . $className . '::' . $methodName, 1288984174);
+			throw new \TYPO3\FLOW3\Exception('Could not get return value for ' . $className . '::' . $methodName, 1288984174);
 		}
 	}
 
@@ -282,7 +282,7 @@ class WsdlGenerator {
 				)
 			);
 		} elseif (strpos($phpType, '\\') !== FALSE) {
-			$classReflection = new \F3\FLOW3\Reflection\ClassReflection($phpType);
+			$classReflection = new \TYPO3\FLOW3\Reflection\ClassReflection($phpType);
 			$typeName = substr($phpType, strrpos($phpType, '\\') + 1);
 			$typeMapping[$phpType] = 'tns:' . $typeName;
 			$complexTypes[$typeName] = array(
@@ -294,7 +294,7 @@ class WsdlGenerator {
 			foreach ($methodNames as $methodName) {
 				if (strpos($methodName, 'get') === 0 && $this->reflectionService->isMethodPublic($phpType, $methodName)) {
 					$propertyName = lcfirst(substr($methodName, 3));
-					$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection($phpType, $propertyName);
+					$propertyReflection = new \TYPO3\FLOW3\Reflection\PropertyReflection($phpType, $propertyName);
 
 					$minOccurs = $this->isPropertyRequired($propertyReflection) ? 1 : 0;
 
@@ -308,7 +308,7 @@ class WsdlGenerator {
 				}
 			}
 		} else {
-			throw new \F3\FLOW3\Exception('Type ' . $phpType . ' not supported', 1288979369);
+			throw new \TYPO3\FLOW3\Exception('Type ' . $phpType . ' not supported', 1288979369);
 		}
 		return $typeMapping[$phpType];
 	}
@@ -317,14 +317,14 @@ class WsdlGenerator {
 	 * A property of a complex type is considered as required and exported with <code>minOccurs="1"</code>
 	 * if the property is tagged with <code>@validate NotEmpty</code>.
 	 *
-	 * @param \F3\FLOW3\Reflection\PropertyReflection $propertyReflection Property reflection of the property
+	 * @param \TYPO3\FLOW3\Reflection\PropertyReflection $propertyReflection Property reflection of the property
 	 * @return boolean
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function isPropertyRequired(\F3\FLOW3\Reflection\PropertyReflection $propertyReflection) {
+	protected function isPropertyRequired(\TYPO3\FLOW3\Reflection\PropertyReflection $propertyReflection) {
 		if ($propertyReflection->isTaggedWith('validate')) {
 			$validationRules = implode(',', $propertyReflection->getTagValues('validate'));
-			preg_match_all(\F3\FLOW3\Validation\ValidatorResolver::PATTERN_MATCH_VALIDATORS, $validationRules, $validators);
+			preg_match_all(\TYPO3\FLOW3\Validation\ValidatorResolver::PATTERN_MATCH_VALIDATORS, $validationRules, $validators);
 			return in_array('NotEmpty', $validators['validatorName']);
 		}
 		return FALSE;
@@ -339,9 +339,9 @@ class WsdlGenerator {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function renderTemplate($templatePathAndFilename, array $contextVariables) {
-		$templateSource = \F3\FLOW3\Utility\Files::getFileContents($templatePathAndFilename, FILE_TEXT);
+		$templateSource = \TYPO3\FLOW3\Utility\Files::getFileContents($templatePathAndFilename, FILE_TEXT);
 		if ($templateSource === FALSE) {
-			throw new \F3\Fluid\Core\Exception('The template file "' . $templatePathAndFilename . '" could not be loaded.', 1225709595);
+			throw new \TYPO3\Fluid\Core\Exception('The template file "' . $templatePathAndFilename . '" could not be loaded.', 1225709595);
 		}
 		$parsedTemplate = $this->templateParser->parse($templateSource);
 		$renderingContext = $this->buildRenderingContext($contextVariables);
@@ -352,13 +352,13 @@ class WsdlGenerator {
 	 * Build the rendering context
 	 *
 	 * @param array $contextVariables
-	 * @return \F3\Fluid\Core\Rendering\RenderingContextInterface
+	 * @return \TYPO3\Fluid\Core\Rendering\RenderingContextInterface
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function buildRenderingContext(array $contextVariables) {
-		$renderingContext = $this->objectManager->create('F3\Fluid\Core\Rendering\RenderingContextInterface');
-		$renderingContext->injectTemplateVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\TemplateVariableContainer', $contextVariables));
-		$renderingContext->injectViewHelperVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer'));
+		$renderingContext = $this->objectManager->create('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
+		$renderingContext->injectTemplateVariableContainer($this->objectManager->create('TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer', $contextVariables));
+		$renderingContext->injectViewHelperVariableContainer($this->objectManager->create('TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer'));
 		return $renderingContext;
 	}
 

@@ -2,17 +2,20 @@
 # Default settings for the package "Soap"                                #
 #                                                                        #
 
-Soap:
-  # This path will be prefixed with the current web base URI and be suffixed
-  # with the service name.
-  #
-  # If it does not conflict with any other URI you are using in your application,
-  # there's no need to change it.
-  endpointUriBasePath: 'service/soap/'
+TYPO3:
 
-  # Expose the exception information to the client in a SOAP fault. Should
-  # not be used in production context.
-  exposeExceptionInformation: no
+  Soap:
 
-  # Log detailed exception information including a stacktrace of the exception.
-  logDetailedExceptions: yes
+    # This path will be prefixed with the current web base URI and be suffixed
+    # with the service name.
+    #
+    # If it does not conflict with any other URI you are using in your application,
+    # there's no need to change it.
+    endpointUriBasePath: 'service/soap/'
+
+    # Expose the exception information to the client in a SOAP fault. Should
+    # not be used in production context.
+    exposeExceptionInformation: no
+
+    # Log detailed exception information including a stacktrace of the exception.
+    logDetailedExceptions: yes

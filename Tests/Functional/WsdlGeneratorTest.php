@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Tests\Functional;
+namespace TYPO3\Soap\Tests\Functional;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -27,18 +27,18 @@ namespace F3\Soap\Tests\Functional;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class WsdlGeneratorTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function wsdlForSimpleServiceIsCorrect() {
-		$wsdlGenerator = $this->objectManager->get('F3\Soap\WsdlGenerator');
+		$wsdlGenerator = $this->objectManager->get('TYPO3\Soap\WsdlGenerator');
 
-		$wsdl = $wsdlGenerator->generateWsdl('F3\Soap\Tests\Functional\Fixtures\TestService');
+		$wsdl = $wsdlGenerator->generateWsdl('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
 
-		$wsdlFixture = \F3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestService.wsdl', FILE_TEXT);
+		$wsdlFixture = \TYPO3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestService.wsdl', FILE_TEXT);
 
 			// Clean whitespace and linebreaks for better comparison and diff
 		$wsdl = preg_replace('/>\\s*</', ">\n<", $wsdl);

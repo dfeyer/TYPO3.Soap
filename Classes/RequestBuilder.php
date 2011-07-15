@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap;
+namespace TYPO3\Soap;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -31,13 +31,13 @@ class RequestBuilder {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
@@ -61,7 +61,7 @@ class RequestBuilder {
 	 * Parses the endpoint URI found in the current HTTP request and resolves the
 	 * responsible service object name accordingly.
 	 *
-	 * @return \F3\Soap\Request The request object or FALSE if the service object name could not be resolved
+	 * @return \TYPO3\Soap\Request The request object or FALSE if the service object name could not be resolved
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build() {
@@ -73,16 +73,16 @@ class RequestBuilder {
 		list($packageKey, $servicePath) = explode('/', $endpointPath, 2);
 		$servicePath = str_replace('/', '\\', $servicePath);
 
-		$serviceObjectName = sprintf("F3\%s\Service\Soap\%sService", $packageKey, $servicePath);
+		$serviceObjectName = sprintf("TYPO3\CouchDB\%s\Service\Soap\%sService", $packageKey, $servicePath);
 		$serviceObjectName = $this->objectManager->getCaseSensitiveObjectName($serviceObjectName);
 		if ($serviceObjectName === FALSE) {
 			return FALSE;
 		}
 
-		$request = $this->objectManager->create('F3\Soap\Request');
+		$request = $this->objectManager->create('TYPO3\Soap\Request');
 		$request->setServiceObjectName($serviceObjectName);
 		$request->setBaseUri($this->environment->getBaseUri());
-		$request->setWsdlUri(new \F3\FLOW3\Property\DataType\Uri($requestUri . '.wsdl'));
+		$request->setWsdlUri(new \TYPO3\FLOW3\Property\DataType\Uri($requestUri . '.wsdl'));
 		return $request;
 	}
 }

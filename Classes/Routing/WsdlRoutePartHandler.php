@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Routing;
+namespace TYPO3\Soap\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -27,7 +27,7 @@ namespace F3\Soap\Routing;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class WsdlRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
+class WsdlRoutePartHandler extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
 	/**
 	 * @var array

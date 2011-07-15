@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Tests\Functional\Fixtures;
+namespace TYPO3\Soap\Tests\Functional\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -31,19 +31,19 @@ namespace F3\Soap\Tests\Functional\Fixtures;
 class DtoWrapper {
 
 	/**
-	 * @var array<\F3\Soap\Tests\Functional\Fixtures\Dto>
+	 * @var array<\TYPO3\Soap\Tests\Functional\Fixtures\Dto>
 	 */
 	protected $dtos = array();
 
 	/**
-	 * @return array<\F3\Soap\Tests\Functional\Fixtures\Dto>
+	 * @return array<\TYPO3\Soap\Tests\Functional\Fixtures\Dto>
 	 */
 	public function getDtos() {
 		return $this->dtos;
 	}
 
 	/**
-	 * @param array<\F3\Soap\Tests\Functional\Fixtures\Dto> $dtos
+	 * @param array<\TYPO3\Soap\Tests\Functional\Fixtures\Dto> $dtos
 	 * @return void
 	 */
 	public function setDtos(array $dtos) {

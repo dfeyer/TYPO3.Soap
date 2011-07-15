@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Tests\Unit\Fixtures;
+namespace TYPO3\Soap\Tests\Unit\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -43,12 +43,12 @@ class MyService {
 	/**
 	 * Bar operation
 	 *
-	 * @param \F3\Soap\Tests\Unit\Fixtures\MyType $objectParameter
+	 * @param \TYPO3\Soap\Tests\Unit\Fixtures\MyType $objectParameter
 	 * @param array<integer> $arrayParameter
 	 * @return array<string> Array of strings
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function bar(\F3\Soap\Tests\Unit\Fixtures\MyType $objectParameter, array $arrayParameter) {
+	public function bar(\TYPO3\Soap\Tests\Unit\Fixtures\MyType $objectParameter, array $arrayParameter) {
 
 	}
 

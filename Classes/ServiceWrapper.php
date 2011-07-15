@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap;
+namespace TYPO3\Soap;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -39,28 +39,28 @@ class ServiceWrapper {
 	protected $service;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Property\PropertyMapper
+	 * @var \TYPO3\FLOW3\Property\PropertyMapper
 	 */
 	protected $propertyMapper;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
-	 * @var \F3\Soap\Request
+	 * @var \TYPO3\Soap\Request
 	 */
 	protected $request;
 
@@ -78,33 +78,33 @@ class ServiceWrapper {
 	/**
 	 * Inject the reflection service
 	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Inject the property mapper
 	 *
-	 * @param \F3\FLOW3\Property\PropertyMapper $propertyMapper
+	 * @param \TYPO3\FLOW3\Property\PropertyMapper $propertyMapper
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function injectPropertyMapper(\F3\FLOW3\Property\PropertyMapper $propertyMapper) {
+	public function injectPropertyMapper(\TYPO3\FLOW3\Property\PropertyMapper $propertyMapper) {
 		$this->propertyMapper = $propertyMapper;
 	}
 
 	/**
 	 * Inject the object manager
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -134,7 +134,7 @@ class ServiceWrapper {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function __call($methodName, $arguments) {
-		if (!$this->request instanceof \F3\Soap\Request) throw new \F3\FLOW3\Exception('No SOAP request set', 1297091911);
+		if (!$this->request instanceof \TYPO3\Soap\Request) throw new \TYPO3\FLOW3\Exception('No SOAP request set', 1297091911);
 		$this->initializeCall($this->request);
 		$className = get_class($this->service);
 		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
@@ -186,7 +186,7 @@ class ServiceWrapper {
 				return $arrayValues;
 			}
 		} else {
-			throw new \F3\FLOW3\Exception('Could not parse array type for parameter ' . $parameterName . ' from type "' . $parameterType . '"', 1297166416);
+			throw new \TYPO3\FLOW3\Exception('Could not parse array type for parameter ' . $parameterName . ' from type "' . $parameterType . '"', 1297166416);
 		}
 	}
 
@@ -194,11 +194,11 @@ class ServiceWrapper {
 	 * AOP method template to intercept a SOAP request and
 	 * set headers before initializing security
 	 *
-	 * @param \F3\Soap\Request $request
+	 * @param \TYPO3\Soap\Request $request
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function initializeCall(\F3\Soap\Request $request) {}
+	protected function initializeCall(\TYPO3\Soap\Request $request) {}
 
 	/**
 	 * Sets SOAP headers from the <headers> SOAP header. Will be indirectly
@@ -211,7 +211,7 @@ class ServiceWrapper {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function headers($arguments) {
-		$headers = \F3\FLOW3\Utility\Arrays::convertObjectToArray($arguments);
+		$headers = \TYPO3\FLOW3\Utility\Arrays::convertObjectToArray($arguments);
 		$this->request->setSoapHeaders($headers);
 	}
 
@@ -230,7 +230,7 @@ class ServiceWrapper {
 	protected function handleException($exception, $className, $methodName) {
 		$this->catchedException = $exception;
 		$exceptionClassName = get_class($exception);
-		if ($exception instanceof \F3\FLOW3\Security\Exception\AuthenticationRequiredException) {
+		if ($exception instanceof \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException) {
 			throw new \SoapFault('Client', 'Authentication required', NULL, 'Security_AuthenticationRequired');
 		}
 		$expectedException = $this->methodThrowsException($className, $methodName, $exceptionClassName);
@@ -244,7 +244,7 @@ class ServiceWrapper {
 				$details = $stackTrace;
 				$identifier = NULL;
 			} else {
-				$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
+				$identifier = \TYPO3\FLOW3\Utility\Algorithms::generateUUID();
 				$message = 'Internal server error. The error was logged as ' . $identifier;
 				$details = $identifier;
 			}
@@ -269,7 +269,7 @@ class ServiceWrapper {
 		if (isset($methodTagsValues['throws'])) {
 			if (is_array($methodTagsValues['throws'])) {
 				foreach ($methodTagsValues['throws'] as $throwsDefinition) {
-					list($throwsType,) = \F3\FLOW3\Utility\Arrays::trimExplode(' ', $throwsDefinition, TRUE);
+					list($throwsType,) = \TYPO3\FLOW3\Utility\Arrays::trimExplode(' ', $throwsDefinition, TRUE);
 					if (ltrim($exceptionClassName, '\\') == ltrim($throwsType, '\\')) {
 						return TRUE;
 					}
@@ -325,7 +325,7 @@ class ServiceWrapper {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function convertStdClassToObject($argument, $className, $parameterName) {
-		$source = \F3\FLOW3\Utility\Arrays::convertObjectToArray($argument);
+		$source = \TYPO3\FLOW3\Utility\Arrays::convertObjectToArray($argument);
 
 		foreach ($source as $propertyName => $propertyValue) {
 			$annotation = $this->getMethodReturnAnnotation($className, 'get' . ucfirst($propertyName));
@@ -339,7 +339,7 @@ class ServiceWrapper {
 		if ($target !== NULL) {
 			return $target;
 		} else {
-			throw new \F3\Soap\MappingException('Could not map argument ' . $parameterName . ' to type ' . $className, $this->propertyMapper->getMessages());
+			throw new \TYPO3\Soap\MappingException('Could not map argument ' . $parameterName . ' to type ' . $className, $this->propertyMapper->getMessages());
 		}
 	}
 
@@ -360,14 +360,14 @@ class ServiceWrapper {
 				'description' => count($returnAnnotations) > 1 ? $returnAnnotations[1] : NULL
 			);
 		} else {
-			throw new \F3\FLOW3\Exception('Could not get return value for ' . $className . '::' . $methodName, 1305130721);
+			throw new \TYPO3\FLOW3\Exception('Could not get return value for ' . $className . '::' . $methodName, 1305130721);
 		}
 	}
 
 	/**
 	 * Set the current SOAP request
 	 *
-	 * @param \F3\Soap\Request $request
+	 * @param \TYPO3\Soap\Request $request
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */

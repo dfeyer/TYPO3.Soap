@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap;
+namespace TYPO3\Soap;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -28,7 +28,7 @@ namespace F3\Soap;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class Request extends \F3\FLOW3\MVC\Request {
+class Request extends \TYPO3\FLOW3\MVC\Request {
 
 	/**
 	 * The fully qualified object name of the service this request refers to
@@ -40,14 +40,14 @@ class Request extends \F3\FLOW3\MVC\Request {
 	/**
 	 * The base URI for this request - ie. the host and path leading to which all FLOW3 URI paths are relative
 	 *
-	 * @var \F3\FLOW3\Property\DataType\Uri
+	 * @var \TYPO3\FLOW3\Property\DataType\Uri
 	 */
 	protected $baseUri;
 
 	/**
 	 * URI pointing to the WSDL of the currently used service
 	 *
-	 * @var \F3\FLOW3\Property\DataType\Uri
+	 * @var \TYPO3\FLOW3\Property\DataType\Uri
 	 */
 	protected $wsdlUri;
 
@@ -87,18 +87,18 @@ class Request extends \F3\FLOW3\MVC\Request {
 	/**
 	 * Sets the base URI
 	 *
-	 * @param \F3\FLOW3\Property\DataType\Uri $baseUri
+	 * @param \TYPO3\FLOW3\Property\DataType\Uri $baseUri
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setBaseUri(\F3\FLOW3\Property\DataType\Uri $baseUri) {
+	public function setBaseUri(\TYPO3\FLOW3\Property\DataType\Uri $baseUri) {
 		$this->baseUri = $baseUri;
 	}
 
 	/**
 	 * Returns the base URI
 	 *
-	 * @return \F3\FLOW3\Property\DataType\Uri URI of this web request
+	 * @return \TYPO3\FLOW3\Property\DataType\Uri URI of this web request
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBaseUri() {
@@ -108,18 +108,18 @@ class Request extends \F3\FLOW3\MVC\Request {
 	/**
 	 * Sets the WSDL URI
 	 *
-	 * @param \F3\FLOW3\Property\DataType\Uri $wsdlUri
+	 * @param \TYPO3\FLOW3\Property\DataType\Uri $wsdlUri
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setWsdlUri(\F3\FLOW3\Property\DataType\Uri $wsdlUri) {
+	public function setWsdlUri(\TYPO3\FLOW3\Property\DataType\Uri $wsdlUri) {
 		$this->wsdlUri = $wsdlUri;
 	}
 
 	/**
 	 * Returns the WSDL URI
 	 *
-	 * @return \F3\FLOW3\Property\DataType\Uri URI pointing to the WSDL
+	 * @return \TYPO3\FLOW3\Property\DataType\Uri URI pointing to the WSDL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getWsdlUri() {

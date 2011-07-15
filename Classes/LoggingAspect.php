@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap;
+namespace TYPO3\Soap;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -32,30 +32,30 @@ class LoggingAspect {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
 	 * Advice for logging calls of the request handler's canHandleRequest() method.
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface
 	 * @return void
-	 * @after method(F3\Soap\RequestHandler->canHandleRequest())
+	 * @after method(TYPO3\Soap\RequestHandler->canHandleRequest())
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function logCanHandleRequestCalls(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logCanHandleRequestCalls(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		switch ($joinPoint->getResult()) {
-			case \F3\Soap\RequestHandler::CANHANDLEREQUEST_OK :
+			case \TYPO3\Soap\RequestHandler::CANHANDLEREQUEST_OK :
 				$message = 'Detected HTTP POST request at valid endpoint URI.';
 			break;
-			case \F3\Soap\RequestHandler::CANHANDLEREQUEST_MISSINGSOAPEXTENSION :
+			case \TYPO3\Soap\RequestHandler::CANHANDLEREQUEST_MISSINGSOAPEXTENSION :
 				$message = 'PHP SOAP extension not installed.';
 			break;
-			case \F3\Soap\RequestHandler::CANHANDLEREQUEST_NOPOSTREQUEST :
+			case \TYPO3\Soap\RequestHandler::CANHANDLEREQUEST_NOPOSTREQUEST :
 				$message = 'Won\'t handle request because it is not HTTP POST.';
 			break;
-			case \F3\Soap\RequestHandler::CANHANDLEREQUEST_WRONGSERVICEURI :
+			case \TYPO3\Soap\RequestHandler::CANHANDLEREQUEST_WRONGSERVICEURI :
 				$message = 'Won\'t handle request because it is not the expected endpoint URI.';
 			break;
 			default :
@@ -67,33 +67,33 @@ class LoggingAspect {
 	/**
 	 * Advice for logging handleRequest() calls
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface
 	 * @return void
-	 * @before method(F3\Soap\RequestHandler->handleRequest())
+	 * @before method(TYPO3\Soap\RequestHandler->handleRequest())
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function logBeforeHandleRequestCalls(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logBeforeHandleRequestCalls(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$this->systemLogger->log('Handling SOAP request.', LOG_INFO);
 	}
 
 	/**
 	 * Advice for logging handleRequest() calls
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface
 	 * @return void
-	 * @after method(F3\Soap\RequestHandler->handleRequest())
+	 * @after method(TYPO3\Soap\RequestHandler->handleRequest())
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function logAfterHandleRequestCalls(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logAfterHandleRequestCalls(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$result = $joinPoint->getResult();
 		if ($result instanceof \Exception) {
 			$this->systemLogger->log('handleRequest() exited with exception:' . $result, LOG_ERR);
 		} else {
 			switch ($result) {
-				case \F3\Soap\RequestHandler::CANHANDLEREQUEST_OK :
+				case \TYPO3\Soap\RequestHandler::CANHANDLEREQUEST_OK :
 					$this->systemLogger->log('handleRequest() exited successfully', LOG_DEBUG);
 				break;
-				case \F3\Soap\RequestHandler::HANDLEREQUEST_NOVALIDREQUEST :
+				case \TYPO3\Soap\RequestHandler::HANDLEREQUEST_NOVALIDREQUEST :
 					$this->systemLogger->log('Could not build request - probably no SOAP service matched the given endpoint URI', LOG_NOTICE);
 				break;
 				default :

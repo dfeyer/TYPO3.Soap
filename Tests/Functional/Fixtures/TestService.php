@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Tests\Functional\Fixtures;
+namespace TYPO3\Soap\Tests\Functional\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -38,7 +38,7 @@ class TestService {
 	 */
 	public function ping($value) {
 		if ($value === 'throw') {
-			throw new \F3\FLOW3\Exception('Some exception occured', 1305541506);
+			throw new \TYPO3\FLOW3\Exception('Some exception occured', 1305541506);
 		}
 		return $value;
 	}
@@ -46,11 +46,11 @@ class TestService {
 	/**
 	 * Concatenate the name multiple times
 	 *
-	 * @param \F3\Soap\Tests\Functional\Fixtures\Dto $value The value as object
+	 * @param \TYPO3\Soap\Tests\Functional\Fixtures\Dto $value The value as object
 	 * @return string The result
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function multiply(\F3\Soap\Tests\Functional\Fixtures\Dto $value) {
+	public function multiply(\TYPO3\Soap\Tests\Functional\Fixtures\Dto $value) {
 		$result = '';
 		for ($i = 0; $i < $value->getSize(); $i++) {
 			$result .= $value->getName();
@@ -61,7 +61,7 @@ class TestService {
 	/**
 	 * Concatenate the given names
 	 *
-	 * @param array<\F3\Soap\Tests\Functional\Fixtures\Dto> $values The values as objects
+	 * @param array<\TYPO3\Soap\Tests\Functional\Fixtures\Dto> $values The values as objects
 	 * @return string The result
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
@@ -76,11 +76,11 @@ class TestService {
 	/**
 	 * Concatenate the given names
 	 *
-	 * @param \F3\Soap\Tests\Functional\Fixtures\DtoWrapper $wrapper The wrapped objects
+	 * @param \TYPO3\Soap\Tests\Functional\Fixtures\DtoWrapper $wrapper The wrapped objects
 	 * @return string The result
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function wrappedConcat(\F3\Soap\Tests\Functional\Fixtures\DtoWrapper $wrapper) {
+	public function wrappedConcat(\TYPO3\Soap\Tests\Functional\Fixtures\DtoWrapper $wrapper) {
 		$result = '';
 		$values = $wrapper->getDtos();
 		foreach ($values as $value) {

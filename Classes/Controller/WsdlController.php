@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Controller;
+namespace TYPO3\Soap\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -27,11 +27,11 @@ namespace F3\Soap\Controller;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class WsdlController extends \F3\FLOW3\MVC\Controller\ActionController {
+class WsdlController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
-	 * @var \F3\Soap\WsdlGenerator
+	 * @var \TYPO3\Soap\WsdlGenerator
 	 */
 	protected $wsdlGenerator;
 
@@ -53,7 +53,7 @@ class WsdlController extends \F3\FLOW3\MVC\Controller\ActionController {
 			list($packageKey, $servicePath) = explode('/', $wsdlUri, 2);
 			$servicePath = str_replace('/', '\\', $servicePath);
 
-			$serviceObjectName = sprintf("F3\%s\Service\Soap\%sService", $packageKey, $servicePath);
+			$serviceObjectName = sprintf("TYPO3\CouchDB\%s\Service\Soap\%sService", $packageKey, $servicePath);
 			$serviceObjectName = $this->objectManager->getCaseSensitiveObjectName($serviceObjectName);
 
 			if ($serviceObjectName === FALSE) {

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap;
+namespace TYPO3\Soap;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -27,10 +27,10 @@ namespace F3\Soap;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class MappingException extends \F3\FLOW3\Exception {
+class MappingException extends \TYPO3\FLOW3\Exception {
 
 	/**
-	 * @var \F3\FLOW3\Property\MappingResults
+	 * @var \TYPO3\FLOW3\Property\MappingResults
 	 */
 	protected $mappingResults;
 
@@ -38,15 +38,15 @@ class MappingException extends \F3\FLOW3\Exception {
 	 * Constructs this exception
 	 *
 	 * @param string $message The exception message
-	 * @param \F3\FLOW3\Property\MappingResults $mappingResults
+	 * @param \TYPO3\FLOW3\Property\MappingResults $mappingResults
 	 */
-	public function __construct($message, \F3\FLOW3\Property\MappingResults $mappingResults) {
+	public function __construct($message, \TYPO3\FLOW3\Property\MappingResults $mappingResults) {
 		parent::__construct($message, '1288952996');
 		$this->mappingResults = $mappingResults;
 	}
 
 	/**
-	 * @return \F3\FLOW3\Property\MappingResults
+	 * @return \TYPO3\FLOW3\Property\MappingResults
 	 */
 	public function getMappingResults() {
 		return $this->mappingResults;

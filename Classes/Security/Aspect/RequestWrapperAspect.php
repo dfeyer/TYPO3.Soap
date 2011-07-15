@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap\Security\Aspect;
+namespace TYPO3\Soap\Security\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -34,29 +34,29 @@ namespace F3\Soap\Security\Aspect;
 class RequestWrapperAspect {
 
 	/**
-	 * @var F3\FLOW3\Security\Context A reference to the security context
+	 * @var TYPO3\FLOW3\Security\Context A reference to the security context
 	 */
 	protected $securityContext;
 
 	/**
 	 * Constructor
 	 *
-	 * @param F3\FLOW3\Security\Context $securityContext
+	 * @param TYPO3\FLOW3\Security\Context $securityContext
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function __construct(\F3\FLOW3\Security\Context $securityContext) {
+	public function __construct(\TYPO3\FLOW3\Security\Context $securityContext) {
 		$this->securityContext = $securityContext;
 	}
 
 	/**
 	 * Advices the service wrapper to initialize the security framework
 	 *
-	 * @afterreturning method(F3\Soap\ServiceWrapper->initializeCall()) && setting(FLOW3.security.enable)
-	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @afterreturning method(TYPO3\Soap\ServiceWrapper->initializeCall()) && setting(TYPO3.FLOW3.security.enable)
+	 * @param TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function initializeSecurity(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function initializeSecurity(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$request = $joinPoint->getMethodArgument('request');
 		$this->securityContext->initialize($request);
 	}

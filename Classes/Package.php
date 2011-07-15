@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap;
+namespace TYPO3\Soap;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -22,7 +22,7 @@ namespace F3\Soap;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Package\Package as BasePackage;
+use \TYPO3\FLOW3\Package\Package as BasePackage;
 
 /**
  * The Soap Package

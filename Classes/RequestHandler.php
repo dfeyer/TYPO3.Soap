@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Soap;
+namespace TYPO3\Soap;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -27,7 +27,7 @@ namespace F3\Soap;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
+class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 
 	const HANDLEREQUEST_OK = 1;
 	const HANDLEREQUEST_NOVALIDREQUEST = -1;
@@ -39,18 +39,18 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\Soap\RequestBuilder
+	 * @var \TYPO3\Soap\RequestBuilder
 	 */
 	protected $requestBuilder;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
@@ -69,11 +69,11 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	}
 
 	/**
-	 * @param \F3\Soap\RequestBuilder $requestBuilder
+	 * @param \TYPO3\Soap\RequestBuilder $requestBuilder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectRequestBuilder(\F3\Soap\RequestBuilder $requestBuilder) {
+	public function injectRequestBuilder(\TYPO3\Soap\RequestBuilder $requestBuilder) {
 		$this->requestBuilder = $requestBuilder;
 	}
 
@@ -98,13 +98,13 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 
 		$soapServer = new \SoapServer((string)$request->getWsdlUri(), $serverOptions);
 		$serviceObject = $this->objectManager->get($request->getServiceObjectName());
-		$serviceWrapper = $this->objectManager->create('F3\Soap\ServiceWrapper', $serviceObject);
+		$serviceWrapper = $this->objectManager->create('TYPO3\Soap\ServiceWrapper', $serviceObject);
 		$serviceWrapper->setRequest($request);
 		$soapServer->setObject($serviceWrapper);
 
 		$soapServer->handle($request->getBody());
 		if ($serviceWrapper->getCatchedException() !== NULL) {
-			throw new \F3\FLOW3\Exception('SOAP fault emitted', 1305541462, $serviceWrapper->getCatchedException());
+			throw new \TYPO3\FLOW3\Exception('SOAP fault emitted', 1305541462, $serviceWrapper->getCatchedException());
 		}
 
 		return self::HANDLEREQUEST_OK;

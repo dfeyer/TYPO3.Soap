@@ -2,6 +2,7 @@
 # Development settings for the package "Soap"                            #
 #                                                                        #
 
-Soap:
-  exposeExceptionInformation: yes
-  logDetailedExceptions: no
+TYPO3:
+  Soap:
+    exposeExceptionInformation: yes
+    logDetailedExceptions: no
