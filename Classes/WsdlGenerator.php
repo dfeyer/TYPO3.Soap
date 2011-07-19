@@ -75,16 +75,6 @@ class WsdlGenerator {
 	protected $operations;
 
 	/**
-	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
-
-	/**
 	 * Inject the settings
 	 *
 	 * @param array $settings
@@ -129,9 +119,11 @@ class WsdlGenerator {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function getServicePath($className) {
-		$classParts = explode('\\', $className);
-		$classParts[count($classParts) - 1] = substr($classParts[count($classParts) - 1], 0, -7);
-		return $this->settings['endpointUriBasePath'] . strtolower($classParts[1] . '/' . implode('/', array_slice($classParts, 4)));
+		$classParts = implode('/', explode('\\', substr($className, 0, -strlen('Service'))));
+		$classParts = str_replace('/Service/Soap/', '/', $classParts);
+		$packageKey = $this->objectManager->getPackageKeyByObjectName($className);
+		$classParts = str_replace(strtr($packageKey, '.', '/'), '', $classParts);
+		return $this->settings['endpointUriBasePath'] . strtolower($packageKey . $classParts);
 	}
 
 	/**
@@ -147,6 +139,9 @@ class WsdlGenerator {
 		$operations = array();
 		$complexTypes = array();
 		$typeMapping = $this->defaultTypeMap;
+		if (!class_exists($className)) {
+			throw new \TYPO3\FLOW3\Exception('Class "' . $className . '" is not known', 1311091776);
+		}
 		$methodNames = get_class_methods($className);
 		foreach ($methodNames as $methodName) {
 			if (!$this->reflectionService->isMethodPublic($className, $methodName) || strpos($methodName, 'inject') === 0) continue;

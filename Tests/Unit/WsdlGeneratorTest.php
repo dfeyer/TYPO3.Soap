@@ -49,7 +49,7 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService->expects($this->any())->method('isClassReflected')->will($this->returnValue(FALSE));
 
 		$wsdlGenerator = new \TYPO3\Soap\WsdlGenerator();
-		$wsdlGenerator->injectReflectionService($mockReflectionService);
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($wsdlGenerator, 'reflectionService', $mockReflectionService, TRUE);
 
 		$wsdlGenerator->generateWsdl('TYPO3\Soap\Tests\Unit\Fixtures\MyUnknownService');
 	}
@@ -62,20 +62,24 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('isClassReflected')->will($this->returnValue(TRUE));
 
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->any())->method('getPackageKeyByObjectName')->will($this->returnValue('TYPO3.Soap'));
+
 		$wsdlGenerator = $this->getMock('TYPO3\Soap\WsdlGenerator', array('reflectOperations', 'renderTemplate'));
-		$wsdlGenerator->injectReflectionService($mockReflectionService);
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($wsdlGenerator, 'reflectionService', $mockReflectionService, TRUE);
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($wsdlGenerator, 'objectManager', $mockObjectManager, TRUE);
 
 		$wsdlGenerator->expects($this->once())->method('reflectOperations')->will($this->returnValue(array(
 			'messages' => array('foo'),
 			'complexTypes' => array('bar'),
 			'operations' => array('baz')
 		)));
-		$wsdlGenerator->expects($this->once())->method('renderTemplate')->with('resource://Soap/Private/Templates/Definitions.xml', array(
+		$wsdlGenerator->expects($this->once())->method('renderTemplate')->with('resource://TYPO3.Soap/Private/Templates/Definitions.xml', array(
 			'messages' => array('foo'),
 			'complexTypes' => array('bar'),
 			'operations' => array('baz'),
 			'serviceName' => 'MyService',
-			'servicePath' => 'soap/fixtures/my'
+			'servicePath' => 'typo3.soap/tests/unit/fixtures/my'
 		))->will($this->returnValue('<WSDL>'));
 		$result = $wsdlGenerator->generateWsdl('TYPO3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals('<WSDL>', $result);
@@ -88,8 +92,8 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function reflectOperationsCollectsPublicMethodsAsOperations() {
 		$mockReflectionService = $this->buildMockReflectionServiceForTestService();
 
-		$wsdlGenerator = $this->getMock('TYPO3\Soap\WsdlGenerator', array('dummy'));
-		$wsdlGenerator->injectReflectionService($mockReflectionService);
+		$wsdlGenerator = new \TYPO3\Soap\WsdlGenerator();
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($wsdlGenerator, 'reflectionService', $mockReflectionService, TRUE);
 
 		$schema = $wsdlGenerator->reflectOperations('TYPO3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals(array(
@@ -112,7 +116,7 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService = $this->buildMockReflectionServiceForTestService();
 
 		$wsdlGenerator = $this->getMock('TYPO3\Soap\WsdlGenerator', array('dummy'));
-		$wsdlGenerator->injectReflectionService($mockReflectionService);
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($wsdlGenerator, 'reflectionService', $mockReflectionService, TRUE);
 
 		$schema = $wsdlGenerator->reflectOperations('TYPO3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals(array(
@@ -172,7 +176,7 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService = $this->buildMockReflectionServiceForTestService();
 
 		$wsdlGenerator = $this->getMock('TYPO3\Soap\WsdlGenerator', array('dummy'));
-		$wsdlGenerator->injectReflectionService($mockReflectionService);
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($wsdlGenerator, 'reflectionService', $mockReflectionService, TRUE);
 
 		$schema = $wsdlGenerator->reflectOperations('TYPO3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals(array(

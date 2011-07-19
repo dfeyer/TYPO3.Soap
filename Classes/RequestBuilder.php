@@ -73,7 +73,7 @@ class RequestBuilder {
 		list($packageKey, $servicePath) = explode('/', $endpointPath, 2);
 		$servicePath = str_replace('/', '\\', $servicePath);
 
-		$serviceObjectName = sprintf("TYPO3\CouchDB\%s\Service\Soap\%sService", $packageKey, $servicePath);
+		$serviceObjectName = sprintf("%s\Service\Soap\%sService", implode('\\', explode('.', $packageKey)), $servicePath);
 		$serviceObjectName = $this->objectManager->getCaseSensitiveObjectName($serviceObjectName);
 		if ($serviceObjectName === FALSE) {
 			return FALSE;

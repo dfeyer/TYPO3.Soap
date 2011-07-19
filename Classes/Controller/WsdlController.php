@@ -45,6 +45,7 @@ class WsdlController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @param string $wsdlUri The WSDL URI part
 	 * @return string
+	 * @todo Implement functional test for route handler and this action
 	 */
 	public function showAction($wsdlUri) {
 		if (isset($this->settings['staticWsdlResources'][$wsdlUri])) {
@@ -53,7 +54,7 @@ class WsdlController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 			list($packageKey, $servicePath) = explode('/', $wsdlUri, 2);
 			$servicePath = str_replace('/', '\\', $servicePath);
 
-			$serviceObjectName = sprintf("TYPO3\CouchDB\%s\Service\Soap\%sService", $packageKey, $servicePath);
+			$serviceObjectName = sprintf("%s\Service\Soap\%sService", implode('\\', explode('.', $packageKey)), $servicePath);
 			$serviceObjectName = $this->objectManager->getCaseSensitiveObjectName($serviceObjectName);
 
 			if ($serviceObjectName === FALSE) {

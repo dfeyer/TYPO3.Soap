@@ -9,7 +9,7 @@
   name: 'WSDL'
   uriPattern: '{wsdlUri}'
   defaults:
-    '@package':    'TYPO3\CouchDB.Soap'
+    '@package':    'TYPO3.Soap'
     '@controller': 'Wsdl'
     '@action':     'show'
   routeParts:

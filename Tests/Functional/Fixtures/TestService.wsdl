@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-	xmlns:tns="http://tempuri.org/service/soap/soap/fixtures/test"
+	xmlns:tns="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	name="TestService"
-	targetNamespace="http://tempuri.org/service/soap/soap/fixtures/test">
+	targetNamespace="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test">
 	<wsdl:types>
-		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://tempuri.org/service/soap/soap/fixtures/test">
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test">
 			<xsd:complexType name="Dto">
 				<xsd:sequence>
 					<xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1" >
@@ -165,69 +165,69 @@
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
 
 		<wsdl:operation name="ping">
-			<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/ping" />
+			<soap:operation soapAction="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test/ping" />
 			<wsdl:input>
-				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test" />
 			</wsdl:input>
 			<wsdl:output>
-				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test" />
 			</wsdl:output>
 		</wsdl:operation>
 
 		<wsdl:operation name="multiply">
-			<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/multiply" />
+			<soap:operation soapAction="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test/multiply" />
 			<wsdl:input>
-				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test" />
 			</wsdl:input>
 			<wsdl:output>
-				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test" />
 			</wsdl:output>
 		</wsdl:operation>
 
 		<wsdl:operation name="concat">
-			<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/concat" />
+			<soap:operation soapAction="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test/concat" />
 			<wsdl:input>
-				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test" />
 			</wsdl:input>
 			<wsdl:output>
-				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test" />
 			</wsdl:output>
 		</wsdl:operation>
 
 		<wsdl:operation name="wrappedConcat">
-			<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/wrappedConcat" />
+			<soap:operation soapAction="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test/wrappedConcat" />
 			<wsdl:input>
-				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test" />
 			</wsdl:input>
 			<wsdl:output>
-				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test" />
 			</wsdl:output>
 		</wsdl:operation>
 
 		<wsdl:operation name="sum">
-			<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/sum" />
+			<soap:operation soapAction="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test/sum" />
 			<wsdl:input>
-				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test" />
 			</wsdl:input>
 			<wsdl:output>
-				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test" />
 			</wsdl:output>
 		</wsdl:operation>
 
 		<wsdl:operation name="hello">
-			<soap:operation soapAction="http://tempuri.org/service/soap/soap/fixtures/test/hello" />
+			<soap:operation soapAction="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test/hello" />
 			<wsdl:input>
-				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test" />
 			</wsdl:input>
 			<wsdl:output>
-				<soap:body use="literal" namespace="http://tempuri.org/service/soap/soap/fixtures/test" />
+				<soap:body use="literal" namespace="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test" />
 			</wsdl:output>
 		</wsdl:operation>
 	</wsdl:binding>
 
 	<wsdl:service name="TestService">
 		<wsdl:port binding="tns:TestServiceSoapBinding" name="TestServiceSoapPort">
-			<soap:address location="{baseUrl}service/soap/soap/fixtures/test" />
+			<soap:address location="{baseUrl}service/soap/typo3.soap/tests/functional/fixtures/test" />
 		</wsdl:port>
 	</wsdl:service>
 </wsdl:definitions>
