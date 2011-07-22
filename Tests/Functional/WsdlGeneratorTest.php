@@ -47,5 +47,7 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertEquals($wsdlFixture, $wsdl);
 	}
 
+	// TODO Add test for path and namespace mapping
+
 }
 ?>

@@ -47,12 +47,25 @@ class RequestBuilder {
 	protected $settings = array();
 
 	/**
+	 * @var array
+	 */
+	protected $pathToObjectNameMapping;
+
+	/**
 	 * @param array $settings
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
+
+		$this->pathToObjectNameMapping = array();
+		if (isset($this->settings['mapping'])) {
+			foreach ($this->settings['mapping'] as $objectName => $mapping) {
+				$this->pathToObjectNameMapping[$mapping['path']] = $objectName;
+			}
+		}
 	}
 
 	/**
@@ -63,6 +76,7 @@ class RequestBuilder {
 	 *
 	 * @return \TYPO3\Soap\Request The request object or FALSE if the service object name could not be resolved
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function build() {
 		$requestUri = $this->environment->getRequestUri();
@@ -70,10 +84,15 @@ class RequestBuilder {
 		if (substr_count($endpointPath, '/') < 2) {
 			return FALSE;
 		}
-		list($packageKey, $servicePath) = explode('/', $endpointPath, 2);
-		$servicePath = str_replace('/', '\\', $servicePath);
 
-		$serviceObjectName = sprintf("%s\Service\Soap\%sService", implode('\\', explode('.', $packageKey)), $servicePath);
+		if (isset($this->pathToObjectNameMapping[$endpointPath])) {
+			$serviceObjectName = $this->pathToObjectNameMapping[$endpointPath];
+		} else {
+			list($packageKey, $servicePath) = explode('/', $endpointPath, 2);
+			$servicePath = str_replace('/', '\\', $servicePath);
+			$serviceObjectName = sprintf("%s\Service\Soap\%sService", implode('\\', explode('.', $packageKey)), $servicePath);
+		}
+
 		$serviceObjectName = $this->objectManager->getCaseSensitiveObjectName($serviceObjectName);
 		if ($serviceObjectName === FALSE) {
 			return FALSE;
@@ -85,6 +104,7 @@ class RequestBuilder {
 		$request->setWsdlUri(new \TYPO3\FLOW3\Property\DataType\Uri($requestUri . '.wsdl'));
 		return $request;
 	}
+
 }
 
 ?>

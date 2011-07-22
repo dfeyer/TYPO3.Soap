@@ -1,6 +1,6 @@
 <soapenv:Envelope
 	xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-	xmlns:test="http://tempuri.org/service/soap/soap/fixtures/test">
+	xmlns:test="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test">
    <soapenv:Header/>
    <soapenv:Body>
       <test:ping>

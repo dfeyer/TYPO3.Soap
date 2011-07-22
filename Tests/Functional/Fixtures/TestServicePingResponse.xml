@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope
 	xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
-	xmlns:ns1="http://tempuri.org/service/soap/soap/fixtures/test">
+	xmlns:ns1="http://tempuri.org/service/soap/typo3.soap/tests/functional/fixtures/test">
 	<SOAP-ENV:Body>
 		<ns1:pingResponse>
 			<returnValue>Hello, echo!</returnValue>

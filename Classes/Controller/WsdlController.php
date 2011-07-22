@@ -36,6 +36,26 @@ class WsdlController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	protected $wsdlGenerator;
 
 	/**
+	 * @var array
+	 */
+	protected $pathToObjectNameMapping;
+
+	/**
+	 * Initialize mappings
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function initializeAction() {
+		$this->pathToObjectNameMapping = array();
+		if (isset($this->settings['mapping'])) {
+			foreach ($this->settings['mapping'] as $objectName => $mapping) {
+				$this->pathToObjectNameMapping[$mapping['path']] = $objectName;
+			}
+		}
+	}
+
+	/**
 	 * Get the WSDL for a WSDL URI part (e.g. 'mypackage/someservicename').
 	 * The WSDL will be generated using reflection on the service class or it
 	 * will use the configured file from staticWsdlResources.
@@ -51,10 +71,14 @@ class WsdlController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 		if (isset($this->settings['staticWsdlResources'][$wsdlUri])) {
 			$wsdlContent = file_get_contents($this->settings['staticWsdlResources'][$wsdlUri]);
 		} else {
-			list($packageKey, $servicePath) = explode('/', $wsdlUri, 2);
-			$servicePath = str_replace('/', '\\', $servicePath);
+			if (isset($this->pathToObjectNameMapping[$wsdlUri])) {
+				$serviceObjectName = $this->pathToObjectNameMapping[$wsdlUri];
+			} else {
+				list($packageKey, $servicePath) = explode('/', $wsdlUri, 2);
+				$servicePath = str_replace('/', '\\', $servicePath);
 
-			$serviceObjectName = sprintf("%s\Service\Soap\%sService", implode('\\', explode('.', $packageKey)), $servicePath);
+				$serviceObjectName = sprintf("%s\Service\Soap\%sService", implode('\\', explode('.', $packageKey)), $servicePath);
+			}
 			$serviceObjectName = $this->objectManager->getCaseSensitiveObjectName($serviceObjectName);
 
 			if ($serviceObjectName === FALSE) {

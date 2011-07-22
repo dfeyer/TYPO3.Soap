@@ -79,7 +79,8 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'complexTypes' => array('bar'),
 			'operations' => array('baz'),
 			'serviceName' => 'MyService',
-			'servicePath' => 'typo3.soap/tests/unit/fixtures/my'
+			'servicePath' => 'typo3.soap/tests/unit/fixtures/my',
+			'namespace' => 'http://tempuri.org/typo3.soap/tests/unit/fixtures/my'
 		))->will($this->returnValue('<WSDL>'));
 		$result = $wsdlGenerator->generateWsdl('TYPO3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals('<WSDL>', $result);

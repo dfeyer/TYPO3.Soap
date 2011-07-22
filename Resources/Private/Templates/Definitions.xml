@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-	xmlns:tns="http://tempuri.org/{servicePath}"
+	xmlns:tns="{namespace}"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	name="{serviceName}"
-	targetNamespace="http://tempuri.org/{servicePath}">
+	targetNamespace="{namespace}">
 	<wsdl:types>
-		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://tempuri.org/{servicePath}">
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="{namespace}">
 			<f:for each="{complexTypes}" as="complexType">
 			<xsd:complexType name="{complexType.name}">
 				<xsd:sequence>
@@ -54,12 +54,12 @@
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
 		<f:for each="{operations}" as="operation">
 		<wsdl:operation name="{operation.name}">
-			<soap:operation soapAction="http://tempuri.org/{servicePath}/{operation.name}" />
+			<soap:operation soapAction="{namespace}/{operation.name}" />
 			<wsdl:input>
-				<soap:body use="literal" namespace="http://tempuri.org/{servicePath}" />
+				<soap:body use="literal" namespace="{namespace}" />
 			</wsdl:input>
 			<wsdl:output>
-				<soap:body use="literal" namespace="http://tempuri.org/{servicePath}" />
+				<soap:body use="literal" namespace="{namespace}" />
 			</wsdl:output>
 		</wsdl:operation>
 		</f:for>

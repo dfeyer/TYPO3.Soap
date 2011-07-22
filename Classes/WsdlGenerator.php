@@ -100,13 +100,22 @@ class WsdlGenerator {
 		}
 
 		$serviceName = substr($className, strrpos($className, '\\') + 1);
-		$servicePath = $this->getServicePath($className);
+
+		if (isset($this->settings['mapping'][$className])) {
+			$mapping = $this->settings['mapping'][$className];
+			$servicePath = $this->settings['endpointUriBasePath'] . $mapping['path'];
+			$namespace = $mapping['namespace'];
+		} else {
+			$servicePath = $this->getServicePath($className);
+			$namespace = 'http://tempuri.org/' . $servicePath;
+		}
 
 		$schema = $this->reflectOperations($className);
 
 		$viewVariables = array_merge($schema, array(
 			'serviceName' => $serviceName,
-			'servicePath' => $servicePath
+			'servicePath' => $servicePath,
+			'namespace' => $namespace
 		));
 		return $this->renderTemplate('resource://TYPO3.Soap/Private/Templates/Definitions.xml', $viewVariables);
 	}
