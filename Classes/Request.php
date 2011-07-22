@@ -28,7 +28,7 @@ namespace TYPO3\Soap;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class Request extends \TYPO3\FLOW3\MVC\Request {
+class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 
 	/**
 	 * The fully qualified object name of the service this request refers to
@@ -62,6 +62,13 @@ class Request extends \TYPO3\FLOW3\MVC\Request {
 	 * @var array
 	 */
 	protected $soapHeaders;
+
+	/**
+	 * If this request has been changed and needs to be dispatched again
+	 *
+	 * @var boolean
+	 */
+	protected $dispatched = FALSE;
 
 	/**
 	 * Sets the service object name
@@ -167,6 +174,32 @@ class Request extends \TYPO3\FLOW3\MVC\Request {
 	public function setSoapHeaders($soapHeaders) {
 		$this->soapHeaders = $soapHeaders;
 	}
-}
 
+	/**
+	 * Sets the dispatched flag
+	 *
+	 * @param boolean $flag If this request has been dispatched
+	 * @return void
+	 * @api
+	 */
+	public function setDispatched($flag) {
+		$this->dispatched = $flag ? TRUE : FALSE;
+	}
+
+	/**
+	 * If this request has been dispatched and addressed by the responsible
+	 * controller and the response is ready to be sent.
+	 *
+	 * The dispatcher will try to dispatch the request again if it has not been
+	 * addressed yet.
+	 *
+	 * @return boolean TRUE if this request has been disptached successfully
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function isDispatched() {
+		return $this->dispatched;
+	}
+
+}
 ?>
