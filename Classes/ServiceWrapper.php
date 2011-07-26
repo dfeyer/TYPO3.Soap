@@ -233,6 +233,9 @@ class ServiceWrapper {
 		if ($exception instanceof \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException) {
 			throw new \SoapFault('Client', 'Authentication required', NULL, 'Security_AuthenticationRequired');
 		}
+		if ($exception instanceof \TYPO3\FLOW3\Security\Exception\AccessDeniedException) {
+			throw new \SoapFault('Client', 'Access denied', NULL, 'Security_AccessDenied');
+		}
 		$expectedException = $this->methodThrowsException($className, $methodName, $exceptionClassName);
 		if ($expectedException) {
 			$exceptionName = implode('_', array_slice(explode('\\', $exceptionClassName), 4));
