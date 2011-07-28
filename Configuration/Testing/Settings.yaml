@@ -6,3 +6,5 @@ TYPO3:
   Soap:
     exposeExceptionInformation: yes
     logDetailedExceptions: no
+    # Use default generator template for tests
+    generatorTemplate: 'resource://TYPO3.Soap/Private/Templates/Definitions.xml'

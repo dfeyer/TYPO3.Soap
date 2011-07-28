@@ -68,6 +68,10 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$wsdlGenerator = $this->getMock('TYPO3\Soap\WsdlGenerator', array('reflectOperations', 'renderTemplate'));
 		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($wsdlGenerator, 'reflectionService', $mockReflectionService, TRUE);
 		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($wsdlGenerator, 'objectManager', $mockObjectManager, TRUE);
+		$wsdlGenerator->injectSettings(array(
+			'endpointUriBasePath' => 'service/soap/',
+			'generatorTemplate' => 'resource://TYPO3.Soap/Private/Templates/Definitions.xml'
+		));
 
 		$wsdlGenerator->expects($this->once())->method('reflectOperations')->will($this->returnValue(array(
 			'messages' => array('foo'),
@@ -79,8 +83,8 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'complexTypes' => array('bar'),
 			'operations' => array('baz'),
 			'serviceName' => 'MyService',
-			'servicePath' => 'typo3.soap/tests/unit/fixtures/my',
-			'namespace' => 'http://tempuri.org/typo3.soap/tests/unit/fixtures/my'
+			'servicePath' => 'service/soap/typo3.soap/tests/unit/fixtures/my',
+			'namespace' => 'http://tempuri.org/service/soap/typo3.soap/tests/unit/fixtures/my'
 		))->will($this->returnValue('<WSDL>'));
 		$result = $wsdlGenerator->generateWsdl('TYPO3\Soap\Tests\Unit\Fixtures\MyService');
 		$this->assertEquals('<WSDL>', $result);
