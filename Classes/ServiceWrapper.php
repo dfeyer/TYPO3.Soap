@@ -134,6 +134,7 @@ class ServiceWrapper {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function __call($methodName, $arguments) {
+		if (substr($methodName, 0, 9) === 'FLOW3_AOP') return;
 		if (!$this->request instanceof \TYPO3\Soap\Request) throw new \TYPO3\FLOW3\Exception('No SOAP request set', 1297091911);
 		$this->initializeCall($this->request);
 		$className = get_class($this->service);

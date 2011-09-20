@@ -98,7 +98,7 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 
 		$soapServer = new \SoapServer((string)$request->getWsdlUri(), $serverOptions);
 		$serviceObject = $this->objectManager->get($request->getServiceObjectName());
-		$serviceWrapper = $this->objectManager->create('TYPO3\Soap\ServiceWrapper', $serviceObject);
+		$serviceWrapper = new \TYPO3\Soap\ServiceWrapper($serviceObject);
 		$serviceWrapper->setRequest($request);
 		$soapServer->setObject($serviceWrapper);
 
