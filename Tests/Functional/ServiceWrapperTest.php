@@ -170,5 +170,27 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertEquals('', $result);
 	}
 
+	/**
+	 * @test
+	 * @expectedException \SoapFault
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function expectedExceptionsAreConvertedToClientSoapFault() {
+		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
+		$wrapper = new \TYPO3\Soap\ServiceWrapper($serviceObject);
+		$mockRequest = $this->getMock('TYPO3\Soap\Request');
+		$wrapper->setRequest($mockRequest);
+
+		$reflectionService = $this->objectManager->get('TYPO3\FLOW3\Reflection\ReflectionService');
+		$tags = $reflectionService->getMethodTagsValues('Networkteam\\MyRossmann\\Service\\Soap\\V1\\CustomerService', 'removeDeliveryAddress');
+
+		try {
+			$result = $wrapper->ping('invalid');
+		} catch(\Exception $exception) {
+			$this->assertContains('SoapFault exception: [Client] Some expected exception occured', (string)$exception);
+			throw $exception;
+		}
+	}
+
 }
 ?>

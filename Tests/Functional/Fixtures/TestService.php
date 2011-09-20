@@ -34,11 +34,15 @@ class TestService {
 	 *
 	 * @param string $value The value
 	 * @return string The same value
+	 * @throws \TYPO3\Soap\Tests\Functional\Fixtures\PingException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function ping($value) {
 		if ($value === 'throw') {
 			throw new \TYPO3\FLOW3\Exception('Some exception occured', 1305541506);
+		}
+		if ($value === 'invalid') {
+			throw new PingException('Some expected exception occured', 1312964667);
 		}
 		return $value;
 	}
