@@ -60,6 +60,12 @@ class ServiceWrapper {
 	protected $systemLogger;
 
 	/**
+	 * @inject
+	 * @var \TYPO3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
+
+	/**
 	 * @var \TYPO3\Soap\Request
 	 */
 	protected $request;
@@ -250,17 +256,18 @@ class ServiceWrapper {
 			$exceptionName = implode('_', array_slice(explode('\\', $exceptionClassName), 4));
 			throw new \SoapFault('Client', $exception->getMessage(), NULL, $exceptionName);
 		} else {
+			$identifier = $exception->getReferenceCode();
 			if ($this->settings['exposeExceptionInformation'] === TRUE) {
 				$message = $exceptionClassName . ' (' . $exception->getCode() . '): ' . $exception->getMessage();
 				$stackTrace = $exception->getTraceAsString();
 				$details = $stackTrace;
-				$identifier = NULL;
 			} else {
-				$identifier = \TYPO3\FLOW3\Utility\Algorithms::generateUUID();
-				$message = 'Internal server error. The error was logged as ' . $identifier;
+				$message = 'Internal server error. The error was logged as ' . $identifier . ' on ' . $this->environment->getHTTPHost() . '.';
 				$details = $identifier;
 			}
-			$this->logException($exception, $identifier);
+			if ($this->settings['logDetailedExceptions'] === TRUE) {
+				$this->logException($exception, $identifier);
+			}
 
 			throw new \SoapFault('Server', $message, NULL, $details);
 		}
@@ -292,8 +299,8 @@ class ServiceWrapper {
 	}
 
 	/**
-	 * Logs the given exception with an identifier to find the specific log
-	 * for debugging purposes.
+	 * Logs the given exception through the system logger which
+	 * should log an exception file with details.
 	 *
 	 * @param \Exception $exception The exception object
 	 * @param string $identifier
@@ -302,26 +309,7 @@ class ServiceWrapper {
 	 */
 	public function logException(\Exception $exception, $identifier = NULL) {
 		if (is_object($this->systemLogger)) {
-			$exceptionCodeNumber = ($exception->getCode() > 0) ? ' #' . $exception->getCode() : '';
-			$backTrace = $exception->getTrace();
-			$className = isset($backTrace[0]['class']) ? $backTrace[0]['class'] : '?';
-			$methodName = isset($backTrace[0]['function']) ? $backTrace[0]['function'] : '?';
-			$line = isset($backTrace[0]['line']) ? ' in line ' . $backTrace[0]['line'] . ' of ' . $backTrace[0]['file'] : '';
-			$message = 'Uncaught exception' . $exceptionCodeNumber . '. ' . $exception->getMessage() . $line . '.';
-
-			$explodedClassName = explode('\\', $className);
-			$packageKey = (isset($explodedClassName[1])) ? $explodedClassName[1] : NULL;
-
-			$additionalData = array();
-			if ($identifier !== NULL) {
-				$additionalData['identifier'] = $identifier;
-			}
-
-			if ($this->settings['logDetailedExceptions'] === TRUE) {
-				$additionalData['stacktrace'] = $exception->getTrace();
-			}
-
-			$this->systemLogger->log($message, LOG_CRIT, $additionalData, $packageKey, $className, $methodName);
+			$this->systemLogger->logException($exception);
 		}
 	}
 
