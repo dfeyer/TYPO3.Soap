@@ -73,7 +73,7 @@ class LoggingAspect {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logBeforeHandleRequestCalls(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$this->systemLogger->log('Handling SOAP request.', LOG_INFO);
+		$this->systemLogger->log('Handling SOAP request.', LOG_DEBUG);
 	}
 
 	/**

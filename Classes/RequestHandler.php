@@ -60,6 +60,16 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	protected $settings = array();
 
 	/**
+	 * @var mixed
+	 */
+	protected $lastOperationResult;
+
+	/**
+	 * @var \Exception
+	 */
+	protected $lastCatchedException;
+
+	/**
 	 * @param array $settings
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -78,10 +88,11 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	}
 
 	/**
-	 * Handles a SOAP request and sends the response directly to the clien.
+	 * Handles a SOAP request and sends the response directly to the client.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function handleRequest() {
 		$request = $this->requestBuilder->build();
@@ -91,11 +102,10 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 			return self::HANDLEREQUEST_NOVALIDREQUEST;
 		}
 
-		$serverOptions = array(
-			'soap_version' => SOAP_1_2,
-			'encoding' => 'UTF-8'
-		);
+		$this->lastOperationResult = NULL;
+		$this->lastCatchedException = NULL;
 
+		$serverOptions = array('soap_version' => SOAP_1_2, 'encoding' => 'UTF-8');
 		$soapServer = new \SoapServer((string)$request->getWsdlUri(), $serverOptions);
 		$serviceObject = $this->objectManager->get($request->getServiceObjectName());
 		$serviceWrapper = new \TYPO3\Soap\ServiceWrapper($serviceObject);
@@ -104,8 +114,11 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 
 		$soapServer->handle($request->getBody());
 		if ($serviceWrapper->getCatchedException() !== NULL) {
-			throw new \TYPO3\FLOW3\Exception('SOAP fault emitted', 1305541462, $serviceWrapper->getCatchedException());
+			$this->lastCatchedException = $serviceWrapper->getCatchedException();
+			throw new SoapFaultException('SOAP fault emitted', 1305541462, $serviceWrapper->getCatchedException());
 		}
+
+		$this->lastOperationResult = $serviceWrapper->getLastOperationResult();
 
 		return self::HANDLEREQUEST_OK;
 	}
@@ -141,5 +154,28 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	public function getPriority() {
 		return 200;
 	}
+
+	/**
+	 * Get the result of the last operation
+	 *
+	 * Could be used in functional tests.
+	 *
+	 * @return mixed
+	 */
+	public function getLastOperationResult() {
+		return $this->lastOperationResult;
+	}
+
+	/**
+	 * Get the last catched exception
+	 *
+	 * Could be used in functional tests.
+	 *
+	 * @return \Exception
+	 */
+	public function getLastCatchedException() {
+		return $this->lastCatchedException;
+	}
+
 }
 ?>

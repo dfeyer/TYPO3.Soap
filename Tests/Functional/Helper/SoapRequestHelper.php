@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace TYPO3\Soap\Tests\Functional;
+namespace TYPO3\Soap\Tests\Functional\Helper;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -23,49 +23,69 @@ namespace TYPO3\Soap\Tests\Functional;
  *                                                                        */
 
 /**
- * Testcase for the Soap Request Handler
+ * A helper to test SOAP requests
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RequestHandlerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class SoapRequestHelper {
 
 	/**
-	 * @var \TYPO3\Soap\Tests\Functional\Helper\SoapRequestHelper
+	 * @inject
+	 * @var \TYPO3\Soap\RequestHandler
 	 */
-	protected $soapRequestHelper;
+	protected $requestHandler;
 
 	/**
-	 * Set up test dependencies
+	 * @var mixed
 	 */
-	public function setUp() {
-		parent::setUp();
-		$this->soapRequestHelper = new Helper\SoapRequestHelper();
+	protected $lastOperationResult;
+
+	/**
+	 * @var \Exception
+	 */
+	protected $lastCatchedException;
+
+	/**
+	 * Simulate a SOAP request
+	 *
+	 * @param string $wsdlUri
+	 * @param string $serviceObjectName
+	 * @param string $requestBody
+	 * @return string The SOAP response
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function sendSoapRequest($wsdlUri, $serviceObjectName, $requestBody) {
+		$requestHandler = clone $this->requestHandler;
+		$testRequestBuilder = new TestRequestBuilder($wsdlUri, $serviceObjectName, $requestBody);
+		$requestHandler->injectRequestBuilder($testRequestBuilder);
+
+		ob_start();
+		try {
+			$requestHandler->handleRequest();
+		} catch(\TYPO3\Soap\SoapFaultException $exception) {
+			// Ignore SOAP fault exceptions
+		}
+		$response = ob_get_contents();
+		ob_end_clean();
+
+		$this->lastOperationResult = $requestHandler->getLastOperationResult();
+		$this->lastCatchedException = $requestHandler->getLastCatchedException();
+
+		return $response;
 	}
 
 	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @return mixed
 	 */
-	public function pingRespondsWithEcho() {
-		$response = $this->soapRequestHelper->sendSoapRequest(
-			__DIR__ . '/Fixtures/TestService.wsdl',
-			'TYPO3\Soap\Tests\Functional\Fixtures\TestService',
-			\TYPO3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingRequest.xml', FILE_TEXT)
-		);
-		$this->assertXmlStringEqualsXmlFile(__DIR__ . '/Fixtures/TestServicePingResponse.xml', $response);
+	public function getLastOperationResult() {
+		return $this->lastOperationResult;
 	}
 
 	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @return \Exception
 	 */
-	public function pingWithExceptionRespondsWithSoapFaultAndException() {
-		$response = $this->soapRequestHelper->sendSoapRequest(
-			__DIR__ . '/Fixtures/TestService.wsdl',
-			'TYPO3\Soap\Tests\Functional\Fixtures\TestService',
-			\TYPO3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingWithExceptionRequest.xml', FILE_TEXT)
-		);
-		$this->assertStringStartsWith(\TYPO3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingWithExceptionResponse.xml'), $response);
+	public function getLastCatchedException() {
+		return $this->lastCatchedException;
 	}
 
 }

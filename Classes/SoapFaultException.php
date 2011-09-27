@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace TYPO3\Soap\Tests\Functional;
+namespace TYPO3\Soap;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -23,50 +23,11 @@ namespace TYPO3\Soap\Tests\Functional;
  *                                                                        */
 
 /**
- * Testcase for the Soap Request Handler
+ * An exception for a SOAP fault
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RequestHandlerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
-
-	/**
-	 * @var \TYPO3\Soap\Tests\Functional\Helper\SoapRequestHelper
-	 */
-	protected $soapRequestHelper;
-
-	/**
-	 * Set up test dependencies
-	 */
-	public function setUp() {
-		parent::setUp();
-		$this->soapRequestHelper = new Helper\SoapRequestHelper();
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function pingRespondsWithEcho() {
-		$response = $this->soapRequestHelper->sendSoapRequest(
-			__DIR__ . '/Fixtures/TestService.wsdl',
-			'TYPO3\Soap\Tests\Functional\Fixtures\TestService',
-			\TYPO3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingRequest.xml', FILE_TEXT)
-		);
-		$this->assertXmlStringEqualsXmlFile(__DIR__ . '/Fixtures/TestServicePingResponse.xml', $response);
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function pingWithExceptionRespondsWithSoapFaultAndException() {
-		$response = $this->soapRequestHelper->sendSoapRequest(
-			__DIR__ . '/Fixtures/TestService.wsdl',
-			'TYPO3\Soap\Tests\Functional\Fixtures\TestService',
-			\TYPO3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingWithExceptionRequest.xml', FILE_TEXT)
-		);
-		$this->assertStringStartsWith(\TYPO3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingWithExceptionResponse.xml'), $response);
-	}
+class SoapFaultException extends \TYPO3\FLOW3\Exception {
 
 }
 ?>

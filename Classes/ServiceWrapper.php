@@ -76,6 +76,12 @@ class ServiceWrapper {
 	protected $catchedException;
 
 	/**
+	 * Store the result of an operation for later inspection
+	 * @var mixed
+	 */
+	protected $lastOperationResult;
+
+	/**
 	 * Inject the reflection service
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
@@ -136,6 +142,7 @@ class ServiceWrapper {
 	public function __call($methodName, $arguments) {
 		if (substr($methodName, 0, 9) === 'FLOW3_AOP') return;
 		if (!$this->request instanceof \TYPO3\Soap\Request) throw new \TYPO3\FLOW3\Exception('No SOAP request set', 1297091911);
+		$this->lastOperationResult = NULL;
 		$this->initializeCall($this->request);
 		$className = get_class($this->service);
 		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
@@ -149,7 +156,8 @@ class ServiceWrapper {
 					$arguments[$parameterOptions['position']] = $this->convertArrayArgument($arguments[$parameterOptions['position']], $methodName, $parameterName, $parameterOptions['type']);
 				}
 			}
-			return call_user_func_array(array($this->service, $methodName), $arguments);
+			$this->lastOperationResult = call_user_func_array(array($this->service, $methodName), $arguments);
+			return $this->lastOperationResult;
 		} catch(\Exception $exception) {
 			$this->handleException($exception, $className, $methodName);
 		}
@@ -386,6 +394,15 @@ class ServiceWrapper {
 	 */
 	public function getCatchedException() {
 		return $this->catchedException;
+	}
+
+	/**
+	 * Get the result of the last operation
+	 *
+	 * @return mixed
+	 */
+	public function getLastOperationResult() {
+		return $this->lastOperationResult;
 	}
 
 }
