@@ -256,13 +256,17 @@ class ServiceWrapper {
 			$exceptionName = implode('_', array_slice(explode('\\', $exceptionClassName), 4));
 			throw new \SoapFault('Client', $exception->getMessage(), NULL, $exceptionName);
 		} else {
+			if (!$exception instanceof \TYPO3\FLOW3\Exception) {
+				$exception = new \TYPO3\FLOW3\Exception($exception->getMessage(), $exception->getCode(), $exception);
+			}
 			$identifier = $exception->getReferenceCode();
 			if ($this->settings['exposeExceptionInformation'] === TRUE) {
 				$message = $exceptionClassName . ' (' . $exception->getCode() . '): ' . $exception->getMessage();
 				$stackTrace = $exception->getTraceAsString();
 				$details = $stackTrace;
 			} else {
-				$message = 'Internal server error. The error was logged as ' . $identifier . ' on ' . $this->environment->getHTTPHost() . '.';
+				// TODO Move gethostname to Environment
+				$message = 'Internal server error. The error was logged as ' . $identifier . ' on ' . gethostname() . '.';
 				$details = $identifier;
 			}
 			if ($this->settings['logDetailedExceptions'] === TRUE) {
