@@ -26,6 +26,7 @@ namespace TYPO3\Soap;
  * The SOAP request handler
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  */
 class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 
@@ -70,6 +71,11 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	protected $lastCatchedException;
 
 	/**
+	 * @var \TYPO3\FLOW3\MVC\RequestInterface
+	 */
+	protected $request;
+
+	/**
 	 * @param array $settings
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -101,6 +107,8 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 			echo 'Could not build request - probably no SOAP service matched the given endpoint URI.';
 			return self::HANDLEREQUEST_NOVALIDREQUEST;
 		}
+
+		$this->request = $request;
 
 		$this->lastOperationResult = NULL;
 		$this->lastCatchedException = NULL;
@@ -175,6 +183,13 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	 */
 	public function getLastCatchedException() {
 		return $this->lastCatchedException;
+	}
+
+	/**
+	 * @return \TYPO3\FLOW3\MVC\RequestInterface
+	 */
+	public function getRequest() {
+		return $this->request;
 	}
 
 }

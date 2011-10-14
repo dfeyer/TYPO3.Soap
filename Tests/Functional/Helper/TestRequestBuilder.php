@@ -58,5 +58,12 @@ class TestRequestBuilder extends \TYPO3\Soap\RequestBuilder {
 		return $this->request;
 	}
 
+	/**
+	 * @return \TYPO3\Soap\Request
+	 */
+	public function getRequest() {
+		return $this->request;
+	}
+
 }
 ?>

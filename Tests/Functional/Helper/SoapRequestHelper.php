@@ -48,16 +48,21 @@ class SoapRequestHelper {
 	/**
 	 * Simulate a SOAP request
 	 *
-	 * @param string $wsdlUri
-	 * @param string $serviceObjectName
-	 * @param string $requestBody
+	 * @param string $wsdlUri The URI of the WSDL (could be a file resource)
+	 * @param string $serviceObjectName The name of the service object
+	 * @param string $requestBody The request body (SOAP request)
+	 * @param \TYPO3\FLOW3\Tests\Functional\MVC\MockWebRequestHandler $mockRequestHandler Pass the mock request handler of a functional test to register the request on the current request handler (e.g. for security)
 	 * @return string The SOAP response
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function sendSoapRequest($wsdlUri, $serviceObjectName, $requestBody) {
+	public function sendSoapRequest($wsdlUri, $serviceObjectName, $requestBody, $mockRequestHandler = NULL) {
 		$requestHandler = clone $this->requestHandler;
 		$testRequestBuilder = new TestRequestBuilder($wsdlUri, $serviceObjectName, $requestBody);
 		$requestHandler->injectRequestBuilder($testRequestBuilder);
+
+		if ($mockRequestHandler !== NULL) {
+			$mockRequestHandler->setRequest($testRequestBuilder->getRequest());
+		}
 
 		ob_start();
 		try {

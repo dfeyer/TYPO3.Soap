@@ -57,8 +57,8 @@ class RequestWrapperAspect {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function initializeSecurity(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$request = $joinPoint->getMethodArgument('request');
-		$this->securityContext->initialize($request);
+		$this->securityContext->clearContext();
 	}
- }
+
+}
 ?>
