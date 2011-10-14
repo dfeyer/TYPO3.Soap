@@ -24,8 +24,6 @@ namespace TYPO3\Soap\Tests\Functional\Helper;
 
 /**
  * A test request builder
- *
- * @scope prototype
  */
 class TestRequestBuilder extends \TYPO3\Soap\RequestBuilder {
 

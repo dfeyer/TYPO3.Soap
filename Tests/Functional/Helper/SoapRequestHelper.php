@@ -24,8 +24,6 @@ namespace TYPO3\Soap\Tests\Functional\Helper;
 
 /**
  * A helper to test SOAP requests
- *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class SoapRequestHelper {
 

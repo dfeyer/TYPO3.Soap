@@ -28,7 +28,6 @@ namespace TYPO3\Soap\Security\Aspect;
  * setting of SOAP headers, it will advice the service wrapper and not the
  * request builder.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @aspect
  */
 class RequestWrapperAspect {

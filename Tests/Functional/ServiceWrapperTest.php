@@ -24,8 +24,6 @@ namespace TYPO3\Soap\Tests\Functional;
 
 /**
  * Testcase for the Service Wrapper
- *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 

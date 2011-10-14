@@ -24,8 +24,6 @@ namespace TYPO3\Soap\Tests\Unit;
 
 /**
  * Unit test for ServiceWrapper
- *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

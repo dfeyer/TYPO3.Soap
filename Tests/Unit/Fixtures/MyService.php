@@ -24,8 +24,6 @@ namespace TYPO3\Soap\Tests\Unit\Fixtures;
 
 /**
  * Simple service fixture
- *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class MyService {
 

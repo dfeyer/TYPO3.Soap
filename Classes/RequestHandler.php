@@ -25,7 +25,6 @@ namespace TYPO3\Soap;
 /**
  * The SOAP request handler
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {

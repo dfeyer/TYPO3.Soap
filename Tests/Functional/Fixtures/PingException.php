@@ -24,8 +24,6 @@ namespace TYPO3\Soap\Tests\Functional\Fixtures;
 
 /**
  * A sample exception
- *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PingException extends \TYPO3\FLOW3\Exception {
 }

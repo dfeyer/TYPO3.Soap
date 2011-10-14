@@ -24,9 +24,6 @@ namespace TYPO3\Soap;
 
 /**
  * A SOAP request
- *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
  */
 class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 

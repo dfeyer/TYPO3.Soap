@@ -24,8 +24,6 @@ namespace TYPO3\Soap\Tests\Functional\Helper;
 
 /**
  * A test request
- *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class TestRequest extends \TYPO3\Soap\Request {
 

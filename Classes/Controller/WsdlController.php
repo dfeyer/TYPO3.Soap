@@ -24,8 +24,6 @@ namespace TYPO3\Soap\Controller;
 
 /**
  * A controller to serve static or generated WSDL
- *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class WsdlController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
