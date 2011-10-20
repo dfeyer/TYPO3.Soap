@@ -22,10 +22,13 @@ namespace TYPO3\Soap;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The SOAP request handler
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 
@@ -38,7 +41,7 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	const CANHANDLEREQUEST_WRONGSERVICEURI = -3;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
@@ -49,7 +52,7 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	protected $requestBuilder;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;

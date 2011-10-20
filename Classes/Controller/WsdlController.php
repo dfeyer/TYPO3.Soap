@@ -22,13 +22,16 @@ namespace TYPO3\Soap\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A controller to serve static or generated WSDL
  */
 class WsdlController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\Soap\WsdlGenerator
 	 */
 	protected $wsdlGenerator;

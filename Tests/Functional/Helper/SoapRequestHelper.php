@@ -22,13 +22,16 @@ namespace TYPO3\Soap\Tests\Functional\Helper;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A helper to test SOAP requests
  */
 class SoapRequestHelper {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\Soap\RequestHandler
 	 */
 	protected $requestHandler;

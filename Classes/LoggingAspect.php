@@ -22,15 +22,18 @@ namespace TYPO3\Soap;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A logging aspect
  *
- * @aspect
+ * @FLOW3\Aspect
  */
 class LoggingAspect {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
@@ -40,7 +43,7 @@ class LoggingAspect {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface
 	 * @return void
-	 * @after method(TYPO3\Soap\RequestHandler->canHandleRequest())
+	 * @FLOW3\After("method(TYPO3\Soap\RequestHandler->canHandleRequest())")
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logCanHandleRequestCalls(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
@@ -68,7 +71,7 @@ class LoggingAspect {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface
 	 * @return void
-	 * @before method(TYPO3\Soap\RequestHandler->handleRequest())
+	 * @FLOW3\Before("method(TYPO3\Soap\RequestHandler->handleRequest())")
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logBeforeHandleRequestCalls(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
@@ -80,7 +83,7 @@ class LoggingAspect {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface
 	 * @return void
-	 * @after method(TYPO3\Soap\RequestHandler->handleRequest())
+	 * @FLOW3\After("method(TYPO3\Soap\RequestHandler->handleRequest())")
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logAfterHandleRequestCalls(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {

@@ -22,6 +22,9 @@ namespace TYPO3\Soap;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A wrapper for services to map arguments and handle exceptions in a
  * SoapServer friendly way.
@@ -51,13 +54,13 @@ class ServiceWrapper {
 	protected $objectManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;

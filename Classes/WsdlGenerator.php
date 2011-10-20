@@ -22,25 +22,28 @@ namespace TYPO3\Soap;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Dynamic WSDL Generator using reflection
  */
 class WsdlGenerator {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\Fluid\Core\Parser\TemplateParser
 	 */
 	protected $templateParser;
@@ -301,7 +304,7 @@ class WsdlGenerator {
 					$propertyName = lcfirst(substr($methodName, 3));
 					$propertyReflection = new \TYPO3\FLOW3\Reflection\PropertyReflection($phpType, $propertyName);
 
-					$minOccurs = $this->isPropertyRequired($propertyReflection) ? 1 : 0;
+					$minOccurs = $this->isPropertyRequired($phpType, $propertyName) ? 1 : 0;
 
 					$returnType = $this->getMethodReturnAnnotation($phpType, $methodName);
 					$complexTypes[$typeName]['elements'][$propertyName] = array(
@@ -322,15 +325,19 @@ class WsdlGenerator {
 	 * A property of a complex type is considered as required and exported with <code>minOccurs="1"</code>
 	 * if the property is tagged with <code>@validate NotEmpty</code>.
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\PropertyReflection $propertyReflection Property reflection of the property
+	 * @param string $className
+	 * @param string $propertyName
 	 * @return boolean
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function isPropertyRequired(\TYPO3\FLOW3\Reflection\PropertyReflection $propertyReflection) {
-		if ($propertyReflection->isTaggedWith('validate')) {
-			$validationRules = implode(',', $propertyReflection->getTagValues('validate'));
-			preg_match_all(\TYPO3\FLOW3\Validation\ValidatorResolver::PATTERN_MATCH_VALIDATORS, $validationRules, $validators);
-			return in_array('NotEmpty', $validators['validatorName']);
+	protected function isPropertyRequired($className, $propertyName) {
+		if ($this->reflectionService->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\FLOW3\Annotations\Validate')) {
+			$annotations = $this->reflectionService->getPropertyAnnotations($className, $propertyName, 'TYPO3\FLOW3\Annotations\Validate');
+			foreach ($annotations as $annotation) {
+				if ($annotation->type === 'NotEmpty') {
+					return TRUE;
+				}
+			}
 		}
 		return FALSE;
 	}

@@ -22,13 +22,16 @@ namespace TYPO3\Soap\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A security aspect for Soap to invoke security interceptors and initialize
  * the security framework before calling a service method. To allow the
  * setting of SOAP headers, it will advice the service wrapper and not the
  * request builder.
  *
- * @aspect
+ * @FLOW3\Aspect
  */
 class RequestWrapperAspect {
 
@@ -50,7 +53,7 @@ class RequestWrapperAspect {
 	/**
 	 * Advices the service wrapper to initialize the security framework
 	 *
-	 * @afterreturning method(TYPO3\Soap\ServiceWrapper->initializeCall()) && setting(TYPO3.FLOW3.security.enable)
+	 * @FLOW3\AfterReturning("method(TYPO3\Soap\ServiceWrapper->initializeCall()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
