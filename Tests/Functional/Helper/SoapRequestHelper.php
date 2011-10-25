@@ -67,7 +67,8 @@ class SoapRequestHelper {
 
 		ob_start();
 		try {
-			$requestHandler->handleRequest();
+				// Suppress errors since headers might not be settable during a PHPUnit run
+			@$requestHandler->handleRequest();
 		} catch(\TYPO3\Soap\SoapFaultException $exception) {
 			// Ignore SOAP fault exceptions
 		}
