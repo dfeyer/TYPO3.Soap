@@ -6,3 +6,4 @@ TYPO3:
   Soap:
     exposeExceptionInformation: yes
     logDetailedExceptions: no
+    logRequests: no

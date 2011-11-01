@@ -20,6 +20,9 @@ TYPO3:
     # Log detailed exception information including a stacktrace of the exception.
     logDetailedExceptions: yes
 
+    # Log debug information about requests
+    logRequests: no
+
     # Default template for WSDL generator
     generatorTemplate: 'resource://TYPO3.Soap/Private/Templates/Definitions.xml'
 
