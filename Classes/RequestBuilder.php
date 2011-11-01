@@ -78,31 +78,61 @@ class RequestBuilder {
 	 */
 	public function build() {
 		$requestUri = $this->environment->getRequestUri();
-		$endpointPath = substr($requestUri, strpos($requestUri, $this->settings['endpointUriBasePath']) + strlen($this->settings['endpointUriBasePath']));
-		if (substr_count($endpointPath, '/') < 2) {
-			return FALSE;
-		}
+		$baseUri = $this->environment->getBaseUri();
 
-		if (isset($this->pathToObjectNameMapping[$endpointPath])) {
-			$serviceObjectName = $this->pathToObjectNameMapping[$endpointPath];
-		} else {
-			list($packageKey, $servicePath) = explode('/', $endpointPath, 2);
-			$servicePath = str_replace('/', '\\', $servicePath);
-			$serviceObjectName = sprintf("%s\Service\Soap\%sService", implode('\\', explode('.', $packageKey)), $servicePath);
-		}
+		$servicePath = $this->servicePathForRequestUri($requestUri);
+		$serviceObjectName = $this->serviceObjectNameForServicePath($servicePath);
 
-		$serviceObjectName = $this->objectManager->getCaseSensitiveObjectName($serviceObjectName);
-		if ($serviceObjectName === FALSE) {
-			return FALSE;
-		}
+		$wsdlUri = clone $baseUri;
+		$wsdlUri->setPath($requestUri->getPath() . '.wsdl');
 
-		$request = $this->objectManager->create('TYPO3\Soap\Request');
+		$request = new \TYPO3\Soap\Request();
 		$request->setServiceObjectName($serviceObjectName);
-		$request->setBaseUri($this->environment->getBaseUri());
-		$request->setWsdlUri(new \TYPO3\FLOW3\Property\DataType\Uri($requestUri . '.wsdl'));
+		$request->setBaseUri($baseUri);
+		$request->setWsdlUri($wsdlUri);
 		return $request;
 	}
 
-}
+	/**
+	 * Get the path for the service definition from the request URI
+	 *
+	 * E.g. "http://host/service/soap/mypackage/v1/test" would return "mypackage/v1/test".
+	 *
+	 * @param string $requestUri
+	 * @return string The endpoint path
+	 */
+	protected function servicePathForRequestUri($requestUri) {
+		$servicePath = substr($requestUri, strpos($requestUri, $this->settings['endpointUriBasePath']) + strlen($this->settings['endpointUriBasePath']));
+		if (substr_count($servicePath, '/') < 2) {
+			throw new InvalidSoapRequestException('Request service path "' . $servicePath . '" is not a valid service endpoint path', 1320164802);
+		}
+		return $servicePath;
+	}
 
+	/**
+	 * Get the service object name from a service path
+	 *
+	 * E.g. "mypackage/v1/test" would return "Mypackage\Service\Soap\V1\TestService" if the object name is registered.
+	 *
+	 * @param string $servicePath
+	 * @return string The object name
+	 */
+	protected function serviceObjectNameForServicePath($servicePath) {
+		if (isset($this->pathToObjectNameMapping[$servicePath])) {
+			$serviceObjectNameCandidate = $this->pathToObjectNameMapping[$servicePath];
+		} else {
+			list($packageKey, $servicePath) = explode('/', $servicePath, 2);
+			$servicePath = str_replace('/', '\\', $servicePath);
+			$serviceObjectNameCandidate = sprintf("%s\Service\Soap\%sService", implode('\\', explode('.', $packageKey)), $servicePath);
+		}
+
+		$serviceObjectName = $this->objectManager->getCaseSensitiveObjectName($serviceObjectNameCandidate);
+		if (!is_string($serviceObjectName)) {
+			throw new InvalidSoapRequestException('Service object with name "' . $serviceObjectNameCandidate . '" not registered', 1320164740);
+		}
+
+		return $serviceObjectName;
+	}
+
+}
 ?>

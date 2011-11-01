@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Soap\Tests\Unit;
+namespace TYPO3\Soap;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Soap".                       *
@@ -22,42 +22,9 @@ namespace TYPO3\Soap\Tests\Unit;
  *                                                                        */
 
 /**
- * Unit test for RequestHandler
+ * An exception for invalid SOAP requests (should translate to a client SOAP fault)
  */
-class RequestHandlerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
-
-	/**
-	 * Check if the PHP soap extension was loaded
-	 */
-	protected function setUp() {
-		parent::setUp();
-
-		if (!extension_loaded('soap')) {
-			$this->markTestSkipped('Test does not run without SOAP extension');
-		}
-	}
-
-	/**
-	 * @test
-	 */
-	public function canHandleDoesNotRelyOnBaseUrl() {
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$requestHandler = new \TYPO3\Soap\RequestHandler();
-		$requestHandler->injectEnvironment($mockEnvironment);
-
-		$settings = array(
-			'endpointUriBasePath' => 'service/soap/'
-		);
-		$requestHandler->injectSettings($settings);
-
-		$mockEnvironment->expects($this->any())->method('getRequestMethod')->will($this->returnValue('POST'));
-		$mockEnvironment->expects($this->any())->method('getRequestUri')->will($this->returnValue(new \TYPO3\FLOW3\Property\DataType\Uri('http://request-host/service/soap/test')));
-		$mockEnvironment->expects($this->any())->method('getBaseUri')->will($this->returnValue(new \TYPO3\FLOW3\Property\DataType\Uri('https://very-different/')));
-
-		$result = $requestHandler->canHandleRequest();
-
-		$this->assertGreaterThan(0, $result);
-	}
+class InvalidSoapRequestException extends \TYPO3\FLOW3\Exception {
 
 }
 ?>
