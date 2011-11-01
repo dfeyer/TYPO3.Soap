@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap\Security\Aspect;
 
 /*                                                                        *
@@ -44,7 +43,6 @@ class RequestWrapperAspect {
 	 * Constructor
 	 *
 	 * @param TYPO3\FLOW3\Security\Context $securityContext
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function __construct(\TYPO3\FLOW3\Security\Context $securityContext) {
 		$this->securityContext = $securityContext;
@@ -56,7 +54,6 @@ class RequestWrapperAspect {
 	 * @FLOW3\AfterReturning("method(TYPO3\Soap\ServiceWrapper->initializeCall()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function initializeSecurity(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$this->securityContext->clearContext();

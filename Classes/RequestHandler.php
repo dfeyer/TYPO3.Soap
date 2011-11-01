@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap;
 
 /*                                                                        *
@@ -80,7 +79,6 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	/**
 	 * @param array $settings
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -89,7 +87,6 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	/**
 	 * @param \TYPO3\Soap\RequestBuilder $requestBuilder
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectRequestBuilder(\TYPO3\Soap\RequestBuilder $requestBuilder) {
 		$this->requestBuilder = $requestBuilder;
@@ -106,8 +103,6 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	 * Handles a SOAP request and sends the response directly to the client.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function handleRequest() {
 		$request = $this->requestBuilder->build();
@@ -144,7 +139,6 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	 * Checks if the request handler can handle the current request.
 	 *
 	 * @return boolean TRUE if it can handle the request, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function canHandleRequest() {
 		if (!extension_loaded('soap')) {
@@ -171,7 +165,6 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	 * request.
 	 *
 	 * @return integer The priority of the request handler
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPriority() {
 		return 200;

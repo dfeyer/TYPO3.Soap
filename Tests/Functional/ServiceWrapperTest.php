@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap\Tests\Functional;
 
 /*                                                                        *
@@ -34,7 +33,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function simpleServiceMethodIsWrapped() {
 		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
@@ -47,7 +45,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function argumentToMethodIsMappedToObjectByParamAnnotation() {
 		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
@@ -63,7 +60,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function mapperMapsToClassName() {
 		$this->propertyMapper = $this->objectManager->get('TYPO3\FLOW3\Property\PropertyMapper');
@@ -76,7 +72,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function simpleArrayTypeParametersAreConvertedFromStdClass() {
 		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
@@ -91,7 +86,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function objectArrayTypeParametersAreConvertedFromStdClass() {
 		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
@@ -110,7 +104,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function wrappedObjectArrayTypeParameterWithMultipleValuesIsConvertedFromStdClass() {
 		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
@@ -131,7 +124,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function wrappedObjectArrayTypeParameterWithSingleValueIsConvertedFromStdClass() {
 		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
@@ -149,7 +141,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function wrappedObjectArrayTypeParameterWithNoValueIsConvertedFromStdClass() {
 		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
@@ -171,7 +162,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 * @expectedException \SoapFault
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function expectedExceptionsAreConvertedToClientSoapFault() {
 		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');

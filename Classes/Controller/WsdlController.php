@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap\Controller;
 
 /*                                                                        *
@@ -45,7 +44,6 @@ class WsdlController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * Initialize mappings
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function initializeAction() {
 		$this->pathToObjectNameMapping = array();

@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap;
 
 /*                                                                        *
@@ -92,7 +91,6 @@ class ServiceWrapper {
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -103,7 +101,6 @@ class ServiceWrapper {
 	 *
 	 * @param \TYPO3\FLOW3\Property\PropertyMapper $propertyMapper
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function injectPropertyMapper(\TYPO3\FLOW3\Property\PropertyMapper $propertyMapper) {
 		$this->propertyMapper = $propertyMapper;
@@ -114,7 +111,6 @@ class ServiceWrapper {
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -143,7 +139,6 @@ class ServiceWrapper {
 	 * @param string $methodName Method name called
 	 * @param object $arguments Arguments of the call
 	 * @return mixed
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function __call($methodName, $arguments) {
 		if (substr($methodName, 0, 9) === 'FLOW3_AOP') return;
@@ -178,7 +173,6 @@ class ServiceWrapper {
 	 * @param string $parameterName
 	 * @param string $parameterType
 	 * @return array
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function convertArrayArgument($argument, $methodName, $parameterName, $parameterType) {
 		if (preg_match('/^array<(.+)>$/', $parameterType, $matches)) {
@@ -211,7 +205,6 @@ class ServiceWrapper {
 	 *
 	 * @param \TYPO3\Soap\Request $request
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function initializeCall(\TYPO3\Soap\Request $request) {}
 
@@ -223,7 +216,6 @@ class ServiceWrapper {
 	 *
 	 * @param object $arguments
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function headers($arguments) {
 		$headers = \TYPO3\FLOW3\Utility\Arrays::convertObjectToArray($arguments);
@@ -240,7 +232,6 @@ class ServiceWrapper {
 	 * @param string $methodName The method name of the service that was called
 	 * @return void
 	 * @throws \SoapFault The exception converted to a SoapFault
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function handleException($exception, $className, $methodName) {
 		$this->catchedException = $exception;
@@ -285,7 +276,6 @@ class ServiceWrapper {
 	 * @param string $methodName The method name
 	 * @param string $exceptionClassName The exception class name
 	 * @return boolean
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function methodThrowsException($className, $methodName, $exceptionClassName) {
 		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
@@ -309,7 +299,6 @@ class ServiceWrapper {
 	 * @param \Exception $exception The exception object
 	 * @param string $identifier
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function logException(\Exception $exception, $identifier = NULL) {
 		if (is_object($this->systemLogger)) {
@@ -326,7 +315,6 @@ class ServiceWrapper {
 	 * @param string $className The class name of the target object
 	 * @param string $parameterName The parameter name of the argument
 	 * @return object The converted object
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function convertStdClassToObject($argument, $className, $parameterName) {
 		$source = \TYPO3\FLOW3\Utility\Arrays::convertObjectToArray($argument);
@@ -353,7 +341,6 @@ class ServiceWrapper {
 	 * @param string $className
 	 * @param string $methodName
 	 * @return array The method return type and description
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function getMethodReturnAnnotation($className, $methodName) {
 		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
@@ -373,7 +360,6 @@ class ServiceWrapper {
 	 *
 	 * @param \TYPO3\Soap\Request $request
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setRequest($request) {
 		$this->request = $request;

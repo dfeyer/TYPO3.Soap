@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap;
 
 /*                                                                        *
@@ -90,7 +89,6 @@ class WsdlGenerator {
 	 *
 	 * @param string $className
 	 * @return string The WSDL XML
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function generateWsdl($className) {
 		if (!preg_match('/Service$/', $className)) {
@@ -129,7 +127,6 @@ class WsdlGenerator {
 	 *
 	 * @param string $className The service class name
 	 * @return string The URI path
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function getServicePath($className) {
 		$classParts = implode('/', explode('\\', substr($className, 0, -strlen('Service'))));
@@ -145,7 +142,6 @@ class WsdlGenerator {
 	 *
 	 * @param string $className
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function reflectOperations($className) {
 		$messages = array();
@@ -184,7 +180,6 @@ class WsdlGenerator {
 	 * @param array &$complexTypes
 	 * @param array &$typeMapping
 	 * @return array Message information
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function buildRequestMessage($className, $methodName, &$complexTypes, &$typeMapping) {
 		$messageName = $methodName . 'Request';
@@ -223,7 +218,6 @@ class WsdlGenerator {
 	 * @param array &$complexTypes
 	 * @param array &$typeMapping
 	 * @return array Message information
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function buildResponseMessage($className, $methodName, &$complexTypes, &$typeMapping) {
 		$messageName = $methodName . 'Response';
@@ -247,7 +241,6 @@ class WsdlGenerator {
 	 * @param string $className
 	 * @param string $methodName
 	 * @return array The method return type and description
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function getMethodReturnAnnotation($className, $methodName) {
 		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
@@ -269,7 +262,6 @@ class WsdlGenerator {
 	 * @param array &$complexTypes The complex types
 	 * @param array &$typeMapping Type mapping from PHP to schema type
 	 * @return string The namespace prefixed schema type
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function getOrCreateType($phpType, &$complexTypes, &$typeMapping) {
 		if (isset($typeMapping[$phpType])) {
@@ -328,7 +320,6 @@ class WsdlGenerator {
 	 * @param string $className
 	 * @param string $propertyName
 	 * @return boolean
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function isPropertyRequired($className, $propertyName) {
 		if ($this->reflectionService->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\FLOW3\Annotations\Validate')) {
@@ -348,7 +339,6 @@ class WsdlGenerator {
 	 * @param string $templatePathAndFilename
 	 * @param array $contextVariables
 	 * @return string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function renderTemplate($templatePathAndFilename, array $contextVariables) {
 		$templateSource = \TYPO3\FLOW3\Utility\Files::getFileContents($templatePathAndFilename, FILE_TEXT);
@@ -365,7 +355,6 @@ class WsdlGenerator {
 	 *
 	 * @param array $contextVariables
 	 * @return \TYPO3\Fluid\Core\Rendering\RenderingContextInterface
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function buildRenderingContext(array $contextVariables) {
 		$renderingContext = $this->objectManager->create('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');

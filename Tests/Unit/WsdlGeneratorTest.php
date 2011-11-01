@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap\Tests\Unit;
 
 /*                                                                        *
@@ -29,7 +28,6 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @expectedException \TYPO3\FLOW3\Exception
 	 */
 	public function generateWsdlAcceptsOnlyClassNamesWithServiceSuffix() {
@@ -39,7 +37,6 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @expectedException \TYPO3\FLOW3\Exception
 	 */
 	public function generateWsdlAcceptsOnlyReflectedClassNames() {
@@ -54,7 +51,6 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function generateWsdlReflectsOperationsAndRendersTemplate() {
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
@@ -90,7 +86,6 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function reflectOperationsCollectsPublicMethodsAsOperations() {
 		$mockReflectionService = $this->buildMockReflectionServiceForTestService();
@@ -113,7 +108,6 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function reflectOperationsCollectsOperationRequestResponseMessagesAndMapsTypes() {
 		$mockReflectionService = $this->buildMockReflectionServiceForTestService();
@@ -173,7 +167,6 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function reflectOperationsCollectsComplexTypesForOperation() {
 		$mockReflectionService = $this->buildMockReflectionServiceForTestService();
@@ -221,7 +214,6 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 *
 	 * @return \TYPO3\FLOW3\Reflection\ReflectionService
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function buildMockReflectionServiceForTestService() {
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');

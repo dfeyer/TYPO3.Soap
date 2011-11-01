@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap\Tests\Functional;
 
 /*                                                                        *
@@ -42,7 +41,6 @@ class RequestHandlerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function pingRespondsWithEcho() {
 		$response = $this->soapRequestHelper->sendSoapRequest(
@@ -55,7 +53,6 @@ class RequestHandlerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function pingWithExceptionRespondsWithSoapFaultAndException() {
 		$response = $this->soapRequestHelper->sendSoapRequest(

@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap\Tests\Functional\Helper;
 
 /*                                                                        *
@@ -54,7 +53,6 @@ class SoapRequestHelper {
 	 * @param string $requestBody The request body (SOAP request)
 	 * @param \TYPO3\FLOW3\Tests\Functional\MVC\MockWebRequestHandler $mockRequestHandler Pass the mock request handler of a functional test to register the request on the current request handler (e.g. for security)
 	 * @return string The SOAP response
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function sendSoapRequest($wsdlUri, $serviceObjectName, $requestBody, $mockRequestHandler = NULL) {
 		$requestHandler = clone $this->requestHandler;

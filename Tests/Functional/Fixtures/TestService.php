@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap\Tests\Functional\Fixtures;
 
 /*                                                                        *
@@ -33,7 +32,6 @@ class TestService {
 	 * @param string $value The value
 	 * @return string The same value
 	 * @throws \TYPO3\Soap\Tests\Functional\Fixtures\PingException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function ping($value) {
 		if ($value === 'throw') {
@@ -50,7 +48,6 @@ class TestService {
 	 *
 	 * @param \TYPO3\Soap\Tests\Functional\Fixtures\Dto $value The value as object
 	 * @return string The result
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function multiply(\TYPO3\Soap\Tests\Functional\Fixtures\Dto $value) {
 		$result = '';
@@ -65,7 +62,6 @@ class TestService {
 	 *
 	 * @param array<\TYPO3\Soap\Tests\Functional\Fixtures\Dto> $values The values as objects
 	 * @return string The result
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function concat(array $values) {
 		$result = '';
@@ -80,7 +76,6 @@ class TestService {
 	 *
 	 * @param \TYPO3\Soap\Tests\Functional\Fixtures\DtoWrapper $wrapper The wrapped objects
 	 * @return string The result
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function wrappedConcat(\TYPO3\Soap\Tests\Functional\Fixtures\DtoWrapper $wrapper) {
 		$result = '';
@@ -96,7 +91,6 @@ class TestService {
 	 *
 	 * @param array<integer> $values The values as int array
 	 * @return integer The sum of the values
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function sum(array $values) {
 		return array_sum($values);

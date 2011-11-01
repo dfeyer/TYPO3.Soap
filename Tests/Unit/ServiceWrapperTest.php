@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap\Tests\Unit;
 
 /*                                                                        *
@@ -60,7 +59,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Set up test dependencies
 	 *
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setUp() {
 		$serviceClassName = 'Test' . uniqid() . 'Service';
@@ -98,7 +96,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function methodCallInitializesRequest() {
 		$this->serviceWrapper->expects($this->once())->method('initializeCall')->with($this->mockRequest);
@@ -107,7 +104,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function methodCallInvokesServiceMethod() {
 		$result = $this->serviceWrapper->hello('World');
@@ -116,7 +112,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function methodCallConvertsObjectValue() {
 		$testClassName = uniqid('TestObject');
@@ -144,7 +139,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function methodCallConvertsSimpleArrayValues() {
 		$argument = (object)array(
@@ -156,7 +150,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function methodCallConvertsObjectArrayValues() {
 		$testClassName = uniqid('TestObject');
@@ -191,7 +184,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return \TYPO3\FLOW3\Reflection\ReflectionService
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function buildMockReflectionServiceForTestService() {
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');

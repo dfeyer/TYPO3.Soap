@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap\Tests\Functional;
 
 /*                                                                        *
@@ -29,7 +28,6 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function wsdlForSimpleServiceIsCorrect() {
 		$wsdlGenerator = $this->objectManager->get('TYPO3\Soap\WsdlGenerator');

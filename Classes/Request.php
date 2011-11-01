@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap;
 
 /*                                                                        *
@@ -72,7 +71,6 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	 *
 	 * @param string $serviceObjectName The fully qualified service object name
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setServiceObjectName($serviceObjectName) {
 		$this->serviceObjectName = $serviceObjectName;
@@ -82,7 +80,6 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	 * Returns the service object name
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getServiceObjectName() {
 		return $this->serviceObjectName;
@@ -93,7 +90,6 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Property\DataType\Uri $baseUri
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setBaseUri(\TYPO3\FLOW3\Property\DataType\Uri $baseUri) {
 		$this->baseUri = $baseUri;
@@ -103,7 +99,6 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	 * Returns the base URI
 	 *
 	 * @return \TYPO3\FLOW3\Property\DataType\Uri URI of this web request
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBaseUri() {
 		return $this->baseUri;
@@ -114,7 +109,6 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Property\DataType\Uri $wsdlUri
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setWsdlUri(\TYPO3\FLOW3\Property\DataType\Uri $wsdlUri) {
 		$this->wsdlUri = $wsdlUri;
@@ -124,7 +118,6 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	 * Returns the WSDL URI
 	 *
 	 * @return \TYPO3\FLOW3\Property\DataType\Uri URI pointing to the WSDL
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getWsdlUri() {
 		return $this->wsdlUri;
@@ -134,7 +127,6 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	 * Overrides the body of this request
 	 *
 	 * @param string $body The SOAP body XML
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setBody($body) {
 		$this->body = $body;
@@ -147,7 +139,6 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	 * this function uses the POST data sent by the client.
 	 *
 	 * @return string SOAP body
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBody() {
 		return isset($this->body) ? $this->body : $GLOBALS['HTTP_RAW_POST_DATA'];
@@ -191,7 +182,6 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	 * addressed yet.
 	 *
 	 * @return boolean TRUE if this request has been disptached successfully
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function isDispatched() {

@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap\Tests\Unit\Fixtures;
 
 /*                                                                        *
@@ -32,7 +31,6 @@ class MyService {
 	 *
 	 * @param string $stringParameter
 	 * @return string The string result
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function foo($stringParameter) {
 
@@ -44,7 +42,6 @@ class MyService {
 	 * @param \TYPO3\Soap\Tests\Unit\Fixtures\MyType $objectParameter
 	 * @param array<integer> $arrayParameter
 	 * @return array<string> Array of strings
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function bar(\TYPO3\Soap\Tests\Unit\Fixtures\MyType $objectParameter, array $arrayParameter) {
 

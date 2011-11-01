@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap;
 
 /*                                                                        *
@@ -57,8 +56,6 @@ class RequestBuilder {
 	/**
 	 * @param array $settings
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -78,8 +75,6 @@ class RequestBuilder {
 	 * responsible service object name accordingly.
 	 *
 	 * @return \TYPO3\Soap\Request The request object or FALSE if the service object name could not be resolved
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function build() {
 		$requestUri = $this->environment->getRequestUri();

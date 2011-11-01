@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\Soap;
 
 /*                                                                        *
@@ -43,7 +42,6 @@ class LoggingAspect {
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface
 	 * @return void
 	 * @FLOW3\After("setting(TYPO3.Soap.logRequests) && method(TYPO3\Soap\RequestHandler->canHandleRequest())")
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logCanHandleRequestCalls(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		switch ($joinPoint->getResult()) {
@@ -71,7 +69,6 @@ class LoggingAspect {
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface
 	 * @return void
 	 * @FLOW3\Before("setting(TYPO3.Soap.logRequests) && method(TYPO3\Soap\RequestHandler->handleRequest())")
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logBeforeHandleRequestCalls(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$this->systemLogger->log('Handling SOAP request.', LOG_DEBUG);
@@ -83,7 +80,6 @@ class LoggingAspect {
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface
 	 * @return void
 	 * @FLOW3\After("setting(TYPO3.Soap.logRequests) && method(TYPO3\Soap\RequestHandler->handleRequest())")
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logAfterHandleRequestCalls(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$result = $joinPoint->getResult();
