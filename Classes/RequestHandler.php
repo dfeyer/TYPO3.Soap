@@ -39,6 +39,7 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	const CANHANDLEREQUEST_MISSINGSOAPEXTENSION = -1;
 	const CANHANDLEREQUEST_NOPOSTREQUEST = -2;
 	const CANHANDLEREQUEST_WRONGSERVICEURI = -3;
+	const CANHANDLEREQUEST_NOURIBASEPATH = -4;
 
 	/**
 	 * @FLOW3\Inject
@@ -52,7 +53,6 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	protected $requestBuilder;
 
 	/**
-	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
@@ -93,6 +93,13 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	 */
 	public function injectRequestBuilder(\TYPO3\Soap\RequestBuilder $requestBuilder) {
 		$this->requestBuilder = $requestBuilder;
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment
+	 */
+	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
+		$this->environment = $environment;
 	}
 
 	/**
@@ -143,12 +150,17 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 		if (!extension_loaded('soap')) {
 			return self::CANHANDLEREQUEST_MISSINGSOAPEXTENSION;
 		}
-		if ($this->environment->getRequestMethod() !== 'POST' ) {
+		if ($this->environment->getRequestMethod() !== 'POST') {
 			return self::CANHANDLEREQUEST_NOPOSTREQUEST;
 		}
+		if (!isset($this->settings['endpointUriBasePath'])) {
+			return self::CANHANDLEREQUEST_NOURIBASEPATH;
+		}
 
-		$uriString = substr($this->environment->getRequestUri(), strlen($this->environment->getBaseUri()));
-		if (strpos($uriString, $this->settings['endpointUriBasePath']) !== 0) {
+		$requestUriPath = $this->environment->getRequestUri()->getPath();
+		$requestUriPath = ltrim($requestUriPath, '/');
+		$baseUriPath = ltrim($this->settings['endpointUriBasePath']);
+		if (strpos($requestUriPath, $baseUriPath) !== 0) {
 			return self::CANHANDLEREQUEST_WRONGSERVICEURI;
 		}
 		return self::CANHANDLEREQUEST_OK;
