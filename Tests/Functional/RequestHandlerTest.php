@@ -53,6 +53,7 @@ class RequestHandlerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \TYPO3\FLOW3\Exception
 	 */
 	public function pingWithExceptionRespondsWithSoapFaultAndException() {
 		$response = $this->soapRequestHelper->sendSoapRequest(

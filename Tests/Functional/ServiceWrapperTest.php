@@ -66,7 +66,7 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$value = array('name' => 'Foo', 'size' => 2);
 		$type = 'TYPO3\Soap\Tests\Functional\Fixtures\Dto';
 		$target = $this->propertyMapper->convert($value, $type);
-		$this->assertType('TYPO3\Soap\Tests\Functional\Fixtures\Dto', $target);
+		$this->assertInstanceOf('TYPO3\Soap\Tests\Functional\Fixtures\Dto', $target);
 		$this->assertEquals('Foo', $target->getName());
 	}
 

@@ -127,7 +127,7 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 		$soapServer->handle($request->getBody());
 		if ($serviceWrapper->getCatchedException() !== NULL) {
 			$this->lastCatchedException = $serviceWrapper->getCatchedException();
-			throw new SoapFaultException('SOAP fault emitted', 1305541462, $serviceWrapper->getCatchedException());
+			throw $serviceWrapper->getCatchedException();
 		}
 
 		$this->lastOperationResult = $serviceWrapper->getLastOperationResult();
