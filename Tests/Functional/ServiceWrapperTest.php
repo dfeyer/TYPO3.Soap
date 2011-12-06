@@ -170,7 +170,6 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$wrapper->setRequest($mockRequest);
 
 		$reflectionService = $this->objectManager->get('TYPO3\FLOW3\Reflection\ReflectionService');
-		$tags = $reflectionService->getMethodTagsValues('Networkteam\\MyRossmann\\Service\\Soap\\V1\\CustomerService', 'removeDeliveryAddress');
 
 		try {
 			$result = $wrapper->ping('invalid');
