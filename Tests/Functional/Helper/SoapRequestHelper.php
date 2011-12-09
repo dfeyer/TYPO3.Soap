@@ -21,19 +21,12 @@ namespace TYPO3\Soap\Tests\Functional\Helper;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Doctrine\ORM\Mapping as ORM;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A helper to test SOAP requests
  */
 class SoapRequestHelper {
-
-	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\Soap\RequestHandler
-	 */
-	protected $requestHandler;
 
 	/**
 	 * @var mixed
@@ -46,33 +39,46 @@ class SoapRequestHelper {
 	protected $lastCatchedException;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 */
+	protected $objectManager;
+
+	/**
 	 * Simulate a SOAP request
 	 *
 	 * @param string $wsdlUri The URI of the WSDL (could be a file resource)
 	 * @param string $serviceObjectName The name of the service object
 	 * @param string $requestBody The request body (SOAP request)
-	 * @param \TYPO3\FLOW3\Tests\Functional\MVC\MockWebRequestHandler $mockRequestHandler Pass the mock request handler of a functional test to register the request on the current request handler (e.g. for security)
+	 * @param \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler $testRequestHandler The current test request handler for global object mangling
 	 * @return string The SOAP response
 	 */
-	public function sendSoapRequest($wsdlUri, $serviceObjectName, $requestBody, $mockRequestHandler = NULL) {
-		$requestHandler = clone $this->requestHandler;
-		$testRequestBuilder = new TestRequestBuilder($wsdlUri, $serviceObjectName, $requestBody);
-		$requestHandler->injectRequestBuilder($testRequestBuilder);
+	public function sendSoapRequest($wsdlUri, $serviceObjectName, $requestBody, \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler $testRequestHandler = NULL) {
+		$requestHandler = new \TYPO3\Soap\RequestHandler();
+		$requestHandler->setObjectManager($this->objectManager);
 
-		if ($mockRequestHandler !== NULL) {
-			$mockRequestHandler->setRequest($testRequestBuilder->getRequest());
+		$testRequestBuilder = new TestRequestBuilder($wsdlUri, $serviceObjectName, $requestBody);
+		$request = $testRequestBuilder->getRequest();
+
+		if ($testRequestHandler !== NULL) {
+			$previousRequest = $testRequestHandler->getRequest();
+			$testRequestHandler->setRequest($request);
 		}
 
 		ob_start();
 
 			// Suppress errors since headers might not be settable during a PHPUnit run
-		@$requestHandler->handleRequest();
+		@$requestHandler->processRequest($request);
 
 		$response = ob_get_contents();
 		ob_end_clean();
 
 		$this->lastOperationResult = $requestHandler->getLastOperationResult();
 		$this->lastCatchedException = $requestHandler->getLastCatchedException();
+
+		if ($testRequestHandler !== NULL) {
+			$testRequestHandler->setRequest($previousRequest);
+		}
 
 		return $response;
 	}

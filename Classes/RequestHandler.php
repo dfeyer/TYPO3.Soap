@@ -23,13 +23,12 @@ namespace TYPO3\Soap;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Core\Booting\Step;
 
 /**
  * The SOAP request handler
- *
- * @FLOW3\Scope("singleton")
  */
-class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
+class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 
 	const HANDLEREQUEST_OK = 1;
 	const HANDLEREQUEST_NOVALIDREQUEST = -1;
@@ -39,12 +38,7 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	const CANHANDLEREQUEST_NOPOSTREQUEST = -2;
 	const CANHANDLEREQUEST_WRONGSERVICEURI = -3;
 	const CANHANDLEREQUEST_NOURIBASEPATH = -4;
-
-	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
+	const CANHANDLEREQUEST_NOSOAPACTION = -5;
 
 	/**
 	 * @var \TYPO3\Soap\RequestBuilder
@@ -55,11 +49,6 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
-
-	/**
-	 * @var array
-	 */
-	protected $settings = array();
 
 	/**
 	 * @var mixed
@@ -77,26 +66,26 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	protected $request;
 
 	/**
-	 * @param array $settings
-	 * @return void
+	 * @var \TYPO3\FLOW3\Core\Bootstrap
 	 */
-	public function injectSettings(array $settings) {
-		$this->settings = $settings;
-	}
+	protected $bootstrap;
 
 	/**
-	 * @param \TYPO3\Soap\RequestBuilder $requestBuilder
-	 * @return void
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
-	public function injectRequestBuilder(\TYPO3\Soap\RequestBuilder $requestBuilder) {
-		$this->requestBuilder = $requestBuilder;
-	}
+	protected $objectManager;
 
 	/**
-	 * @param \TYPO3\FLOW3\Utility\Environment $environment
+	 * Constructor
+	 *
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
 	 */
-	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
-		$this->environment = $environment;
+	public function __construct(\TYPO3\FLOW3\Core\Bootstrap $bootstrap = NULL) {
+		$this->bootstrap = $bootstrap;
+		if ($bootstrap !== NULL) {
+			// TODO Use global environment or use HTTP request after refactoring
+			$this->environment = new \TYPO3\FLOW3\Utility\Environment($bootstrap->getContext());
+		}
 	}
 
 	/**
@@ -105,13 +94,30 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	 * @return void
 	 */
 	public function handleRequest() {
-		$request = $this->requestBuilder->build();
+		$sequence = $this->buildRuntimeSequence();
+		$sequence->invoke($this->bootstrap);
+
+		$this->objectManager = $this->bootstrap->getObjectManager();
+		$request = $this->objectManager->get('TYPO3\Soap\RequestBuilder')->build();
 		if ($request === FALSE) {
 			header('HTTP/1.1 404 Not Found');
 			echo 'Could not build request - probably no SOAP service matched the given endpoint URI.';
 			return self::HANDLEREQUEST_NOVALIDREQUEST;
 		}
 
+		$this->processRequest($request);
+
+		$this->bootstrap->shutdown('Runtime');
+	}
+
+	/**
+	 * Process a SOAP Request and invoke the SoapServer with a ServiceWrapper wrapping
+	 * the SOAP service object.
+	 *
+	 * @param \TYPO3\Soap\Request $request
+	 * @return void
+	 */
+	public function processRequest(Request $request) {
 		$this->request = $request;
 
 		$this->lastOperationResult = NULL;
@@ -131,8 +137,25 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 		}
 
 		$this->lastOperationResult = $serviceWrapper->getLastOperationResult();
+	}
 
-		return self::HANDLEREQUEST_OK;
+	/**
+	 * Builds a boot sequence for SOAP requests leaving out
+	 * resource and session management.
+	 *
+	 * @return \TYPO3\FLOW3\Core\Booting\Sequence
+	 */
+	public function buildRuntimeSequence() {
+		$sequence = $this->bootstrap->buildEssentialsSequence();
+		$sequence->addStep(new Step('typo3.flow3:objectmanagement:proxyclasses', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeProxyClasses')), 'typo3.flow3:systemlogger');
+		$sequence->addStep(new Step('typo3.flow3:classloader:cache', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeClassLoaderClassesCache')), 'typo3.flow3:objectmanagement:proxyclasses');
+		$sequence->addStep(new Step('typo3.flow3:reflectionservice', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow3:classloader:cache');
+		$sequence->addStep(new Step('typo3.flow3:objectmanagement:runtime', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeObjectManager')), 'typo3.flow3:reflectionservice');
+		if ($this->bootstrap->getContext() !== 'Production') {
+			$sequence->addStep(new Step('typo3.flow3:classfilemonitor', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeClassFileMonitor')), 'typo3.flow3:objectmanagement:runtime');
+		}
+		$sequence->addStep(new Step('typo3.flow3:persistence', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializePersistence')), 'typo3.flow3:objectmanagement:runtime');
+		return $sequence;
 	}
 
 	/**
@@ -147,15 +170,9 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 		if ($this->environment->getRequestMethod() !== 'POST') {
 			return self::CANHANDLEREQUEST_NOPOSTREQUEST;
 		}
-		if (!isset($this->settings['endpointUriBasePath'])) {
-			return self::CANHANDLEREQUEST_NOURIBASEPATH;
-		}
-
-		$requestUriPath = $this->environment->getRequestUri()->getPath();
-		$requestUriPath = ltrim($requestUriPath, '/');
-		$baseUriPath = ltrim($this->settings['endpointUriBasePath']);
-		if (strpos($requestUriPath, $baseUriPath) !== 0) {
-			return self::CANHANDLEREQUEST_WRONGSERVICEURI;
+		$server = $this->environment->getRawServerEnvironment();
+		if (!isset($server['HTTP_SOAPACTION'])) {
+			return self::CANHANDLEREQUEST_NOSOAPACTION;
 		}
 		return self::CANHANDLEREQUEST_OK;
 	}
@@ -197,6 +214,13 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	 */
 	public function getRequest() {
 		return $this->request;
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 */
+	public function setObjectManager($objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 }
