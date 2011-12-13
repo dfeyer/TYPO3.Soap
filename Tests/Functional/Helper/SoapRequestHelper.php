@@ -53,7 +53,7 @@ class SoapRequestHelper {
 	 * @param \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler $testRequestHandler The current test request handler for global object mangling
 	 * @return string The SOAP response
 	 */
-	public function sendSoapRequest($wsdlUri, $serviceObjectName, $requestBody, \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler $testRequestHandler = NULL) {
+	public function sendSoapRequest($wsdlUri, $serviceObjectName, $requestBody, \TYPO3\FLOW3\Tests\Functional\FunctionalTestRequestHandler $testRequestHandler = NULL) {
 		$requestHandler = new \TYPO3\Soap\RequestHandler();
 		$requestHandler->setObjectManager($this->objectManager);
 
