@@ -27,7 +27,8 @@ TYPO3:
     generatorTemplate: 'resource://TYPO3.Soap/Private/Templates/Definitions.xml'
 
     # Explicit mapping of object names to URLs and XML namespaces for WSDL generator and SOAP request handler
-    mapping:
-      # Package\SomeObjectName:
-      #   path: path/after/endpointUriBasePath
-      #   namespace: http://example.com/some/xml/namespace
+    #
+    # mapping:
+    #   Package\SomeObjectName:
+    #     path: path/after/endpointUriBasePath
+    #     namespace: http://example.com/some/xml/namespace
