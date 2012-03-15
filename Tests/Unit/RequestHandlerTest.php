@@ -40,15 +40,14 @@ class RequestHandlerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function canHandleDoesNotRelyOnBaseUrl() {
+	public function canHandleHandlesPostRequestWithSoapactionHeader() {
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$requestHandler = new \TYPO3\Soap\RequestHandler();
-		$requestHandler->injectEnvironment($mockEnvironment);
-
-		$settings = array(
-			'endpointUriBasePath' => 'service/soap/'
+		$server = array(
+			'HTTP_SOAPACTION' => 'Foo'
 		);
-		$requestHandler->injectSettings($settings);
+		$mockEnvironment->expects($this->any())->method('getRawServerEnvironment')->will($this->returnValue($server));
+		$requestHandler = new \TYPO3\Soap\RequestHandler();
+		$requestHandler->setEnvironment($mockEnvironment);
 
 		$mockEnvironment->expects($this->any())->method('getRequestMethod')->will($this->returnValue('POST'));
 		$mockEnvironment->expects($this->any())->method('getRequestUri')->will($this->returnValue(new \TYPO3\FLOW3\Property\DataType\Uri('http://request-host/service/soap/test')));

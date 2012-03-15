@@ -223,5 +223,12 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 		$this->objectManager = $objectManager;
 	}
 
+	/**
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment
+	 */
+	public function setEnvironment($environment) {
+		$this->environment = $environment;
+	}
+
 }
 ?>

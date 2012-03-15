@@ -357,9 +357,9 @@ class WsdlGenerator {
 	 * @return \TYPO3\Fluid\Core\Rendering\RenderingContextInterface
 	 */
 	protected function buildRenderingContext(array $contextVariables) {
-		$renderingContext = $this->objectManager->create('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
-		$renderingContext->injectTemplateVariableContainer($this->objectManager->create('TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer', $contextVariables));
-		$renderingContext->injectViewHelperVariableContainer($this->objectManager->create('TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer'));
+		$renderingContext = new \TYPO3\Fluid\Core\Rendering\RenderingContext();
+		$renderingContext->injectTemplateVariableContainer(new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer($contextVariables));
+		$renderingContext->injectViewHelperVariableContainer(new \TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer());
 		return $renderingContext;
 	}
 
