@@ -39,11 +39,11 @@ class LoggingAspect {
 	/**
 	 * Advice for logging calls of the request handler's canHandleRequest() method.
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface
 	 * @return void
 	 * @FLOW3\After("setting(TYPO3.Soap.logRequests) && method(TYPO3\Soap\RequestHandler->canHandleRequest())")
 	 */
-	public function logCanHandleRequestCalls(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logCanHandleRequestCalls(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		switch ($joinPoint->getResult()) {
 			case \TYPO3\Soap\RequestHandler::CANHANDLEREQUEST_OK :
 				$message = 'Detected HTTP POST request at valid endpoint URI.';
@@ -66,22 +66,22 @@ class LoggingAspect {
 	/**
 	 * Advice for logging handleRequest() calls
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface
 	 * @return void
 	 * @FLOW3\Before("setting(TYPO3.Soap.logRequests) && method(TYPO3\Soap\RequestHandler->handleRequest())")
 	 */
-	public function logBeforeHandleRequestCalls(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logBeforeHandleRequestCalls(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$this->systemLogger->log('Handling SOAP request.', LOG_DEBUG);
 	}
 
 	/**
 	 * Advice for logging handleRequest() calls
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface
 	 * @return void
 	 * @FLOW3\After("setting(TYPO3.Soap.logRequests) && method(TYPO3\Soap\RequestHandler->handleRequest())")
 	 */
-	public function logAfterHandleRequestCalls(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logAfterHandleRequestCalls(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$result = $joinPoint->getResult();
 		if ($result instanceof \Exception) {
 			$this->systemLogger->log('handleRequest() exited with exception:' . $result, LOG_ERR);

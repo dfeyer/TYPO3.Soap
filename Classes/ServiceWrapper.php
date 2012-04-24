@@ -59,12 +59,6 @@ class ServiceWrapper {
 	protected $systemLogger;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Utility\Environment
-	 */
-	protected $environment;
-
-	/**
 	 * @var \TYPO3\Soap\Request
 	 */
 	protected $request;

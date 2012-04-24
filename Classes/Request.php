@@ -24,7 +24,7 @@ namespace TYPO3\Soap;
 /**
  * A SOAP request
  */
-class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
+class Request extends \TYPO3\FLOW3\Http\Request {
 
 	/**
 	 * The fully qualified object name of the service this request refers to
@@ -36,14 +36,14 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	/**
 	 * The base URI for this request - ie. the host and path leading to which all FLOW3 URI paths are relative
 	 *
-	 * @var \TYPO3\FLOW3\Property\DataType\Uri
+	 * @var \TYPO3\FLOW3\Http\Uri
 	 */
 	protected $baseUri;
 
 	/**
 	 * URI pointing to the WSDL of the currently used service
 	 *
-	 * @var \TYPO3\FLOW3\Property\DataType\Uri
+	 * @var \TYPO3\FLOW3\Http\Uri
 	 */
 	protected $wsdlUri;
 
@@ -58,13 +58,6 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	 * @var array
 	 */
 	protected $soapHeaders;
-
-	/**
-	 * If this request has been changed and needs to be dispatched again
-	 *
-	 * @var boolean
-	 */
-	protected $dispatched = FALSE;
 
 	/**
 	 * Sets the service object name
@@ -88,17 +81,17 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	/**
 	 * Sets the base URI
 	 *
-	 * @param \TYPO3\FLOW3\Property\DataType\Uri $baseUri
+	 * @param \TYPO3\FLOW3\Http\Uri $baseUri
 	 * @return void
 	 */
-	public function setBaseUri(\TYPO3\FLOW3\Property\DataType\Uri $baseUri) {
+	public function setBaseUri(\TYPO3\FLOW3\Http\Uri $baseUri) {
 		$this->baseUri = $baseUri;
 	}
 
 	/**
 	 * Returns the base URI
 	 *
-	 * @return \TYPO3\FLOW3\Property\DataType\Uri URI of this web request
+	 * @return \TYPO3\FLOW3\Http\Uri URI of this web request
 	 */
 	public function getBaseUri() {
 		return $this->baseUri;
@@ -107,17 +100,17 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	/**
 	 * Sets the WSDL URI
 	 *
-	 * @param \TYPO3\FLOW3\Property\DataType\Uri $wsdlUri
+	 * @param \TYPO3\FLOW3\Http\Uri $wsdlUri
 	 * @return void
 	 */
-	public function setWsdlUri(\TYPO3\FLOW3\Property\DataType\Uri $wsdlUri) {
+	public function setWsdlUri(\TYPO3\FLOW3\Http\Uri $wsdlUri) {
 		$this->wsdlUri = $wsdlUri;
 	}
 
 	/**
 	 * Returns the WSDL URI
 	 *
-	 * @return \TYPO3\FLOW3\Property\DataType\Uri URI pointing to the WSDL
+	 * @return \TYPO3\FLOW3\Http\Uri URI pointing to the WSDL
 	 */
 	public function getWsdlUri() {
 		return $this->wsdlUri;
@@ -161,31 +154,6 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	 */
 	public function setSoapHeaders($soapHeaders) {
 		$this->soapHeaders = $soapHeaders;
-	}
-
-	/**
-	 * Sets the dispatched flag
-	 *
-	 * @param boolean $flag If this request has been dispatched
-	 * @return void
-	 * @api
-	 */
-	public function setDispatched($flag) {
-		$this->dispatched = $flag ? TRUE : FALSE;
-	}
-
-	/**
-	 * If this request has been dispatched and addressed by the responsible
-	 * controller and the response is ready to be sent.
-	 *
-	 * The dispatcher will try to dispatch the request again if it has not been
-	 * addressed yet.
-	 *
-	 * @return boolean TRUE if this request has been disptached successfully
-	 * @api
-	 */
-	public function isDispatched() {
-		return $this->dispatched;
 	}
 
 }

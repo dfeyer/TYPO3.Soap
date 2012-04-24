@@ -45,13 +45,10 @@ class RequestHandlerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$server = array(
 			'HTTP_SOAPACTION' => 'Foo'
 		);
-		$mockEnvironment->expects($this->any())->method('getRawServerEnvironment')->will($this->returnValue($server));
-		$requestHandler = new \TYPO3\Soap\RequestHandler();
-		$requestHandler->setEnvironment($mockEnvironment);
+		$httpRequest = \TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://request-host/service/soap/test'), 'POST', array(), array(), array(), $server);
 
-		$mockEnvironment->expects($this->any())->method('getRequestMethod')->will($this->returnValue('POST'));
-		$mockEnvironment->expects($this->any())->method('getRequestUri')->will($this->returnValue(new \TYPO3\FLOW3\Property\DataType\Uri('http://request-host/service/soap/test')));
-		$mockEnvironment->expects($this->any())->method('getBaseUri')->will($this->returnValue(new \TYPO3\FLOW3\Property\DataType\Uri('https://very-different/')));
+		$requestHandler = new \TYPO3\Soap\RequestHandler();
+		$requestHandler->setHttpRequest($httpRequest);
 
 		$result = $requestHandler->canHandleRequest();
 

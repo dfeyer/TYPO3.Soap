@@ -24,7 +24,7 @@ namespace TYPO3\Soap\Routing;
 /**
  * A route part handler for WSDL "files"
  */
-class WsdlRoutePartHandler extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
+class WsdlRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
 
 	/**
 	 * @var array

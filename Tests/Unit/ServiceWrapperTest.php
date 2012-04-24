@@ -83,7 +83,7 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			}
 		');
 		$this->mockService = $this->getMock($serviceClassName, array('dummy'));
-		$this->mockRequest = $this->getMock('TYPO3\Soap\Request');
+		$this->mockRequest = $this->getMock('TYPO3\Soap\Request', array(), array(), '', FALSE);
 		$this->mockReflectionService = $this->buildMockReflectionServiceForTestService();
 		$this->mockPropertyMapper = $this->getMock('TYPO3\FLOW3\Property\PropertyMapper');
 		$this->mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');

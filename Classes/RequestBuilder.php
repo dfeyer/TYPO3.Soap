@@ -38,12 +38,6 @@ class RequestBuilder {
 	protected $objectManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Utility\Environment
-	 */
-	protected $environment;
-
-	/**
 	 * @var array
 	 */
 	protected $settings = array();
@@ -74,11 +68,12 @@ class RequestBuilder {
 	 * Parses the endpoint URI found in the current HTTP request and resolves the
 	 * responsible service object name accordingly.
 	 *
+	 * @param \TYPO3\FLOW3\Http\Request $httpRequest
 	 * @return \TYPO3\Soap\Request The request object or FALSE if the service object name could not be resolved
 	 */
-	public function build() {
-		$requestUri = $this->environment->getRequestUri();
-		$baseUri = $this->environment->getBaseUri();
+	public function build(\TYPO3\FLOW3\Http\Request $httpRequest) {
+		$requestUri = $httpRequest->getUri();
+		$baseUri = $httpRequest->getBaseUri();
 
 		$servicePath = $this->servicePathForRequestUri($requestUri);
 		$serviceObjectName = $this->serviceObjectNameForServicePath($servicePath);
@@ -86,7 +81,7 @@ class RequestBuilder {
 		$wsdlUri = clone $baseUri;
 		$wsdlUri->setPath($requestUri->getPath() . '.wsdl');
 
-		$request = new \TYPO3\Soap\Request();
+		$request = \TYPO3\Soap\Request::create($requestUri, 'POST');
 		$request->setServiceObjectName($serviceObjectName);
 		$request->setBaseUri($baseUri);
 		$request->setWsdlUri($wsdlUri);

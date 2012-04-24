@@ -27,7 +27,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A controller to serve static or generated WSDL
  */
-class WsdlController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
+class WsdlController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
 	 * @FLOW3\Inject
@@ -89,7 +89,7 @@ class WsdlController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 		}
 
 		$this->response->setHeader('Content-type', 'application/xml');
-		$wsdlContent = str_replace('{baseUrl}', $this->request->getBaseUri(), $wsdlContent);
+		$wsdlContent = str_replace('{baseUrl}', $this->request->getHttpRequest()->getBaseUri(), $wsdlContent);
 		return $wsdlContent;
 	}
 }

@@ -38,9 +38,9 @@ class TestRequestBuilder extends \TYPO3\Soap\RequestBuilder {
 	 * @param string $requestBody
 	 */
 	public function __construct($wsdlUri, $serviceObjectName, $requestBody) {
-		$this->request = new TestRequest();
+		$this->request = TestRequest::create(new \TYPO3\FLOW3\Http\Uri('http://localhost/soap'), 'POST');
 		if (is_string($wsdlUri)) {
-			$wsdlUri = new \TYPO3\FLOW3\Property\DataType\Uri($wsdlUri);
+			$wsdlUri = new \TYPO3\FLOW3\Http\Uri($wsdlUri);
 		}
 		$this->request->setWsdlUri($wsdlUri);
 		$this->request->setServiceObjectName($serviceObjectName);
@@ -49,9 +49,10 @@ class TestRequestBuilder extends \TYPO3\Soap\RequestBuilder {
 
 	/**
 	 *
+	 * @param \TYPO3\FLOW3\Http\Request $httpRequest
 	 * @return \TYPO3\Soap\Request
 	 */
-	public function build() {
+	public function build(\TYPO3\FLOW3\Http\Request $httpRequest) {
 		return $this->request;
 	}
 

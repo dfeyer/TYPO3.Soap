@@ -50,20 +50,17 @@ class SoapRequestHelper {
 	 * @param string $wsdlUri The URI of the WSDL (could be a file resource)
 	 * @param string $serviceObjectName The name of the service object
 	 * @param string $requestBody The request body (SOAP request)
-	 * @param \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler $testRequestHandler The current test request handler for global object mangling
 	 * @return string The SOAP response
 	 */
-	public function sendSoapRequest($wsdlUri, $serviceObjectName, $requestBody, \TYPO3\FLOW3\Tests\Functional\FunctionalTestRequestHandler $testRequestHandler = NULL) {
+	public function sendSoapRequest($wsdlUri, $serviceObjectName, $requestBody) {
 		$requestHandler = new \TYPO3\Soap\RequestHandler();
 		$requestHandler->setObjectManager($this->objectManager);
 
 		$testRequestBuilder = new TestRequestBuilder($wsdlUri, $serviceObjectName, $requestBody);
 		$request = $testRequestBuilder->getRequest();
 
-		if ($testRequestHandler !== NULL) {
-			$previousRequest = $testRequestHandler->getRequest();
-			$testRequestHandler->setRequest($request);
-		}
+		$securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
+		$securityContext->injectRequest($request->createActionRequest());
 
 		ob_start();
 
@@ -75,10 +72,6 @@ class SoapRequestHelper {
 
 		$this->lastOperationResult = $requestHandler->getLastOperationResult();
 		$this->lastCatchedException = $requestHandler->getLastCatchedException();
-
-		if ($testRequestHandler !== NULL) {
-			$testRequestHandler->setRequest($previousRequest);
-		}
 
 		return $response;
 	}

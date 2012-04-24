@@ -46,9 +46,9 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	protected $requestBuilder;
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Http\Request
 	 */
-	protected $environment;
+	protected $httpRequest;
 
 	/**
 	 * @var mixed
@@ -61,7 +61,7 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	protected $lastCatchedException;
 
 	/**
-	 * @var \TYPO3\FLOW3\MVC\RequestInterface
+	 * @var \TYPO3\FLOW3\Mvc\RequestInterface
 	 */
 	protected $request;
 
@@ -82,10 +82,7 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	 */
 	public function __construct(\TYPO3\FLOW3\Core\Bootstrap $bootstrap = NULL) {
 		$this->bootstrap = $bootstrap;
-		if ($bootstrap !== NULL) {
-			// TODO Use global environment or use HTTP request after refactoring
-			$this->environment = new \TYPO3\FLOW3\Utility\Environment($bootstrap->getContext());
-		}
+		$this->httpRequest = \TYPO3\FLOW3\Http\Request::createFromEnvironment();
 	}
 
 	/**
@@ -98,12 +95,15 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 		$sequence->invoke($this->bootstrap);
 
 		$this->objectManager = $this->bootstrap->getObjectManager();
-		$request = $this->objectManager->get('TYPO3\Soap\RequestBuilder')->build();
+		$request = $this->objectManager->get('TYPO3\Soap\RequestBuilder')->build($this->httpRequest);
 		if ($request === FALSE) {
 			header('HTTP/1.1 404 Not Found');
 			echo 'Could not build request - probably no SOAP service matched the given endpoint URI.';
 			return self::HANDLEREQUEST_NOVALIDREQUEST;
 		}
+
+		$securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
+		$securityContext->injectRequest($request->createActionRequest());
 
 		$this->processRequest($request);
 
@@ -152,7 +152,7 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 		$sequence->addStep(new Step('typo3.flow3:reflectionservice', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow3:classloader:cache');
 		$sequence->addStep(new Step('typo3.flow3:objectmanagement:runtime', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeObjectManager')), 'typo3.flow3:reflectionservice');
 		if ($this->bootstrap->getContext() !== 'Production') {
-			$sequence->addStep(new Step('typo3.flow3:classfilemonitor', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeClassFileMonitor')), 'typo3.flow3:objectmanagement:runtime');
+			$sequence->addStep(new Step('typo3.flow3:systemfilemonitor', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeSystemFileMonitor')), 'typo3.flow3:objectmanagement:runtime');
 		}
 		$sequence->addStep(new Step('typo3.flow3:persistence', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializePersistence')), 'typo3.flow3:objectmanagement:runtime');
 		return $sequence;
@@ -167,11 +167,10 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 		if (!extension_loaded('soap')) {
 			return self::CANHANDLEREQUEST_MISSINGSOAPEXTENSION;
 		}
-		if ($this->environment->getRequestMethod() !== 'POST') {
+		if ($this->httpRequest->getMethod() !== 'POST') {
 			return self::CANHANDLEREQUEST_NOPOSTREQUEST;
 		}
-		$server = $this->environment->getRawServerEnvironment();
-		if (!isset($server['HTTP_SOAPACTION'])) {
+		if (!$this->httpRequest->getHeaders()->has('Soapaction')) {
 			return self::CANHANDLEREQUEST_NOSOAPACTION;
 		}
 		return self::CANHANDLEREQUEST_OK;
@@ -210,7 +209,7 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	}
 
 	/**
-	 * @return \TYPO3\FLOW3\MVC\RequestInterface
+	 * @return \TYPO3\FLOW3\Mvc\RequestInterface
 	 */
 	public function getRequest() {
 		return $this->request;
@@ -224,10 +223,12 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Utility\Environment $environment
+	 * Override the HTTP request
+	 *
+	 * @param \TYPO3\FLOW3\Http\Request $httpRequest
 	 */
-	public function setEnvironment($environment) {
-		$this->environment = $environment;
+	public function setHttpRequest($httpRequest) {
+		$this->httpRequest = $httpRequest;
 	}
 
 }

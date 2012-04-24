@@ -32,10 +32,8 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function buildGetsServiceObjectNameFromUrl() {
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$requestBuilder = new \TYPO3\Soap\RequestBuilder();
-		ObjectAccess::setProperty($requestBuilder, 'environment', $mockEnvironment, TRUE);
 		ObjectAccess::setProperty($requestBuilder, 'objectManager', $mockObjectManager, TRUE);
 
 		$settings = array(
@@ -43,12 +41,12 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 		$requestBuilder->injectSettings($settings);
 
-		$mockEnvironment->expects($this->any())->method('getRequestUri')->will($this->returnValue(new \TYPO3\FLOW3\Property\DataType\Uri('http://request-host/service/soap/testing/v1/test')));
-		$mockEnvironment->expects($this->any())->method('getBaseUri')->will($this->returnValue(new \TYPO3\FLOW3\Property\DataType\Uri('https://very-different/')));
+		$httpRequest = \TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://request-host/service/soap/testing/v1/test'), 'POST');
+		ObjectAccess::setProperty($httpRequest, 'baseUri', new \TYPO3\FLOW3\Http\Uri('https://very-different/'), TRUE);
 
 		$mockObjectManager->expects($this->atLeastOnce())->method('getCaseSensitiveObjectName')->with('testing\Service\Soap\v1\testService')->will($this->returnValue('Testing\Service\Soap\V1\TestService'));
 
-		$request = $requestBuilder->build();
+		$request = $requestBuilder->build($httpRequest);
 
 		$this->assertEquals('Testing\Service\Soap\V1\TestService', $request->getServiceObjectName());
 	}
@@ -57,10 +55,8 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function buildUsesBaseUrlForWsdlUri() {
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$requestBuilder = new \TYPO3\Soap\RequestBuilder();
-		ObjectAccess::setProperty($requestBuilder, 'environment', $mockEnvironment, TRUE);
 		ObjectAccess::setProperty($requestBuilder, 'objectManager', $mockObjectManager, TRUE);
 
 		$settings = array(
@@ -68,11 +64,12 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 		$requestBuilder->injectSettings($settings);
 
-		$mockEnvironment->expects($this->any())->method('getRequestUri')->will($this->returnValue(new \TYPO3\FLOW3\Property\DataType\Uri('http://request-host/service/soap/testing/v1/test')));
-		$mockEnvironment->expects($this->any())->method('getBaseUri')->will($this->returnValue(new \TYPO3\FLOW3\Property\DataType\Uri('https://very-different/')));
+		$httpRequest = \TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://request-host/service/soap/testing/v1/test'), 'POST');
+		ObjectAccess::setProperty($httpRequest, 'baseUri', new \TYPO3\FLOW3\Http\Uri('https://very-different/'), TRUE);
+
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('testing\Service\Soap\v1\testService')->will($this->returnValue('Testing\Service\Soap\V1\TestService'));
 
-		$request = $requestBuilder->build();
+		$request = $requestBuilder->build($httpRequest);
 
 		$this->assertEquals('https://very-different/service/soap/testing/v1/test.wsdl', (string)$request->getWsdlUri(), 'WSDL URI should use base URI');
 		$this->assertEquals('https://very-different/', (string)$request->getBaseUri(), 'Base URI should not be modified');
