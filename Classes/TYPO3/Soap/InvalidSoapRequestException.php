@@ -2,7 +2,7 @@
 namespace TYPO3\Soap;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -22,32 +22,9 @@ namespace TYPO3\Soap;
  *                                                                        */
 
 /**
- * A mapping exception
+ * An exception for invalid SOAP requests (should translate to a client SOAP fault)
  */
-class MappingException extends \TYPO3\FLOW3\Exception {
+class InvalidSoapRequestException extends \TYPO3\Flow\Exception {
 
-	/**
-	 * @var \TYPO3\FLOW3\Property\MappingResults
-	 */
-	protected $mappingResults;
-
-	/**
-	 * Constructs this exception
-	 *
-	 * @param string $message The exception message
-	 * @param \TYPO3\FLOW3\Property\MappingResults $mappingResults
-	 */
-	public function __construct($message, \TYPO3\FLOW3\Property\MappingResults $mappingResults) {
-		parent::__construct($message, '1288952996');
-		$this->mappingResults = $mappingResults;
-	}
-
-	/**
-	 * @return \TYPO3\FLOW3\Property\MappingResults
-	 */
-	public function getMappingResults() {
-		return $this->mappingResults;
-	}
 }
-
 ?>

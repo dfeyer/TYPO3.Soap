@@ -2,7 +2,7 @@
 namespace TYPO3\Soap;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -22,7 +22,7 @@ namespace TYPO3\Soap;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Dynamic WSDL Generator using reflection
@@ -30,19 +30,19 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class WsdlGenerator {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\Fluid\Core\Parser\TemplateParser
 	 */
 	protected $templateParser;
@@ -92,10 +92,10 @@ class WsdlGenerator {
 	 */
 	public function generateWsdl($className) {
 		if (!preg_match('/Service$/', $className)) {
-			throw new \TYPO3\FLOW3\Exception('SOAP service class must end with "Service"', 1288984414);
+			throw new \TYPO3\Flow\Exception('SOAP service class must end with "Service"', 1288984414);
 		}
 		if (!$this->reflectionService->isClassReflected($className)) {
-			throw new \TYPO3\FLOW3\Exception('SOAP service class "' . $className . '" is not known', 1297073339);
+			throw new \TYPO3\Flow\Exception('SOAP service class "' . $className . '" is not known', 1297073339);
 		}
 
 		$serviceName = substr($className, strrpos($className, '\\') + 1);
@@ -130,9 +130,10 @@ class WsdlGenerator {
 	 */
 	protected function getServicePath($className) {
 		$classParts = implode('/', explode('\\', substr($className, 0, -strlen('Service'))));
-		$classParts = str_replace('/Service/Soap/', '/', $classParts);
 		$packageKey = $this->objectManager->getPackageKeyByObjectName($className);
+		$classParts = str_replace('/Service/Soap/', '/', $classParts);
 		$classParts = str_replace(strtr($packageKey, '.', '/'), '', $classParts);
+
 		return $this->settings['endpointUriBasePath'] . strtolower($packageKey . $classParts);
 	}
 
@@ -149,12 +150,12 @@ class WsdlGenerator {
 		$complexTypes = array();
 		$typeMapping = $this->defaultTypeMap;
 		if (!class_exists($className)) {
-			throw new \TYPO3\FLOW3\Exception('Class "' . $className . '" is not known', 1311091776);
+			throw new \TYPO3\Flow\Exception('Class "' . $className . '" is not known', 1311091776);
 		}
 		$methodNames = get_class_methods($className);
 		foreach ($methodNames as $methodName) {
 			if (!$this->reflectionService->isMethodPublic($className, $methodName) || strpos($methodName, 'inject') === 0) continue;
-			$methodReflection = new \TYPO3\FLOW3\Reflection\MethodReflection($className, $methodName);
+			$methodReflection = new \TYPO3\Flow\Reflection\MethodReflection($className, $methodName);
 			$operations[$methodName] = array(
 				'name' => $methodName,
 				'documentation' => $methodReflection->getDescription()
@@ -191,7 +192,7 @@ class WsdlGenerator {
 		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
 		foreach ($methodParameters as $parameterName => $methodParameter) {
 			if ($methodParameter['optional']) {
-				throw new \TYPO3\FLOW3\Exception('Optional method arguments are not allowed for SOAP operations, ' . $className . '::' . $methodName, 1305039276);
+				throw new \TYPO3\Flow\Exception('Optional method arguments are not allowed for SOAP operations, ' . $className . '::' . $methodName, 1305039276);
 			}
 
 			$paramAnnotation = $methodTagsValues['param'][$methodParameter['position']];
@@ -251,7 +252,7 @@ class WsdlGenerator {
 				'description' => count($returnAnnotations) > 1 ? $returnAnnotations[1] : NULL
 			);
 		} else {
-			throw new \TYPO3\FLOW3\Exception('Could not get return value for ' . $className . '::' . $methodName, 1288984174);
+			throw new \TYPO3\Flow\Exception('Could not get return value for ' . $className . '::' . $methodName, 1288984174);
 		}
 	}
 
@@ -282,7 +283,7 @@ class WsdlGenerator {
 				)
 			);
 		} elseif (strpos($phpType, '\\') !== FALSE) {
-			$classReflection = new \TYPO3\FLOW3\Reflection\ClassReflection($phpType);
+			$classReflection = new \TYPO3\Flow\Reflection\ClassReflection($phpType);
 			$typeName = substr($phpType, strrpos($phpType, '\\') + 1);
 			$typeMapping[$phpType] = 'tns:' . $typeName;
 			$complexTypes[$typeName] = array(
@@ -294,7 +295,7 @@ class WsdlGenerator {
 			foreach ($methodNames as $methodName) {
 				if (strpos($methodName, 'get') === 0 && $this->reflectionService->isMethodPublic($phpType, $methodName)) {
 					$propertyName = lcfirst(substr($methodName, 3));
-					$propertyReflection = new \TYPO3\FLOW3\Reflection\PropertyReflection($phpType, $propertyName);
+					$propertyReflection = new \TYPO3\Flow\Reflection\PropertyReflection($phpType, $propertyName);
 
 					$minOccurs = $this->isPropertyRequired($phpType, $propertyName) ? 1 : 0;
 
@@ -308,7 +309,7 @@ class WsdlGenerator {
 				}
 			}
 		} else {
-			throw new \TYPO3\FLOW3\Exception('Type ' . $phpType . ' not supported', 1288979369);
+			throw new \TYPO3\Flow\Exception('Type ' . $phpType . ' not supported', 1288979369);
 		}
 		return $typeMapping[$phpType];
 	}
@@ -322,8 +323,8 @@ class WsdlGenerator {
 	 * @return boolean
 	 */
 	protected function isPropertyRequired($className, $propertyName) {
-		if ($this->reflectionService->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\FLOW3\Annotations\Validate')) {
-			$annotations = $this->reflectionService->getPropertyAnnotations($className, $propertyName, 'TYPO3\FLOW3\Annotations\Validate');
+		if ($this->reflectionService->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Validate')) {
+			$annotations = $this->reflectionService->getPropertyAnnotations($className, $propertyName, 'TYPO3\Flow\Annotations\Validate');
 			foreach ($annotations as $annotation) {
 				if ($annotation->type === 'NotEmpty') {
 					return TRUE;
@@ -341,7 +342,7 @@ class WsdlGenerator {
 	 * @return string
 	 */
 	protected function renderTemplate($templatePathAndFilename, array $contextVariables) {
-		$templateSource = \TYPO3\FLOW3\Utility\Files::getFileContents($templatePathAndFilename, FILE_TEXT);
+		$templateSource = \TYPO3\Flow\Utility\Files::getFileContents($templatePathAndFilename, FILE_TEXT);
 		if ($templateSource === FALSE) {
 			throw new \TYPO3\Fluid\Core\Exception('The template file "' . $templatePathAndFilename . '" could not be loaded.', 1225709595);
 		}

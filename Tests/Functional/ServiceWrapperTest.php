@@ -2,7 +2,7 @@
 namespace TYPO3\Soap\Tests\Functional;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -24,10 +24,10 @@ namespace TYPO3\Soap\Tests\Functional;
 /**
  * Testcase for the Service Wrapper
  */
-class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class ServiceWrapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Property\PropertyMapper
+	 * @var \TYPO3\Flow\Property\PropertyMapper
 	 */
 	protected $propertyMapper;
 
@@ -62,7 +62,7 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function mapperMapsToClassName() {
-		$this->propertyMapper = $this->objectManager->get('TYPO3\FLOW3\Property\PropertyMapper');
+		$this->propertyMapper = $this->objectManager->get('TYPO3\Flow\Property\PropertyMapper');
 		$value = array('name' => 'Foo', 'size' => 2);
 		$type = 'TYPO3\Soap\Tests\Functional\Fixtures\Dto';
 		$target = $this->propertyMapper->convert($value, $type);
@@ -169,7 +169,7 @@ class ServiceWrapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$mockRequest = $this->getMock('TYPO3\Soap\Request', array(), array(), '', FALSE);
 		$wrapper->setRequest($mockRequest);
 
-		$reflectionService = $this->objectManager->get('TYPO3\FLOW3\Reflection\ReflectionService');
+		$reflectionService = $this->objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
 
 		try {
 			$result = $wrapper->ping('invalid');

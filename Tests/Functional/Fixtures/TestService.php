@@ -2,7 +2,7 @@
 namespace TYPO3\Soap\Tests\Functional\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -35,7 +35,7 @@ class TestService {
 	 */
 	public function ping($value) {
 		if ($value === 'throw') {
-			throw new \TYPO3\FLOW3\Exception('Some exception occured', 1305541506);
+			throw new \TYPO3\Flow\Exception('Some exception occured', 1305541506);
 		}
 		if ($value === 'invalid') {
 			throw new PingException('Some expected exception occured', 1312964667);

@@ -2,7 +2,7 @@
 namespace TYPO3\Soap\Tests\Functional\Helper;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -38,9 +38,9 @@ class TestRequestBuilder extends \TYPO3\Soap\RequestBuilder {
 	 * @param string $requestBody
 	 */
 	public function __construct($wsdlUri, $serviceObjectName, $requestBody) {
-		$this->request = TestRequest::create(new \TYPO3\FLOW3\Http\Uri('http://localhost/soap'), 'POST');
+		$this->request = TestRequest::create(new \TYPO3\Flow\Http\Uri('http://localhost/soap'), 'POST');
 		if (is_string($wsdlUri)) {
-			$wsdlUri = new \TYPO3\FLOW3\Http\Uri($wsdlUri);
+			$wsdlUri = new \TYPO3\Flow\Http\Uri($wsdlUri);
 		}
 		$this->request->setWsdlUri($wsdlUri);
 		$this->request->setServiceObjectName($serviceObjectName);
@@ -49,10 +49,10 @@ class TestRequestBuilder extends \TYPO3\Soap\RequestBuilder {
 
 	/**
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $httpRequest
+	 * @param \TYPO3\Flow\Http\Request $httpRequest
 	 * @return \TYPO3\Soap\Request
 	 */
-	public function build(\TYPO3\FLOW3\Http\Request $httpRequest) {
+	public function build(\TYPO3\Flow\Http\Request $httpRequest) {
 		return $this->request;
 	}
 

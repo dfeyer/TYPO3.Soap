@@ -2,7 +2,7 @@
 namespace TYPO3\Soap\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -24,7 +24,7 @@ namespace TYPO3\Soap\Routing;
 /**
  * A route part handler for WSDL "files"
  */
-class WsdlRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
+class WsdlRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
 
 	/**
 	 * @var array

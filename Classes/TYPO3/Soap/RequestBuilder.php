@@ -2,7 +2,7 @@
 namespace TYPO3\Soap;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -22,18 +22,18 @@ namespace TYPO3\Soap;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The SOAP request builder
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class RequestBuilder {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -68,10 +68,10 @@ class RequestBuilder {
 	 * Parses the endpoint URI found in the current HTTP request and resolves the
 	 * responsible service object name accordingly.
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $httpRequest
+	 * @param \TYPO3\Flow\Http\Request $httpRequest
 	 * @return \TYPO3\Soap\Request The request object or FALSE if the service object name could not be resolved
 	 */
-	public function build(\TYPO3\FLOW3\Http\Request $httpRequest) {
+	public function build(\TYPO3\Flow\Http\Request $httpRequest) {
 		$requestUri = $httpRequest->getUri();
 		$baseUri = $httpRequest->getBaseUri();
 

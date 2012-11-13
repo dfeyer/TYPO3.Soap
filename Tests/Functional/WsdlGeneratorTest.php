@@ -2,7 +2,7 @@
 namespace TYPO3\Soap\Tests\Functional;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -24,7 +24,7 @@ namespace TYPO3\Soap\Tests\Functional;
 /**
  * Testcase for the WSDL generator
  */
-class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class WsdlGeneratorTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
@@ -34,7 +34,7 @@ class WsdlGeneratorTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 		$wsdl = $wsdlGenerator->generateWsdl('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
 
-		$wsdlFixture = \TYPO3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestService.wsdl', FILE_TEXT);
+		$wsdlFixture = \TYPO3\Flow\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestService.wsdl', FILE_TEXT);
 
 			// Clean whitespace and linebreaks for better comparison and diff
 		$wsdl = preg_replace('/>\\s*</', ">\n<", $wsdl);

@@ -2,7 +2,7 @@
 namespace TYPO3\Soap\Tests\Functional;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -24,7 +24,7 @@ namespace TYPO3\Soap\Tests\Functional;
 /**
  * Testcase for the Soap Request Handler
  */
-class RequestHandlerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class RequestHandlerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @var \TYPO3\Soap\Tests\Functional\Helper\SoapRequestHelper
@@ -46,22 +46,22 @@ class RequestHandlerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$response = $this->soapRequestHelper->sendSoapRequest(
 			__DIR__ . '/Fixtures/TestService.wsdl',
 			'TYPO3\Soap\Tests\Functional\Fixtures\TestService',
-			\TYPO3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingRequest.xml', FILE_TEXT)
+			\TYPO3\Flow\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingRequest.xml', FILE_TEXT)
 		);
 		$this->assertXmlStringEqualsXmlFile(__DIR__ . '/Fixtures/TestServicePingResponse.xml', $response);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Exception
+	 * @expectedException \TYPO3\Flow\Exception
 	 */
 	public function pingWithExceptionRespondsWithSoapFaultAndException() {
 		$response = $this->soapRequestHelper->sendSoapRequest(
 			__DIR__ . '/Fixtures/TestService.wsdl',
 			'TYPO3\Soap\Tests\Functional\Fixtures\TestService',
-			\TYPO3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingWithExceptionRequest.xml', FILE_TEXT)
+			\TYPO3\Flow\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingWithExceptionRequest.xml', FILE_TEXT)
 		);
-		$this->assertStringStartsWith(\TYPO3\FLOW3\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingWithExceptionResponse.xml'), $response);
+		$this->assertStringStartsWith(\TYPO3\Flow\Utility\Files::getFileContents(__DIR__ . '/Fixtures/TestServicePingWithExceptionResponse.xml'), $response);
 	}
 
 }

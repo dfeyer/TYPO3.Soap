@@ -2,7 +2,7 @@
 namespace TYPO3\Soap;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -21,10 +21,22 @@ namespace TYPO3\Soap;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \TYPO3\Flow\Package\Package as BasePackage;
+
 /**
- * An exception for invalid SOAP requests (should translate to a client SOAP fault)
+ * The Soap Package
  */
-class InvalidSoapRequestException extends \TYPO3\FLOW3\Exception {
+class Package extends BasePackage {
+
+	/**
+	 * Invokes custom PHP code directly after the package manager has been initialized.
+	 *
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap The current bootstrap
+	 * @return void
+	 */
+	public function boot(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
+		$bootstrap->registerRequestHandler(new RequestHandler($bootstrap));
+	}
 
 }
 ?>

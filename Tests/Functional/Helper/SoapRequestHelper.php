@@ -2,7 +2,7 @@
 namespace TYPO3\Soap\Tests\Functional\Helper;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -21,7 +21,7 @@ namespace TYPO3\Soap\Tests\Functional\Helper;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A helper to test SOAP requests
@@ -39,8 +39,8 @@ class SoapRequestHelper {
 	protected $lastCatchedException;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -59,8 +59,8 @@ class SoapRequestHelper {
 		$testRequestBuilder = new TestRequestBuilder($wsdlUri, $serviceObjectName, $requestBody);
 		$request = $testRequestBuilder->getRequest();
 
-		$securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
-		$securityContext->injectRequest($request->createActionRequest());
+		$securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
+		$securityContext->setRequest($request->createActionRequest());
 
 		ob_start();
 

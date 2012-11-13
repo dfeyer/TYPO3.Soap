@@ -2,7 +2,7 @@
 namespace TYPO3\Soap\Tests\Unit;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -24,7 +24,7 @@ namespace TYPO3\Soap\Tests\Unit;
 /**
  * Unit test for RequestHandler
  */
-class RequestHandlerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class RequestHandlerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * Check if the PHP soap extension was loaded
@@ -41,11 +41,9 @@ class RequestHandlerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function canHandleHandlesPostRequestWithSoapactionHeader() {
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$server = array(
-			'HTTP_SOAPACTION' => 'Foo'
-		);
-		$httpRequest = \TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://request-host/service/soap/test'), 'POST', array(), array(), array(), $server);
+		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
+		$httpRequest = \TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://request-host/service/soap/test'), 'POST', array(), array(), array(), $server);
+		$httpRequest->setHeader('Soapaction', 'Foo');
 
 		$requestHandler = new \TYPO3\Soap\RequestHandler();
 		$requestHandler->setHttpRequest($httpRequest);

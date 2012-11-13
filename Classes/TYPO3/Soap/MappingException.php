@@ -2,7 +2,7 @@
 namespace TYPO3\Soap;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -21,22 +21,33 @@ namespace TYPO3\Soap;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Package\Package as BasePackage;
-
 /**
- * The Soap Package
+ * A mapping exception
  */
-class Package extends BasePackage {
+class MappingException extends \TYPO3\Flow\Exception {
 
 	/**
-	 * Invokes custom PHP code directly after the package manager has been initialized.
-	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
-	 * @return void
+	 * @var \TYPO3\Flow\Property\MappingResults
 	 */
-	public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
-		$bootstrap->registerRequestHandler(new RequestHandler($bootstrap));
+	protected $mappingResults;
+
+	/**
+	 * Constructs this exception
+	 *
+	 * @param string $message The exception message
+	 * @param \TYPO3\Flow\Property\MappingResults $mappingResults
+	 */
+	public function __construct($message, \TYPO3\Flow\Property\MappingResults $mappingResults) {
+		parent::__construct($message, '1288952996');
+		$this->mappingResults = $mappingResults;
 	}
 
+	/**
+	 * @return \TYPO3\Flow\Property\MappingResults
+	 */
+	public function getMappingResults() {
+		return $this->mappingResults;
+	}
 }
+
 ?>

@@ -2,7 +2,7 @@
 namespace TYPO3\Soap;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -24,7 +24,7 @@ namespace TYPO3\Soap;
 /**
  * A SOAP request
  */
-class Request extends \TYPO3\FLOW3\Http\Request {
+class Request extends \TYPO3\Flow\Http\Request {
 
 	/**
 	 * The fully qualified object name of the service this request refers to
@@ -34,16 +34,16 @@ class Request extends \TYPO3\FLOW3\Http\Request {
 	protected $serviceObjectName;
 
 	/**
-	 * The base URI for this request - ie. the host and path leading to which all FLOW3 URI paths are relative
+	 * The base URI for this request - ie. the host and path leading to which all Flow URI paths are relative
 	 *
-	 * @var \TYPO3\FLOW3\Http\Uri
+	 * @var \TYPO3\Flow\Http\Uri
 	 */
 	protected $baseUri;
 
 	/**
 	 * URI pointing to the WSDL of the currently used service
 	 *
-	 * @var \TYPO3\FLOW3\Http\Uri
+	 * @var \TYPO3\Flow\Http\Uri
 	 */
 	protected $wsdlUri;
 
@@ -81,17 +81,17 @@ class Request extends \TYPO3\FLOW3\Http\Request {
 	/**
 	 * Sets the base URI
 	 *
-	 * @param \TYPO3\FLOW3\Http\Uri $baseUri
+	 * @param \TYPO3\Flow\Http\Uri $baseUri
 	 * @return void
 	 */
-	public function setBaseUri(\TYPO3\FLOW3\Http\Uri $baseUri) {
+	public function setBaseUri(\TYPO3\Flow\Http\Uri $baseUri) {
 		$this->baseUri = $baseUri;
 	}
 
 	/**
 	 * Returns the base URI
 	 *
-	 * @return \TYPO3\FLOW3\Http\Uri URI of this web request
+	 * @return \TYPO3\Flow\Http\Uri URI of this web request
 	 */
 	public function getBaseUri() {
 		return $this->baseUri;
@@ -100,17 +100,17 @@ class Request extends \TYPO3\FLOW3\Http\Request {
 	/**
 	 * Sets the WSDL URI
 	 *
-	 * @param \TYPO3\FLOW3\Http\Uri $wsdlUri
+	 * @param \TYPO3\Flow\Http\Uri $wsdlUri
 	 * @return void
 	 */
-	public function setWsdlUri(\TYPO3\FLOW3\Http\Uri $wsdlUri) {
+	public function setWsdlUri(\TYPO3\Flow\Http\Uri $wsdlUri) {
 		$this->wsdlUri = $wsdlUri;
 	}
 
 	/**
 	 * Returns the WSDL URI
 	 *
-	 * @return \TYPO3\FLOW3\Http\Uri URI pointing to the WSDL
+	 * @return \TYPO3\Flow\Http\Uri URI pointing to the WSDL
 	 */
 	public function getWsdlUri() {
 		return $this->wsdlUri;

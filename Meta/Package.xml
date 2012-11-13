@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://typo3.org/ns/2008/flow3/package" version="1.0">
-	<key>TYPO3.Soap</key>
-	<title>SOAP webservice support for FLOW3</title>
-	<description>This package enables FLOW3 applications to serve SOAP webservices. It features
-    full integration into the framework with automatic property mapping and automatic WSDL generation
-    for service description.</description>
-	<version>1.1.0-dev</version>
-</package>

@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Server</faultcode><faultstring>TYPO3\FLOW3\Exception (1305541506): Some exception occured</faultstring><detail>#0 [internal function]: TYPO3\Soap\Tests\Functional\Fixtures\TestService_Original-&gt;ping('throw')
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Server</faultcode><faultstring>TYPO3\Flow\Exception (1305541506): Some exception occured</faultstring><detail>#0 [internal function]: TYPO3\Soap\Tests\Functional\Fixtures\TestService_Original-&gt;ping('throw')

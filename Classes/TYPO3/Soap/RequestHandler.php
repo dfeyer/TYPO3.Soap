@@ -2,7 +2,8 @@
 namespace TYPO3\Soap;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Soap".                       *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
+ * This script belongs to the Flow package "TYPO3.Soap".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -22,13 +23,13 @@ namespace TYPO3\Soap;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Core\Booting\Step;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Booting\Step;
 
 /**
  * The SOAP request handler
  */
-class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
+class RequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
 
 	const HANDLEREQUEST_OK = 1;
 	const HANDLEREQUEST_NOVALIDREQUEST = -1;
@@ -46,7 +47,7 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	protected $requestBuilder;
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Request
+	 * @var \TYPO3\Flow\Http\Request
 	 */
 	protected $httpRequest;
 
@@ -61,28 +62,28 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	protected $lastCatchedException;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\RequestInterface
+	 * @var \TYPO3\Flow\Mvc\RequestInterface
 	 */
 	protected $request;
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * Constructor
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 */
-	public function __construct(\TYPO3\FLOW3\Core\Bootstrap $bootstrap = NULL) {
+	public function __construct(\TYPO3\Flow\Core\Bootstrap $bootstrap = NULL) {
 		$this->bootstrap = $bootstrap;
-		$this->httpRequest = \TYPO3\FLOW3\Http\Request::createFromEnvironment();
+		$this->httpRequest = \TYPO3\Flow\Http\Request::createFromEnvironment();
 	}
 
 	/**
@@ -102,8 +103,8 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 			return self::HANDLEREQUEST_NOVALIDREQUEST;
 		}
 
-		$securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
-		$securityContext->injectRequest($request->createActionRequest());
+		$securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
+		$securityContext->setRequest($request->createActionRequest());
 
 		$this->processRequest($request);
 
@@ -143,18 +144,20 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	 * Builds a boot sequence for SOAP requests leaving out
 	 * resource and session management.
 	 *
-	 * @return \TYPO3\FLOW3\Core\Booting\Sequence
+	 * @return \TYPO3\Flow\Core\Booting\Sequence
 	 */
 	public function buildRuntimeSequence() {
-		$sequence = $this->bootstrap->buildEssentialsSequence();
-		$sequence->addStep(new Step('typo3.flow3:objectmanagement:proxyclasses', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeProxyClasses')), 'typo3.flow3:systemlogger');
-		$sequence->addStep(new Step('typo3.flow3:classloader:cache', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeClassLoaderClassesCache')), 'typo3.flow3:objectmanagement:proxyclasses');
-		$sequence->addStep(new Step('typo3.flow3:reflectionservice', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow3:classloader:cache');
-		$sequence->addStep(new Step('typo3.flow3:objectmanagement:runtime', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeObjectManager')), 'typo3.flow3:reflectionservice');
+		$sequence = $this->bootstrap->buildEssentialsSequence('runtime');
+		$sequence->addStep(new Step('typo3.flow:objectmanagement:proxyclasses', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeProxyClasses')), 'typo3.flow:systemlogger');
+		$sequence->addStep(new Step('typo3.flow:classloader:cache', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeClassLoaderClassesCache')), 'typo3.flow:objectmanagement:proxyclasses');
+		$sequence->addStep(new Step('typo3.flow:objectmanagement:runtime', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeObjectManager')), 'typo3.flow:classloader:cache');
+
 		if ($this->bootstrap->getContext() !== 'Production') {
-			$sequence->addStep(new Step('typo3.flow3:systemfilemonitor', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeSystemFileMonitor')), 'typo3.flow3:objectmanagement:runtime');
+			$sequence->addStep(new Step('typo3.flow:systemfilemonitor', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeSystemFileMonitor')), 'typo3.flow:objectmanagement:runtime');
+			$sequence->addStep(new Step('typo3.flow:objectmanagement:recompile', array('TYPO3\Flow\Core\Booting\Scripts', 'recompileClasses')), 'typo3.flow:systemfilemonitor');
 		}
-		$sequence->addStep(new Step('typo3.flow3:persistence', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializePersistence')), 'typo3.flow3:objectmanagement:runtime');
+		$sequence->addStep(new Step('typo3.flow:reflectionservice', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow:classloader:cache');
+		$sequence->addStep(new Step('typo3.flow:persistence', array('TYPO3\Flow\Core\Booting\Scripts', 'initializePersistence')), 'typo3.flow:objectmanagement:runtime');
 		return $sequence;
 	}
 
@@ -209,14 +212,14 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	}
 
 	/**
-	 * @return \TYPO3\FLOW3\Mvc\RequestInterface
+	 * @return \TYPO3\Flow\Mvc\RequestInterface
 	 */
 	public function getRequest() {
 		return $this->request;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
 	 */
 	public function setObjectManager($objectManager) {
 		$this->objectManager = $objectManager;
@@ -225,7 +228,7 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	/**
 	 * Override the HTTP request
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $httpRequest
+	 * @param \TYPO3\Flow\Http\Request $httpRequest
 	 */
 	public function setHttpRequest($httpRequest) {
 		$this->httpRequest = $httpRequest;
