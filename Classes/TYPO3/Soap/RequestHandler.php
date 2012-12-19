@@ -130,7 +130,6 @@ class RequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
 		$serviceWrapper = new \TYPO3\Soap\ServiceWrapper($serviceObject);
 		$serviceWrapper->setRequest($request);
 		$soapServer->setObject($serviceWrapper);
-
 		$soapServer->handle($request->getBody());
 		if ($serviceWrapper->getCatchedException() !== NULL) {
 			$this->lastCatchedException = $serviceWrapper->getCatchedException();
@@ -156,8 +155,9 @@ class RequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
 			$sequence->addStep(new Step('typo3.flow:systemfilemonitor', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeSystemFileMonitor')), 'typo3.flow:objectmanagement:runtime');
 			$sequence->addStep(new Step('typo3.flow:objectmanagement:recompile', array('TYPO3\Flow\Core\Booting\Scripts', 'recompileClasses')), 'typo3.flow:systemfilemonitor');
 		}
-		$sequence->addStep(new Step('typo3.flow:reflectionservice', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow:classloader:cache');
-		$sequence->addStep(new Step('typo3.flow:persistence', array('TYPO3\Flow\Core\Booting\Scripts', 'initializePersistence')), 'typo3.flow:objectmanagement:runtime');
+
+		$sequence->addStep(new Step('typo3.flow:reflectionservice', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow:objectmanagement:runtime');
+		$sequence->addStep(new Step('typo3.flow:persistence', array('TYPO3\Flow\Core\Booting\Scripts', 'initializePersistence')), 'typo3.flow:reflectionservice');
 		return $sequence;
 	}
 
