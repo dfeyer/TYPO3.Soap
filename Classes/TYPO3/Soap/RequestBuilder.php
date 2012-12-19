@@ -97,7 +97,7 @@ class RequestBuilder {
 	 * @return string The endpoint path
 	 */
 	protected function servicePathForRequestUri($requestUri) {
-		$servicePath = substr($requestUri, strpos($requestUri, $this->settings['endpointUriBasePath']) + strlen($this->settings['endpointUriBasePath']));
+		list($servicePath) = explode('?', substr($requestUri, strpos($requestUri, $this->settings['endpointUriBasePath']) + strlen($this->settings['endpointUriBasePath'])));
 		if (substr_count($servicePath, '/') < 2) {
 			throw new InvalidSoapRequestException('Request service path "' . $servicePath . '" is not a valid service endpoint path', 1320164802);
 		}
