@@ -219,6 +219,13 @@ class RequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
 	}
 
 	/**
+	 * @return \TYPO3\Flow\Http\Request
+	 */
+	public function getHttpRequest() {
+		return $this->httpRequest;
+	}
+
+	/**
 	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
 	 */
 	public function setObjectManager($objectManager) {
