@@ -42,7 +42,7 @@ class RequestHandlerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function canHandleHandlesPostRequestWithSoapactionHeader() {
 		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
-		$httpRequest = \TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://request-host/service/soap/test'), 'POST', array(), array(), array(), $server);
+		$httpRequest = \TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://request-host/service/soap/test'), 'POST', array(), array(), array(), array());
 		$httpRequest->setHeader('Soapaction', 'Foo');
 
 		$requestHandler = new \TYPO3\Soap\RequestHandler();
