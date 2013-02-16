@@ -151,13 +151,16 @@ class RequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
 		$sequence->addStep(new Step('typo3.flow:classloader:cache', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeClassLoaderClassesCache')), 'typo3.flow:objectmanagement:proxyclasses');
 		$sequence->addStep(new Step('typo3.flow:objectmanagement:runtime', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeObjectManager')), 'typo3.flow:classloader:cache');
 
-		if ($this->bootstrap->getContext() !== 'Production') {
+		if ($this->bootstrap->getContext()->isProduction()) {
 			$sequence->addStep(new Step('typo3.flow:systemfilemonitor', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeSystemFileMonitor')), 'typo3.flow:objectmanagement:runtime');
 			$sequence->addStep(new Step('typo3.flow:objectmanagement:recompile', array('TYPO3\Flow\Core\Booting\Scripts', 'recompileClasses')), 'typo3.flow:systemfilemonitor');
 		}
 
 		$sequence->addStep(new Step('typo3.flow:reflectionservice', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow:objectmanagement:runtime');
 		$sequence->addStep(new Step('typo3.flow:persistence', array('TYPO3\Flow\Core\Booting\Scripts', 'initializePersistence')), 'typo3.flow:reflectionservice');
+		$sequence->addStep(new Step('typo3.flow:resources', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeResources')), 'typo3.flow:persistence');
+		$sequence->addStep(new Step('typo3.flow:session', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeSession')), 'typo3.flow:resources');
+		$sequence->addStep(new Step('typo3.flow:i18n', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeI18n')), 'typo3.flow:session');
 		return $sequence;
 	}
 
