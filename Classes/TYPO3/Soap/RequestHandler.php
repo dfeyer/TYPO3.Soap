@@ -25,11 +25,12 @@ namespace TYPO3\Soap;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Booting\Step;
+use TYPO3\Flow\Http\Response;
 
 /**
  * The SOAP request handler
  */
-class RequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
+class RequestHandler implements \TYPO3\Flow\Http\HttpRequestHandlerInterface {
 
 	const HANDLEREQUEST_OK = 1;
 	const HANDLEREQUEST_NOVALIDREQUEST = -1;
@@ -65,6 +66,11 @@ class RequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
 	 * @var \TYPO3\Flow\Mvc\RequestInterface
 	 */
 	protected $request;
+
+	/**
+	 * @var \TYPO3\Flow\Http\Response
+	 */
+	protected $response;
 
 	/**
 	 * @var \TYPO3\Flow\Core\Bootstrap
@@ -227,6 +233,19 @@ class RequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
 	public function getHttpRequest() {
 		return $this->httpRequest;
 	}
+
+	/**
+	 * Returns the HTTP response corresponding to the currently handled request
+	 *
+	 * @return \TYPO3\Flow\Http\Response
+	 * @api
+	 */
+	public function getHttpResponse() {
+		$this->response = new Response();
+		
+		return $this->response;
+	}
+
 
 	/**
 	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
