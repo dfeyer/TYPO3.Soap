@@ -130,7 +130,11 @@ class RequestHandler implements \TYPO3\Flow\Http\HttpRequestHandlerInterface {
 		$this->lastOperationResult = NULL;
 		$this->lastCatchedException = NULL;
 
-		$serverOptions = array('soap_version' => SOAP_1_2, 'encoding' => 'UTF-8');
+		$serverOptions = array(
+			'soap_version' => SOAP_1_2,
+			'encoding' => 'UTF-8',
+			'cache_wsdl' => WSDL_CACHE_MEMORY
+		);
 		$soapServer = new \SoapServer((string)$request->getWsdlUri(), $serverOptions);
 		$serviceObject = $this->objectManager->get($request->getServiceObjectName());
 		$serviceWrapper = new \TYPO3\Soap\ServiceWrapper($serviceObject);
