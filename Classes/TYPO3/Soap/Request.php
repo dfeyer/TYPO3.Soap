@@ -134,7 +134,7 @@ class Request extends \TYPO3\Flow\Http\Request {
 	 * @return string SOAP body
 	 */
 	public function getBody() {
-		return isset($this->body) ? $this->body : $GLOBALS['HTTP_RAW_POST_DATA'];
+		return isset($this->body) ? $this->body : $this->content;
 	}
 
 	/**
