@@ -265,6 +265,10 @@ class WsdlGenerator {
 	 * @return string The namespace prefixed schema type
 	 */
 	protected function getOrCreateType($phpType, &$complexTypes, &$typeMapping) {
+			// don't need to map this class
+		$phpTypeWhiteList = array(
+			'\DateTime'
+		);
 		if (isset($typeMapping[$phpType])) {
 			return $typeMapping[$phpType];
 		}
@@ -282,7 +286,7 @@ class WsdlGenerator {
 					)
 				)
 			);
-		} elseif (strpos($phpType, '\\') !== FALSE) {
+		} elseif (strpos($phpType, '\\') !== FALSE ) {
 			$classReflection = new \TYPO3\Flow\Reflection\ClassReflection($phpType);
 			$typeName = substr($phpType, strrpos($phpType, '\\') + 1);
 			$typeMapping[$phpType] = 'tns:' . $typeName;
@@ -291,21 +295,23 @@ class WsdlGenerator {
 				'elements' => array(),
 				'documentation' => $classReflection->getDescription()
 			);
-			$methodNames = get_class_methods($phpType);
-			foreach ($methodNames as $methodName) {
-				if (strpos($methodName, 'get') === 0 && $this->reflectionService->isMethodPublic($phpType, $methodName)) {
-					$propertyName = lcfirst(substr($methodName, 3));
-					$propertyReflection = new \TYPO3\Flow\Reflection\PropertyReflection($phpType, $propertyName);
+			if (!in_array($phpType, $phpTypeWhiteList)) {
+				$methodNames = get_class_methods($phpType);
+				foreach ($methodNames as $methodName) {
+					if (strpos($methodName, 'get') === 0 && $this->reflectionService->isMethodPublic($phpType, $methodName)) {
+						$propertyName = lcfirst(substr($methodName, 3));
+						$propertyReflection = new \TYPO3\Flow\Reflection\PropertyReflection($phpType, $propertyName);
 
-					$minOccurs = $this->isPropertyRequired($phpType, $propertyName) ? 1 : 0;
+						$minOccurs = $this->isPropertyRequired($phpType, $propertyName) ? 1 : 0;
 
-					$returnType = $this->getMethodReturnAnnotation($phpType, $methodName);
-					$complexTypes[$typeName]['elements'][$propertyName] = array(
-						'name' => $propertyName,
-						'type' => $this->getOrCreateType($returnType['type'], $complexTypes, $typeMapping),
-						'attributes' => 'minOccurs="' . $minOccurs . '" maxOccurs="1" ',
-						'documentation' => $propertyReflection->getDescription()
-					);
+						$returnType = $this->getMethodReturnAnnotation($phpType, $methodName);
+						$complexTypes[$typeName]['elements'][$propertyName] = array(
+							'name' => $propertyName,
+							'type' => $this->getOrCreateType($returnType['type'], $complexTypes, $typeMapping),
+							'attributes' => 'minOccurs="' . $minOccurs . '" maxOccurs="1" ',
+							'documentation' => $propertyReflection->getDescription()
+						);
+					}
 				}
 			}
 		} else {
