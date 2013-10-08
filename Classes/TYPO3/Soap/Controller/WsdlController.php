@@ -45,7 +45,7 @@ class WsdlController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 *
 	 * @return void
 	 */
-	public function initializeAction() {
+	protected function initializeAction() {
 		$this->pathToObjectNameMapping = array();
 		if (isset($this->settings['mapping'])) {
 			foreach ($this->settings['mapping'] as $objectName => $mapping) {
