@@ -65,8 +65,9 @@ class WsdlGenerator {
 	protected $defaultTypeMap = array(
 		'string' => 'xsd:string',
 		'boolean' => 'xsd:boolean',
-		'integer' => 'xsd:integer',
-		'float' => 'xsd:float'
+		'integer' => 'xsd:int',
+		'float' => 'xsd:float',
+		'long' => 'xsd:long'
 	);
 
 	/**
