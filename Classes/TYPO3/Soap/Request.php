@@ -20,6 +20,7 @@ namespace TYPO3\Soap;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\Flow\Http\Uri;
 
 /**
  * A SOAP request
@@ -36,14 +37,14 @@ class Request extends \TYPO3\Flow\Http\Request {
 	/**
 	 * The base URI for this request - ie. the host and path leading to which all Flow URI paths are relative
 	 *
-	 * @var \TYPO3\Flow\Http\Uri
+	 * @var Uri
 	 */
 	protected $baseUri;
 
 	/**
 	 * URI pointing to the WSDL of the currently used service
 	 *
-	 * @var \TYPO3\Flow\Http\Uri
+	 * @var Uri
 	 */
 	protected $wsdlUri;
 
@@ -81,17 +82,17 @@ class Request extends \TYPO3\Flow\Http\Request {
 	/**
 	 * Sets the base URI
 	 *
-	 * @param \TYPO3\Flow\Http\Uri $baseUri
+	 * @param string $baseUri
 	 * @return void
 	 */
-	public function setBaseUri(\TYPO3\Flow\Http\Uri $baseUri) {
+	public function setBaseUri($baseUri) {
 		$this->baseUri = $baseUri;
 	}
 
 	/**
 	 * Returns the base URI
 	 *
-	 * @return \TYPO3\Flow\Http\Uri URI of this web request
+	 * @return Uri URI of this web request
 	 */
 	public function getBaseUri() {
 		return $this->baseUri;
@@ -100,17 +101,17 @@ class Request extends \TYPO3\Flow\Http\Request {
 	/**
 	 * Sets the WSDL URI
 	 *
-	 * @param \TYPO3\Flow\Http\Uri $wsdlUri
+	 * @param Uri $wsdlUri
 	 * @return void
 	 */
-	public function setWsdlUri(\TYPO3\Flow\Http\Uri $wsdlUri) {
+	public function setWsdlUri(Uri $wsdlUri) {
 		$this->wsdlUri = $wsdlUri;
 	}
 
 	/**
 	 * Returns the WSDL URI
 	 *
-	 * @return \TYPO3\Flow\Http\Uri URI pointing to the WSDL
+	 * @return Uri URI pointing to the WSDL
 	 */
 	public function getWsdlUri() {
 		return $this->wsdlUri;
@@ -157,4 +158,3 @@ class Request extends \TYPO3\Flow\Http\Request {
 	}
 
 }
-?>
