@@ -21,8 +21,15 @@ namespace TYPO3\Soap;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Exception;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Security\Exception\AccessDeniedException;
+use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * A wrapper for services to map arguments and handle exceptions in a
@@ -38,28 +45,31 @@ class ServiceWrapper {
 	protected $service;
 
 	/**
-	 * @var \TYPO3\Flow\Reflection\ReflectionService
+	 * @Flow\Inject
+	 * @var ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \TYPO3\Flow\Property\PropertyMapper
+	 * @Flow\Inject
+	 * @var PropertyMapper
 	 */
 	protected $propertyMapper;
 
 	/**
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @Flow\Inject
+	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 * @var SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
-	 * @var \TYPO3\Soap\Request
+	 * @var Request
 	 */
 	protected $request;
 
@@ -79,36 +89,6 @@ class ServiceWrapper {
 	 * @var mixed
 	 */
 	protected $lastOperationResult;
-
-	/**
-	 * Inject the reflection service
-	 *
-	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 */
-	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
-
-	/**
-	 * Inject the property mapper
-	 *
-	 * @param \TYPO3\Flow\Property\PropertyMapper $propertyMapper
-	 * @return void
-	 */
-	public function injectPropertyMapper(\TYPO3\Flow\Property\PropertyMapper $propertyMapper) {
-		$this->propertyMapper = $propertyMapper;
-	}
-
-	/**
-	 * Inject the object manager
-	 *
-	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 */
-	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
 
 	/**
 	 * @param array $settings
@@ -133,10 +113,12 @@ class ServiceWrapper {
 	 * @param string $methodName Method name called
 	 * @param object $arguments Arguments of the call
 	 * @return mixed
+	 * @throws \SoapFault
+	 * @throws Exception
 	 */
 	public function __call($methodName, $arguments) {
 		if (substr($methodName, 0, 9) === 'Flow_AOP') return;
-		if (!$this->request instanceof \TYPO3\Soap\Request) throw new \TYPO3\Flow\Exception('No SOAP request set', 1297091911);
+		if (!$this->request instanceof Request) throw new Exception('No SOAP request set', 1297091911);
 		$this->lastOperationResult = NULL;
 		$this->initializeCall($this->request);
 		$className = get_class($this->service);
@@ -167,6 +149,8 @@ class ServiceWrapper {
 	 * @param string $parameterName
 	 * @param string $parameterType
 	 * @return array
+	 * @throws MappingException
+	 * @throws Exception
 	 */
 	protected function convertArrayArgument($argument, $methodName, $parameterName, $parameterType) {
 		if (preg_match('/^array<(.+)>$/', $parameterType, $matches)) {
@@ -189,7 +173,7 @@ class ServiceWrapper {
 				return $arrayValues;
 			}
 		} else {
-			throw new \TYPO3\Flow\Exception('Could not parse array type for parameter ' . $parameterName . ' from type "' . $parameterType . '"', 1297166416);
+			throw new Exception('Could not parse array type for parameter ' . $parameterName . ' from type "' . $parameterType . '"', 1297166416);
 		}
 	}
 
@@ -197,10 +181,10 @@ class ServiceWrapper {
 	 * AOP method template to intercept a SOAP request and
 	 * set headers before initializing security
 	 *
-	 * @param \TYPO3\Soap\Request $request
+	 * @param Request $request
 	 * @return void
 	 */
-	protected function initializeCall(\TYPO3\Soap\Request $request) {}
+	protected function initializeCall(Request $request) {}
 
 	/**
 	 * Sets SOAP headers from the <headers> SOAP header. Will be indirectly
@@ -212,7 +196,7 @@ class ServiceWrapper {
 	 * @return void
 	 */
 	public function headers($arguments) {
-		$headers = \TYPO3\Flow\Utility\Arrays::convertObjectToArray($arguments);
+		$headers = Arrays::convertObjectToArray($arguments);
 		$this->request->setSoapHeaders($headers);
 	}
 
@@ -230,10 +214,10 @@ class ServiceWrapper {
 	protected function handleException($exception, $className, $methodName) {
 		$this->catchedException = $exception;
 		$exceptionClassName = get_class($exception);
-		if ($exception instanceof \TYPO3\Flow\Security\Exception\AuthenticationRequiredException) {
+		if ($exception instanceof AuthenticationRequiredException) {
 			throw new \SoapFault('Client', 'Authentication required', NULL, 'Security_AuthenticationRequired');
 		}
-		if ($exception instanceof \TYPO3\Flow\Security\Exception\AccessDeniedException) {
+		if ($exception instanceof AccessDeniedException) {
 			throw new \SoapFault('Client', 'Access denied', NULL, 'Security_AccessDenied');
 		}
 		$expectedException = $this->methodThrowsException($className, $methodName, $exceptionClassName);
@@ -241,8 +225,8 @@ class ServiceWrapper {
 			$exceptionName = implode('_', array_slice(explode('\\', $exceptionClassName), 4));
 			throw new \SoapFault('Client', $exception->getMessage(), NULL, $exceptionName);
 		} else {
-			if (!$exception instanceof \TYPO3\Flow\Exception) {
-				$exception = new \TYPO3\Flow\Exception($exception->getMessage(), $exception->getCode(), $exception);
+			if (!$exception instanceof Exception) {
+				$exception = new Exception($exception->getMessage(), $exception->getCode(), $exception);
 			}
 			$identifier = $exception->getReferenceCode();
 			if ($this->settings['exposeExceptionInformation'] === TRUE) {
@@ -276,7 +260,7 @@ class ServiceWrapper {
 		if (isset($methodTagsValues['throws'])) {
 			if (is_array($methodTagsValues['throws'])) {
 				foreach ($methodTagsValues['throws'] as $throwsDefinition) {
-					list($throwsType,) = \TYPO3\Flow\Utility\Arrays::trimExplode(' ', $throwsDefinition, TRUE);
+					list($throwsType,) = Arrays::trimExplode(' ', $throwsDefinition, TRUE);
 					if (ltrim($exceptionClassName, '\\') == ltrim($throwsType, '\\')) {
 						return TRUE;
 					}
@@ -309,9 +293,11 @@ class ServiceWrapper {
 	 * @param string $className The class name of the target object
 	 * @param string $parameterName The parameter name of the argument
 	 * @return object The converted object
+	 * @throws Exception
+	 * @throws MappingException
 	 */
 	protected function convertStdClassToObject($argument, $className, $parameterName) {
-		$source = \TYPO3\Flow\Utility\Arrays::convertObjectToArray($argument);
+		$source = Arrays::convertObjectToArray($argument);
 
 		foreach ($source as $propertyName => $propertyValue) {
 			$annotation = $this->getMethodReturnAnnotation($className, 'get' . ucfirst($propertyName));
@@ -325,7 +311,7 @@ class ServiceWrapper {
 		if ($target !== NULL) {
 			return $target;
 		} else {
-			throw new \TYPO3\Soap\MappingException('Could not map argument ' . $parameterName . ' to type ' . $className, $this->propertyMapper->getMessages());
+			throw new MappingException('Could not map argument ' . $parameterName . ' to type ' . $className, $this->propertyMapper->getMessages());
 		}
 	}
 
@@ -335,6 +321,7 @@ class ServiceWrapper {
 	 * @param string $className
 	 * @param string $methodName
 	 * @return array The method return type and description
+	 * @throws Exception
 	 */
 	protected function getMethodReturnAnnotation($className, $methodName) {
 		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
@@ -345,14 +332,14 @@ class ServiceWrapper {
 				'description' => count($returnAnnotations) > 1 ? $returnAnnotations[1] : NULL
 			);
 		} else {
-			throw new \TYPO3\Flow\Exception('Could not get return value for ' . $className . '::' . $methodName, 1305130721);
+			throw new Exception('Could not get return value for ' . $className . '::' . $methodName, 1305130721);
 		}
 	}
 
 	/**
 	 * Set the current SOAP request
 	 *
-	 * @param \TYPO3\Soap\Request $request
+	 * @param Request $request
 	 * @return void
 	 */
 	public function setRequest($request) {
@@ -378,4 +365,3 @@ class ServiceWrapper {
 	}
 
 }
-?>

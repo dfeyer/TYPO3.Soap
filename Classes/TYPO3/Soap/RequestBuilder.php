@@ -72,6 +72,7 @@ class RequestBuilder {
 	 * @return \TYPO3\Soap\Request The request object or FALSE if the service object name could not be resolved
 	 */
 	public function build(\TYPO3\Flow\Http\Request $httpRequest) {
+		$payload = html_entity_decode($httpRequest->getContent());
 		$requestUri = $httpRequest->getUri();
 		$baseUri = $httpRequest->getBaseUri();
 
@@ -85,6 +86,7 @@ class RequestBuilder {
 		$request->setServiceObjectName($serviceObjectName);
 		$request->setBaseUri($baseUri);
 		$request->setWsdlUri($wsdlUri);
+		$request->setBody($payload);
 		return $request;
 	}
 
