@@ -41,6 +41,12 @@ class WsdlController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $pathToObjectNameMapping;
 
 	/**
+	 * @Flow\Inject(setting="wsdlResponseContentType")
+	 * @var string
+	 */
+	protected $responseContentType;
+
+	/**
 	 * Initialize mappings
 	 *
 	 * @return void
@@ -88,7 +94,7 @@ class WsdlController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			$wsdlContent = $this->wsdlGenerator->generateWsdl($serviceObjectName);
 		}
 
-		$this->response->setHeader('Content-type', 'application/xml');
+		$this->response->setHeader('Content-type', $this->responseContentType);
 		$wsdlContent = str_replace('{baseUrl}', $this->request->getHttpRequest()->getBaseUri(), $wsdlContent);
 		return $wsdlContent;
 	}
