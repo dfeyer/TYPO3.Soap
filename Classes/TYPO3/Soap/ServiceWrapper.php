@@ -222,8 +222,8 @@ class ServiceWrapper {
 		}
 		$expectedException = $this->methodThrowsException($className, $methodName, $exceptionClassName);
 		if ($expectedException) {
-			$exceptionName = implode('_', array_slice(explode('\\', $exceptionClassName), 4));
-			throw new \SoapFault('Client', $exception->getMessage(), NULL, $exceptionName);
+			$details = $exception->getPrevious() ? $exception->getPrevious()->getMessage() : NULL;
+			throw new \SoapFault('Client', $exception->getMessage(), NULL, $details);
 		} else {
 			if (!$exception instanceof Exception) {
 				$exception = new Exception($exception->getMessage(), $exception->getCode(), $exception);
