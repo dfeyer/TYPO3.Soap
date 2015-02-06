@@ -4,7 +4,7 @@
 	"description": "This package enables Flow applications to serve TYPO3.Soap webservices. It features full integration into the framework with automatic property mapping and automatic WSDL generation for service description.",
 	"version": "1.1.0-dev",
 	"require": {
-		"typo3/flow": "*"
+		"typo3/flow": "~2.3"
 	},
 	"autoload": {
 		"psr-0": {
