@@ -26,6 +26,7 @@ use TYPO3\Flow\Exception;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Property\PropertyMappingConfigurationBuilder;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Security\Exception\AccessDeniedException;
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
@@ -55,6 +56,12 @@ class ServiceWrapper {
 	 * @var PropertyMapper
 	 */
 	protected $propertyMapper;
+
+	/**
+	 * @Flow\Inject
+	 * @var PropertyMappingConfigurationBuilder
+	 */
+	protected $propertyConfigurationBuilder;
 
 	/**
 	 * @Flow\Inject
@@ -299,15 +306,16 @@ class ServiceWrapper {
 	protected function convertStdClassToObject($argument, $className, $parameterName) {
 		$source = Arrays::convertObjectToArray($argument);
 
+		$propertyConfiguration = $this->propertyConfigurationBuilder->build();
 		foreach ($source as $propertyName => $propertyValue) {
 			$annotation = $this->getMethodReturnAnnotation($className, 'get' . ucfirst($propertyName));
 			$propertyType = $annotation['type'];
 			if (preg_match('/^array<(.+)>$/', $propertyType, $matches)) {
 				$source[$propertyName] = $this->convertArrayArgument($argument->$propertyName, '', $propertyName, $propertyType);
+				$propertyConfiguration->forProperty($propertyName)->allowAllProperties();
 			}
 		}
-
-		$target = $this->propertyMapper->convert($source, $className);
+		$target = $this->propertyMapper->convert($source, $className, $propertyConfiguration);
 		if ($target !== NULL) {
 			return $target;
 		} else {
