@@ -20,6 +20,7 @@ namespace TYPO3\Soap\Tests\Functional;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\Soap\ServiceWrapper;
 
 /**
  * Testcase for the Service Wrapper
@@ -32,13 +33,23 @@ class ServiceWrapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected $propertyMapper;
 
 	/**
+	 * @return \TYPO3\Soap\ServiceWrapper
+	 */
+	protected function createServiceWrapper() {
+		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
+		$mockRequest = $this->getMockBuilder('TYPO3\Soap\Request')
+			->disableOriginalConstructor()
+			->getMock();
+		$wrapper = new ServiceWrapper($serviceObject);
+		$wrapper->setRequest($mockRequest);
+		return $wrapper;
+	}
+
+	/**
 	 * @test
 	 */
 	public function simpleServiceMethodIsWrapped() {
-		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
-		$wrapper = new \TYPO3\Soap\ServiceWrapper($serviceObject);
-		$mockRequest = $this->getMock('TYPO3\Soap\Request', array(), array(), '', FALSE);
-		$wrapper->setRequest($mockRequest);
+		$wrapper = $this->createServiceWrapper();
 		$result = $wrapper->ping('Hello');
 		$this->assertEquals('Hello', $result);
 	}
@@ -47,10 +58,7 @@ class ServiceWrapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function argumentToMethodIsMappedToObjectByParamAnnotation() {
-		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
-		$wrapper = new \TYPO3\Soap\ServiceWrapper($serviceObject);
-		$mockRequest = $this->getMock('TYPO3\Soap\Request', array(), array(), '', FALSE);
-		$wrapper->setRequest($mockRequest);
+		$wrapper = $this->createServiceWrapper();
 		$argument = new \stdClass();
 		$argument->name = 'Foo';
 		$argument->size = 2;
@@ -74,10 +82,7 @@ class ServiceWrapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function simpleArrayTypeParametersAreConvertedFromStdClass() {
-		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
-		$wrapper = new \TYPO3\Soap\ServiceWrapper($serviceObject);
-		$mockRequest = $this->getMock('TYPO3\Soap\Request', array(), array(), '', FALSE);
-		$wrapper->setRequest($mockRequest);
+		$wrapper = $this->createServiceWrapper();
 		$argument = new \stdClass();
 		$argument->integer = array(17, 4);
 		$result = $wrapper->sum($argument);
@@ -88,10 +93,7 @@ class ServiceWrapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function objectArrayTypeParametersAreConvertedFromStdClass() {
-		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
-		$wrapper = new \TYPO3\Soap\ServiceWrapper($serviceObject);
-		$mockRequest = $this->getMock('TYPO3\Soap\Request', array(), array(), '', FALSE);
-		$wrapper->setRequest($mockRequest);
+		$wrapper = $this->createServiceWrapper();
 		$argument = (object)array(
 			'dto' => array(
 				(object)array('name' => 'Foo', 'size' => 1),
@@ -106,10 +108,7 @@ class ServiceWrapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function wrappedObjectArrayTypeParameterWithMultipleValuesIsConvertedFromStdClass() {
-		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
-		$wrapper = new \TYPO3\Soap\ServiceWrapper($serviceObject);
-		$mockRequest = $this->getMock('TYPO3\Soap\Request', array(), array(), '', FALSE);
-		$wrapper->setRequest($mockRequest);
+		$wrapper = $this->createServiceWrapper();
 		$argument = (object)array(
 			'dtos' => (object)array(
 				'dto' => array(
@@ -126,10 +125,7 @@ class ServiceWrapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function wrappedObjectArrayTypeParameterWithSingleValueIsConvertedFromStdClass() {
-		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
-		$wrapper = new \TYPO3\Soap\ServiceWrapper($serviceObject);
-		$mockRequest = $this->getMock('TYPO3\Soap\Request', array(), array(), '', FALSE);
-		$wrapper->setRequest($mockRequest);
+		$wrapper = $this->createServiceWrapper();
 		$argument = (object)array(
 			'dtos' => (object)array(
 				'dto' => (object)array('name' => 'Foo', 'size' => 1)
@@ -143,10 +139,7 @@ class ServiceWrapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function wrappedObjectArrayTypeParameterWithNoValueIsConvertedFromStdClass() {
-		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
-		$wrapper = new \TYPO3\Soap\ServiceWrapper($serviceObject);
-		$mockRequest = $this->getMock('TYPO3\Soap\Request', array(), array(), '', FALSE);
-		$wrapper->setRequest($mockRequest);
+		$wrapper = $this->createServiceWrapper();
 
 		$argument = (object)array(
 			'dtos' => (object)array()
@@ -164,12 +157,7 @@ class ServiceWrapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @expectedException \SoapFault
 	 */
 	public function expectedExceptionsAreConvertedToClientSoapFault() {
-		$serviceObject = $this->objectManager->get('TYPO3\Soap\Tests\Functional\Fixtures\TestService');
-		$wrapper = new \TYPO3\Soap\ServiceWrapper($serviceObject);
-		$mockRequest = $this->getMock('TYPO3\Soap\Request', array(), array(), '', FALSE);
-		$wrapper->setRequest($mockRequest);
-
-		$reflectionService = $this->objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+		$wrapper = $this->createServiceWrapper();
 
 		try {
 			$result = $wrapper->ping('invalid');

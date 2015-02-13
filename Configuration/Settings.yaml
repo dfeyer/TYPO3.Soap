@@ -4,7 +4,19 @@
 
 TYPO3:
 
+  Flow:
+    http:
+      chain:
+        'process':
+          chain:
+            'soap':
+              position: 'before routing'
+              component: 'TYPO3\Soap\Http\SoapComponent'
   Soap:
+
+    wsdlResponseContentType: 'application/wsdl+xml'
+
+    soapResponseContentType: 'text/xml'
 
     # This path will be prefixed with the current web base URI and be suffixed
     # with the service name.
