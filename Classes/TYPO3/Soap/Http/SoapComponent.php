@@ -29,6 +29,7 @@ use TYPO3\Soap\Request as SoapRequest;
 use TYPO3\Flow\Mvc\DispatchComponent;
 use TYPO3\Soap\RequestBuilder;
 use TYPO3\Soap\ServiceWrapper;
+use TYPO3\Soap\SoapServer;
 
 /**
  * Soap Request Handling
@@ -65,10 +66,11 @@ class SoapComponent extends DispatchComponent {
 		}
 
 		$request = $this->requestBuilder->build($httpRequest);
-		$this->processRequest($request);
+		$responseContent = $this->processRequest($request);
 
 		$response = $componentContext->getHttpResponse();
 		$response->setHeader('Content-Type', $this->responseContentType, TRUE);
+		$response->setContent($responseContent);
 
 		$componentContext->setParameter('TYPO3\Flow\Http\Component\ComponentChain', 'cancel', TRUE);
 	}
@@ -79,7 +81,7 @@ class SoapComponent extends DispatchComponent {
 	 *
 	 * @param SoapRequest $request
 	 * @throws \Exception
-	 * @return void
+	 * @return string
 	 */
 	public function processRequest(SoapRequest $request) {
 		$serverOptions = array(
@@ -92,7 +94,7 @@ class SoapComponent extends DispatchComponent {
 		$actionRequest = $this->objectManager->get('TYPO3\Flow\Mvc\ActionRequest', $request);
 		$this->securityContext->setRequest($actionRequest);
 
-		$soapServer = new \SoapServer((string)$request->getWsdlUri(), $serverOptions);
+		$soapServer = new SoapServer((string)$request->getWsdlUri(), $serverOptions);
 
 		$serviceObject = $this->objectManager->get($request->getServiceObjectName());
 
@@ -100,9 +102,11 @@ class SoapComponent extends DispatchComponent {
 		$serviceWrapper->setRequest($request);
 
 		$soapServer->setObject($serviceWrapper);
-		$soapServer->handle($request->getBody());
+		$response = $soapServer->handle($request->getBody());
 
 		$this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
+
+		return $response;
 	}
 
 	/**
